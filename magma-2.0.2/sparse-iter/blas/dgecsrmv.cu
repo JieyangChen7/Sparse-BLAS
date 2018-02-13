@@ -145,6 +145,7 @@ magma_dgecsrmv(
     magmaDouble_ptr dy,
     magma_queue_t queue )
 {
+    printf("calling magma_dgecsrmv\n");
     dim3 grid( magma_ceildiv( m, BLOCK_SIZE ) );
     magma_int_t threads = BLOCK_SIZE;
     dgecsrmv_kernel<<< grid, threads, 0, queue->cuda_stream() >>>

@@ -148,6 +148,7 @@ magma_dgeellmv(
     magmaDouble_ptr dy,
     magma_queue_t queue )
 {
+    printf("calling magma_dgeellmv\n");
     dim3 grid( magma_ceildiv( m, BLOCK_SIZE ) );
     magma_int_t threads = BLOCK_SIZE;
     dgeellmv_kernel<<< grid, threads, 0, queue->cuda_stream() >>>

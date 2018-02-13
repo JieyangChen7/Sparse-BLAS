@@ -154,6 +154,7 @@ magma_dgeelltmv(
     magmaDouble_ptr dy,
     magma_queue_t queue )
 {
+    printf("calling magma_dgeelltmv\n");
     dim3 grid( magma_ceildiv( m, BLOCK_SIZE ) );
     magma_int_t threads = BLOCK_SIZE;
     if (beta == MAGMA_D_ZERO) {

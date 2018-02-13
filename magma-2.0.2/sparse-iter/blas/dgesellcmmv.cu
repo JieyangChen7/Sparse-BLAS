@@ -769,6 +769,7 @@ magma_dgesellpmv(
     magmaDouble_ptr dy,
     magma_queue_t queue )
 {
+     printf("calling magma_dgesellpmv\n");
     // using a 2D thread grid
 
     int num_threads = blocksize*alignment;

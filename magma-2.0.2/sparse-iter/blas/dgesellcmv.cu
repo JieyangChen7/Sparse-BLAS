@@ -137,6 +137,7 @@ magma_dgesellcmv(
     magmaDouble_ptr dy,
     magma_queue_t queue )
 {
+    printf("calling magma_dgesellcmv\n");
     // the kernel can only handle up to 65535 slices 
    // (~2M rows for blocksize 32)
    dim3 grid( slices, 1, 1);
