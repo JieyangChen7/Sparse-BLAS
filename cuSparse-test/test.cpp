@@ -59,7 +59,7 @@ int main(){
 	    |5.0     6.0 7.0|
 	    |     8.0    9.0| */
 	double r = 0.1;
-  	n=1000; nnz=n*n*r;
+  	n=10000; nnz=n*n*r;
  	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
  	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
  	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
