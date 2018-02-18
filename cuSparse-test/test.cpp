@@ -296,6 +296,9 @@ int main(){
 	float milliseconds = 0;
 	cudaEventElapsedTime(&milliseconds, start, stop);
 	printf("cusparseDcsrmv time = %f\n", milliseconds);
+	long long flop = n * n * r * 2;
+	double gflops = (flop / (milliseconds/1000))/1000000000;
+	printf("GFLOPS = %f\n", gflops);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
 		CLEANUP("Matrix-vector multiplication failed");
