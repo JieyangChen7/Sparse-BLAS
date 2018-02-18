@@ -59,7 +59,8 @@ int main(){
 	    |5.0     6.0 7.0|
 	    |     8.0    9.0| */
 	double r = 0.1;
-  	n=10000; nnz=n*n*r;
+	double r2 = 0.1;
+  	n=10000; nnz=n*n*r*r2;
  	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
  	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
  	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
@@ -73,10 +74,13 @@ int main(){
 	{
 		for (int j = 0; j < n * r ; j++) 
 		{
-			cooRowIndexHostPtr[counter] = i;
-			cooColIndexHostPtr[counter] = j;
-			cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-			counter++;
+			if (i < n * 0.1) {
+				cooRowIndexHostPtr[counter] = i;
+				cooColIndexHostPtr[counter] = j;
+				cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+				counter++;
+			}
+			
 		}
 	}
 	 // cooRowIndexHostPtr[0]=0; cooColIndexHostPtr[0]=0; cooValHostPtr[0]=1.0;
@@ -113,48 +117,19 @@ int main(){
 		CLEANUP("Host malloc failed (vectors)"); 
 		return 1; 
 	} 
-	// yHostPtr[0] = 10.0; 
-	// xIndHostPtr[0] = 0; 
-	// xValHostPtr[0] = 100.0; 
-	// yHostPtr[1] = 20.0; 
-	// xIndHostPtr[1] = 1; 
-	// xValHostPtr[1] = 200.0; 
-	// yHostPtr[2] = 30.0; 
-	// yHostPtr[3] = 40.0; 
-	// xIndHostPtr[2] = 3; 
-	// xValHostPtr[2] = 400.0; 
-	// yHostPtr[4] = 50.0; 
-	// yHostPtr[5] = 60.0; 
-	// yHostPtr[6] = 70.0; 
-	// yHostPtr[7] = 80.0; 
+	
 	for (int i = 0; i < n*r; i++)
 	{
 		xIndHostPtr[i] = i; 
 		xValHostPtr[i] = ((double) rand() / (RAND_MAX)); 
 		yHostPtr[i] = ((double) rand() / (RAND_MAX));
 	}
-	/* 
-	//print the vectors 
-	for (int j=0; j<2; j++)
-	{ 
-		for (int i=0; i<n; i++)
-		{ 
-			printf("yHostPtr[%d,%d]=%f\n",i,j,yHostPtr[i+n*j]); 
-		} 
-	} 
-
-	for (int i=0; i<nnz_vector; i++)
-	{ 
-		printf("xIndHostPtr[%d]=%d ",i,xIndHostPtr[i]);
-		printf("xValHostPtr[%d]=%f\n",i,xValHostPtr[i]);
-	} 
-	*/ 
-
+	
 	/* allocate GPU memory and copy the matrix and vectors into it */ 
 	cudaStat1 = cudaMalloc((void**)&cooRowIndex,nnz*sizeof(cooRowIndex[0]));
 	cudaStat2 = cudaMalloc((void**)&cooColIndex,nnz*sizeof(cooColIndex[0])); 
 	cudaStat3 = cudaMalloc((void**)&cooVal, nnz*sizeof(cooVal[0])); 
-	cudaStat4 = cudaMalloc((void**)&y, 2*n*sizeof(y[0])); 
+	cudaStat4 = cudaMalloc((void**)&y, n*sizeof(y[0])); 
 	cudaStat5 = cudaMalloc((void**)&xInd,nnz_vector*sizeof(xInd[0])); 
 	cudaStat6 = cudaMalloc((void**)&xVal,nnz_vector*sizeof(xVal[0])); 
 	if ((cudaStat1 != cudaSuccess) || 
@@ -208,7 +183,6 @@ int main(){
 	} 
 
 	/* create and setup matrix descriptor */ 
-
 	status= cusparseCreateMatDescr(&descr);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
@@ -296,7 +270,7 @@ int main(){
 	float milliseconds = 0;
 	cudaEventElapsedTime(&milliseconds, start, stop);
 	printf("cusparseDcsrmv time = %f\n", milliseconds);
-	long long flop = n * n * r * 2;
+	long long flop = n * n * r * r2 * 2;
 	double gflops = (flop / (milliseconds/1000))/1000000000;
 	printf("GFLOPS = %f\n", gflops);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
