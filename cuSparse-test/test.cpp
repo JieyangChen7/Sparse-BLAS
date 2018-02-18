@@ -61,7 +61,7 @@ int main(){
 	double r = 0.1;
 	double r1 = 1;
 	double r2 = 0.1;
-  	n=10000; nnz=n*r*r1 + n*(1-r)*r2;
+  	n=10000; nnz=n*r*n*r1 + n*(1-r)*n*r2;
  	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
  	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
  	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
