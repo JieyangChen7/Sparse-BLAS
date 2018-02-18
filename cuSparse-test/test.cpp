@@ -101,15 +101,15 @@ int main(){
 		return 1; 
 	} 
 	yHostPtr[0] = 10.0; 
-	xIndHostPtr[0]=0; 
-	xValHostPtr[0]=100.0; 
+	xIndHostPtr[0] = 0; 
+	xValHostPtr[0] = 100.0; 
 	yHostPtr[1] = 20.0; 
-	xIndHostPtr[1]=1; 
-	xValHostPtr[1]=200.0; 
+	xIndHostPtr[1] = 1; 
+	xValHostPtr[1] = 200.0; 
 	yHostPtr[2] = 30.0; 
 	yHostPtr[3] = 40.0; 
-	xIndHostPtr[2]=3; 
-	xValHostPtr[2]=400.0; 
+	xIndHostPtr[2] = 3; 
+	xValHostPtr[2] = 400.0; 
 	yHostPtr[4] = 50.0; 
 	yHostPtr[5] = 60.0; 
 	yHostPtr[6] = 70.0; 
@@ -246,7 +246,7 @@ int main(){
 		return 2; 
 	} 
 	/* exercise Level 1 routines (scatter vector elements) */ 
-	status= cusparseDsctr(handle, 
+	status = cusparseDsctr(handle, 
 						nnz_vector, xVal, xInd, 
 						&y[n], CUSPARSE_INDEX_BASE_ZERO);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
@@ -256,13 +256,27 @@ int main(){
 	} 
 
 	//y = [10 20 30 40 | 100 200 70 400] 
-	/* exercise Level 2 routines (csrmv) */ 
+	/* exercise Level 2 routines (csrmv) */
 
-	status= cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
-							n, n, nnz, 
-							&dtwo, descr, cooVal, 
-							csrRowPtr, cooColIndex, 
-							&y[0], &dthree, &y[n]); 
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
+	cudaEventRecord(start);
+	for (int i = 0; i < 10; i++) 
+	{
+		status = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
+								n, n, nnz, 
+								&dtwo, descr, cooVal, 
+								csrRowPtr, cooColIndex, 
+								&y[0], &dthree, &y[n]); 
+	
+	}
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	float milliseconds = 0;
+	cudaEventElapsedTime(&milliseconds, start, stop);
+	printf("cusparseDcsrmv time = %f\n", milliseconds);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
 		CLEANUP("Matrix-vector multiplication failed");
@@ -283,98 +297,98 @@ int main(){
 	} 
 	*/ 
 
-	/* exercise Level 3 routines (csrmm) */ 
-	cudaStat1 = cudaMalloc((void**)&z, 2*(n+1)*sizeof(z[0])); 
-	if (cudaStat1 != cudaSuccess) 
-	{ 
-		CLEANUP("Device malloc failed (z)"); 
-		return 1; 
-	} 
+	// /* exercise Level 3 routines (csrmm) */ 
+	// cudaStat1 = cudaMalloc((void**)&z, 2*(n+1)*sizeof(z[0])); 
+	// if (cudaStat1 != cudaSuccess) 
+	// { 
+	// 	CLEANUP("Device malloc failed (z)"); 
+	// 	return 1; 
+	// } 
 
-	cudaStat1 = cudaMemset((void *)z,0, 2*(n+1)*sizeof(z[0])); 
-	if (cudaStat1 != cudaSuccess) { 
-		CLEANUP("Memset on Device failed"); 
-		return 1; 
-	} 
+	// cudaStat1 = cudaMemset((void *)z,0, 2*(n+1)*sizeof(z[0])); 
+	// if (cudaStat1 != cudaSuccess) { 
+	// 	CLEANUP("Memset on Device failed"); 
+	// 	return 1; 
+	// } 
 
-	status= cusparseDcsrmm(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
-						n, 2, n, nnz, &dfive, descr, 
-						cooVal, csrRowPtr, cooColIndex, y, n, &dzero, z, n+1); 
+	// status= cusparseDcsrmm(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
+	// 					n, 2, n, nnz, &dfive, descr, 
+	// 					cooVal, csrRowPtr, cooColIndex, y, n, &dzero, z, n+1); 
 
-	if (status != CUSPARSE_STATUS_SUCCESS) 
-	{ 
-		CLEANUP("Matrix-matrix multiplication failed"); 
-		return 1; 
-	} 
+	// if (status != CUSPARSE_STATUS_SUCCESS) 
+	// { 
+	// 	CLEANUP("Matrix-matrix multiplication failed"); 
+	// 	return 1; 
+	// } 
 
-	/* print final results (z) */ 
+	// /* print final results (z) */ 
 
-	cudaStat1 = cudaMemcpy(zHostPtr, z, (size_t)(2*(n+1)*sizeof(z[0])), 
-							cudaMemcpyDeviceToHost); 
+	// cudaStat1 = cudaMemcpy(zHostPtr, z, (size_t)(2*(n+1)*sizeof(z[0])), 
+	// 						cudaMemcpyDeviceToHost); 
 
-	if (cudaStat1 != cudaSuccess) 
-	{ 
-		CLEANUP("Memcpy from Device to Host failed"); 
-		return 1; 
-	} 
+	// if (cudaStat1 != cudaSuccess) 
+	// { 
+	// 	CLEANUP("Memcpy from Device to Host failed"); 
+	// 	return 1; 
+	// } 
 
-	//z = [950 400 2550 2600 0 | 49300 15200 132300 131200 0] 
+	// //z = [950 400 2550 2600 0 | 49300 15200 132300 131200 0] 
 
-	/* printf("Final results:\n"); 
-	for (int j=0; j<2; j++)
-	{ 
-		for (int i=0; i<n+1; i++)
-		{ 
-			printf("z[%d,%d]=%f\n",i,j,zHostPtr[i+(n+1)*j]);
-		} 
-	} 
-	*/ 
-	/* destroy matrix descriptor */ 
-	status = cusparseDestroyMatDescr(descr);
-	descr = 0;
-	if (status != CUSPARSE_STATUS_SUCCESS)
-	{ 
-		CLEANUP("Matrix descriptor destruction failed"); 
-		return 1; 
-	} 
+	// /* printf("Final results:\n"); 
+	// for (int j=0; j<2; j++)
+	// { 
+	// 	for (int i=0; i<n+1; i++)
+	// 	{ 
+	// 		printf("z[%d,%d]=%f\n",i,j,zHostPtr[i+(n+1)*j]);
+	// 	} 
+	// } 
+	// */ 
+	//  destroy matrix descriptor  
+	// status = cusparseDestroyMatDescr(descr);
+	// descr = 0;
+	// if (status != CUSPARSE_STATUS_SUCCESS)
+	// { 
+	// 	CLEANUP("Matrix descriptor destruction failed"); 
+	// 	return 1; 
+	// } 
 
-	/* destroy handle */ 
+	// /* destroy handle */ 
 
-	status = cusparseDestroy(handle); 
-	handle = 0; 
-	if (status != CUSPARSE_STATUS_SUCCESS) 
-	{ 
-		CLEANUP("CUSPARSE Library release of resources failed");
-		return 1;
-	} /* check the results */
+	// status = cusparseDestroy(handle); 
+	// handle = 0; 
+	// if (status != CUSPARSE_STATUS_SUCCESS) 
+	// { 
+	// 	CLEANUP("CUSPARSE Library release of resources failed");
+	// 	return 1;
+	// } /* check the results */
 
-	/* Notice that CLEANUP() contains a call to cusparseDestroy(handle) */ 
-	if ((zHostPtr[0] != 950.0) ||
-		(zHostPtr[1] != 400.0) ||
-		(zHostPtr[2] != 2550.0) ||
-		(zHostPtr[3] != 2600.0) ||
-		(zHostPtr[4] != 0.0) ||
-		(zHostPtr[5] != 49300.0) ||
-		(zHostPtr[6] != 15200.0) || 
-		(zHostPtr[7] != 132300.0) ||
-		(zHostPtr[8] != 131200.0) ||
-		(zHostPtr[9] != 0.0) ||
-		(yHostPtr[0] != 10.0) ||
-		(yHostPtr[1] != 20.0) ||
-		(yHostPtr[2] != 30.0) ||
-		(yHostPtr[3] != 40.0) ||
-		(yHostPtr[4] != 680.0) ||
-		(yHostPtr[5] != 760.0) ||
-		(yHostPtr[6] != 1230.0) ||
-		(yHostPtr[7] != 2240.0))
-		{ 
-			CLEANUP("example test FAILED");
-			return 1; 
-		} 
-		else
-		{ 
-			CLEANUP("example test PASSED"); 
-			return 0; 
-		} 
+	// /* Notice that CLEANUP() contains a call to cusparseDestroy(handle) */ 
+	// if ((zHostPtr[0] != 950.0) ||
+	// 	(zHostPtr[1] != 400.0) ||
+	// 	(zHostPtr[2] != 2550.0) ||
+	// 	(zHostPtr[3] != 2600.0) ||
+	// 	(zHostPtr[4] != 0.0) ||
+	// 	(zHostPtr[5] != 49300.0) ||
+	// 	(zHostPtr[6] != 15200.0) || 
+	// 	(zHostPtr[7] != 132300.0) ||
+	// 	(zHostPtr[8] != 131200.0) ||
+	// 	(zHostPtr[9] != 0.0) ||
+	// 	(yHostPtr[0] != 10.0) ||
+	// 	(yHostPtr[1] != 20.0) ||
+	// 	(yHostPtr[2] != 30.0) ||
+	// 	(yHostPtr[3] != 40.0) ||
+	// 	(yHostPtr[4] != 680.0) ||
+	// 	(yHostPtr[5] != 760.0) ||
+	// 	(yHostPtr[6] != 1230.0) ||
+	// 	(yHostPtr[7] != 2240.0))
+	// 	{ 
+	// 		CLEANUP("example test FAILED");
+	// 		return 1; 
+	// 	} 
+	// 	else
+	// 	{ 
+	// 		CLEANUP("example test PASSED"); 
+	// 		return 0; 
+	// 	} 
 	}
 
