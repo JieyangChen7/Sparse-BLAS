@@ -110,7 +110,7 @@ int main(){
 	nnz_vector = n*r; 
 	xIndHostPtr = (int *) malloc(nnz_vector*sizeof(xIndHostPtr[0])); 
 	xValHostPtr = (double *)malloc(nnz_vector*sizeof(xValHostPtr[0])); 
-	yHostPtr = (double *)malloc(2*n *sizeof(yHostPtr[0])); 
+	yHostPtr = (double *)malloc(n *sizeof(yHostPtr[0])); 
 	zHostPtr = (double *)malloc(2*(n+1) *sizeof(zHostPtr[0])); 
 	if((!xIndHostPtr) || (!xValHostPtr) || (!yHostPtr) || (!zHostPtr))
 	{ 
@@ -153,7 +153,7 @@ int main(){
 						(size_t)(nnz*sizeof(cooVal[0])), 
 						cudaMemcpyHostToDevice); 
 	cudaStat4 = cudaMemcpy(y, yHostPtr, 
-						(size_t)(2*n*sizeof(y[0])), 
+						(size_t)(n*sizeof(y[0])), 
 						cudaMemcpyHostToDevice); 
 	cudaStat5 = cudaMemcpy(xInd, xIndHostPtr, 
 						(size_t)(nnz_vector*sizeof(xInd[0])), 
