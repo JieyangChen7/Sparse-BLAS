@@ -59,8 +59,8 @@ int main(){
 	    |5.0     6.0 7.0|
 	    |     8.0    9.0| */
 	double r = 0.1;
-	double r1 = 0.1;
-	double r2 = 0.1;
+	double r1 = 1;
+	double r2 = 0.001;
   	n=10000; nnz=n*r*n*r1 + n*(1-r)*n*r2;
  	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
  	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
@@ -76,18 +76,18 @@ int main(){
 		if (i < n * r) {
 			for (int j = 0; j < n * r1 ; j++) 
 			{
-					cooRowIndexHostPtr[counter] = i;
-					cooColIndexHostPtr[counter] = j;
-					cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-					counter++;
+				cooRowIndexHostPtr[counter] = i;
+				cooColIndexHostPtr[counter] = j;
+				cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+				counter++;
 			}
 		} else {
 			for (int j = 0; j < n * r2 ; j++) 
 			{
-					cooRowIndexHostPtr[counter] = i;
-					cooColIndexHostPtr[counter] = j;
-					cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-					counter++;
+				cooRowIndexHostPtr[counter] = i;
+				cooColIndexHostPtr[counter] = j;
+				cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+				counter++;
 			}
 		}
 	}
@@ -288,7 +288,7 @@ int main(){
 	} 
 
 	//y = [10 20 30 40 | 680 760 1230 2240] 
-	cudaMemcpy(yHostPtr, y, (size_t)(2*n*sizeof(y[0])), cudaMemcpyDeviceToHost); 
+	cudaMemcpy(yHostPtr, y, (size_t)(n*sizeof(y[0])), cudaMemcpyDeviceToHost); 
 
 	/* 
 	printf("Intermediate results:\n"); 
