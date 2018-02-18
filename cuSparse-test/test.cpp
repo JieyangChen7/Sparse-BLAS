@@ -28,52 +28,65 @@
 
 
 int main(){
-	 cudaError_t cudaStat1,cudaStat2,cudaStat3,cudaStat4,cudaStat5,cudaStat6;
-	 cusparseStatus_t status;
-	 cusparseHandle_t handle=0;
-	 cusparseMatDescr_t descr=0;
-	 int * cooRowIndexHostPtr=0;
-	 int * cooColIndexHostPtr=0;
-	 double * cooValHostPtr=0;
-	 int * cooRowIndex=0;
-	 int * cooColIndex=0;
-	 double * cooVal=0;
-	 int * xIndHostPtr=0;
-	 double * xValHostPtr=0;
-	 double * yHostPtr=0;
-	 int * xInd=0;
-	 double * xVal=0;
-	 double * y=0;
-	 int * csrRowPtr=0;
-	 double * zHostPtr=0;
-	 double * z=0;
-	 int n, nnz, nnz_vector;
-	 double dzero =0.0;
-	 double dtwo =2.0;
-	 double dthree=3.0;
-	 double dfive =5.0;
-	 printf("testing example\n");
+	cudaError_t cudaStat1,cudaStat2,cudaStat3,cudaStat4,cudaStat5,cudaStat6;
+	cusparseStatus_t status;
+	cusparseHandle_t handle=0;
+	cusparseMatDescr_t descr=0;
+	int * cooRowIndexHostPtr=0;
+	int * cooColIndexHostPtr=0;
+	double * cooValHostPtr=0;
+	int * cooRowIndex=0;
+	int * cooColIndex=0;
+	double * cooVal=0;
+	int * xIndHostPtr=0;
+	double * xValHostPtr=0;
+	double * yHostPtr=0;
+	int * xInd=0;
+	double * xVal=0;
+	double * y=0;
+	int * csrRowPtr=0;
+	double * zHostPtr=0;
+	double * z=0;
+	int n, nnz, nnz_vector;
+	double dzero =0.0;
+	double dtwo =2.0;
+	double dthree=3.0;
+	double dfive =5.0;
+	printf("testing example\n");
 	 /* create the following sparse test matrix in COO format */
 	 /* |1.0     2.0 3.0|
 	    |    4.0        |
 	    |5.0     6.0 7.0|
 	    |     8.0    9.0| */
-	 n=4; nnz=9;
-	 cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
-	 cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
-	 cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
-	 if ((!cooRowIndexHostPtr) || (!cooColIndexHostPtr) || (!cooValHostPtr)){
-		 CLEANUP("Host malloc failed (matrix)");
-		 return 1;
-	 }
-	 cooRowIndexHostPtr[0]=0; cooColIndexHostPtr[0]=0; cooValHostPtr[0]=1.0;
-	 cooRowIndexHostPtr[1]=0; cooColIndexHostPtr[1]=2; cooValHostPtr[1]=2.0;
-	 cooRowIndexHostPtr[2]=0; cooColIndexHostPtr[2]=3; cooValHostPtr[2]=3.0; 
-	 cooRowIndexHostPtr[4]=2; cooColIndexHostPtr[4]=0; cooValHostPtr[4]=5.0; 
-	 cooRowIndexHostPtr[5]=2; cooColIndexHostPtr[5]=2; cooValHostPtr[5]=6.0; 
-	 cooRowIndexHostPtr[6]=2; cooColIndexHostPtr[6]=3; cooValHostPtr[6]=7.0; 
-	 cooRowIndexHostPtr[7]=3; cooColIndexHostPtr[7]=1; cooValHostPtr[7]=8.0; 
-	 cooRowIndexHostPtr[8]=3; cooColIndexHostPtr[8]=3; cooValHostPtr[8]=9.0; 
+	double r = 0.1;
+  	n=1000; nnz=n*n*r;
+ 	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
+ 	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
+ 	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
+	if ((!cooRowIndexHostPtr) || (!cooColIndexHostPtr) || (!cooValHostPtr))
+	{
+		CLEANUP("Host malloc failed (matrix)");
+		return 1;
+	}
+	counter = 0
+	for (int i = 0; i < n; i++) 
+	{
+		for (int j = 0; j < n * r ; j++) 
+		{
+			cooRowIndexHostPtr[counter] = i;
+			cooColIndexHostPtr[counter] = j;
+			cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+			counter++;
+		}
+	}
+	 // cooRowIndexHostPtr[0]=0; cooColIndexHostPtr[0]=0; cooValHostPtr[0]=1.0;
+	 // cooRowIndexHostPtr[1]=0; cooColIndexHostPtr[1]=2; cooValHostPtr[1]=2.0;
+	 // cooRowIndexHostPtr[2]=0; cooColIndexHostPtr[2]=3; cooValHostPtr[2]=3.0; 
+	 // cooRowIndexHostPtr[4]=2; cooColIndexHostPtr[4]=0; cooValHostPtr[4]=5.0; 
+	 // cooRowIndexHostPtr[5]=2; cooColIndexHostPtr[5]=2; cooValHostPtr[5]=6.0; 
+	 // cooRowIndexHostPtr[6]=2; cooColIndexHostPtr[6]=3; cooValHostPtr[6]=7.0; 
+	 // cooRowIndexHostPtr[7]=3; cooColIndexHostPtr[7]=1; cooValHostPtr[7]=8.0; 
+	 // cooRowIndexHostPtr[8]=3; cooColIndexHostPtr[8]=3; cooValHostPtr[8]=9.0; 
 
 
 	/* 
@@ -90,7 +103,7 @@ int main(){
 	/* create a sparse and dense vector */ 
 	/* xVal= [100.0 200.0 400.0] (sparse) xInd= [0 1 3 ] 
 	   y = [10.0 20.0 30.0 40.0 | 50.0 60.0 70.0 80.0] (dense) */ 
-	nnz_vector = 3; 
+	nnz_vector = n*r; 
 	xIndHostPtr = (int *) malloc(nnz_vector*sizeof(xIndHostPtr[0])); 
 	xValHostPtr = (double *)malloc(nnz_vector*sizeof(xValHostPtr[0])); 
 	yHostPtr = (double *)malloc(2*n *sizeof(yHostPtr[0])); 
@@ -100,20 +113,26 @@ int main(){
 		CLEANUP("Host malloc failed (vectors)"); 
 		return 1; 
 	} 
-	yHostPtr[0] = 10.0; 
-	xIndHostPtr[0] = 0; 
-	xValHostPtr[0] = 100.0; 
-	yHostPtr[1] = 20.0; 
-	xIndHostPtr[1] = 1; 
-	xValHostPtr[1] = 200.0; 
-	yHostPtr[2] = 30.0; 
-	yHostPtr[3] = 40.0; 
-	xIndHostPtr[2] = 3; 
-	xValHostPtr[2] = 400.0; 
-	yHostPtr[4] = 50.0; 
-	yHostPtr[5] = 60.0; 
-	yHostPtr[6] = 70.0; 
-	yHostPtr[7] = 80.0; 
+	// yHostPtr[0] = 10.0; 
+	// xIndHostPtr[0] = 0; 
+	// xValHostPtr[0] = 100.0; 
+	// yHostPtr[1] = 20.0; 
+	// xIndHostPtr[1] = 1; 
+	// xValHostPtr[1] = 200.0; 
+	// yHostPtr[2] = 30.0; 
+	// yHostPtr[3] = 40.0; 
+	// xIndHostPtr[2] = 3; 
+	// xValHostPtr[2] = 400.0; 
+	// yHostPtr[4] = 50.0; 
+	// yHostPtr[5] = 60.0; 
+	// yHostPtr[6] = 70.0; 
+	// yHostPtr[7] = 80.0; 
+	for (int i = 0; i < n*r; i++)
+	{
+		xIndHostPtr[i] = i; 
+		xValHostPtr[i] = ((double) rand() / (RAND_MAX)); 
+		yHostPtr[i] = ((double) rand() / (RAND_MAX));
+	}
 	/* 
 	//print the vectors 
 	for (int j=0; j<2; j++)
