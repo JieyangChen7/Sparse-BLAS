@@ -28,7 +28,7 @@
 
 
 int main(){
-	
+
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
 	int device;
@@ -312,5 +312,5 @@ int main(){
 	// cudaMemcpy(yHostPtr, y, (size_t)(n*sizeof(y[0])), cudaMemcpyDeviceToHost); 
 
 	
-	// }
+	 }
 
