@@ -59,8 +59,9 @@ int main(){
 	    |5.0     6.0 7.0|
 	    |     8.0    9.0| */
 	double r = 0.1;
-	double r2 = 0.1;
-  	n=10000; nnz=n*n*r*r2;
+	double r1 = 1;
+	double r2 = 0.1
+  	n=10000; nnz=n*r*r1 + n*(1-r)*r2;
  	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
  	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
  	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
@@ -72,15 +73,22 @@ int main(){
 	int counter = 0;
 	for (int i = 0; i < n; i++) 
 	{
-		for (int j = 0; j < n * r ; j++) 
-		{
-			if (i < n * 0.1) {
-				cooRowIndexHostPtr[counter] = i;
-				cooColIndexHostPtr[counter] = j;
-				cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-				counter++;
+		if (i < n * r) {
+			for (int j = 0; j < n * r1 ; j++) 
+			{
+					cooRowIndexHostPtr[counter] = i;
+					cooColIndexHostPtr[counter] = j;
+					cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+					counter++;
 			}
-			
+		} else {
+			for (int j = 0; j < n * r2 ; j++) 
+			{
+					cooRowIndexHostPtr[counter] = i;
+					cooColIndexHostPtr[counter] = j;
+					cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
+					counter++;
+			}
 		}
 	}
 	 // cooRowIndexHostPtr[0]=0; cooColIndexHostPtr[0]=0; cooValHostPtr[0]=1.0;
@@ -118,7 +126,7 @@ int main(){
 		return 1; 
 	} 
 	
-	for (int i = 0; i < n*r; i++)
+	for (int i = 0; i < n; i++)
 	{
 		xIndHostPtr[i] = i; 
 		xValHostPtr[i] = ((double) rand() / (RAND_MAX)); 
@@ -270,7 +278,7 @@ int main(){
 	float milliseconds = 0;
 	cudaEventElapsedTime(&milliseconds, start, stop);
 	printf("cusparseDcsrmv time = %f\n", milliseconds);
-	long long flop = n * n * r * r2 * 2;
+	long long flop = nnz * 2;
 	double gflops = (flop / (milliseconds/1000))/1000000000;
 	printf("GFLOPS = %f\n", gflops);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
