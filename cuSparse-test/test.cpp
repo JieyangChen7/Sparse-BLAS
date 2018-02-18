@@ -115,7 +115,7 @@ int main(){
 	/* create a sparse and dense vector */ 
 	/* xVal= [100.0 200.0 400.0] (sparse) xInd= [0 1 3 ] 
 	   y = [10.0 20.0 30.0 40.0 | 50.0 60.0 70.0 80.0] (dense) */ 
-	nnz_vector = n*r; 
+	nnz_vector = n; 
 	xIndHostPtr = (int *) malloc(nnz_vector*sizeof(xIndHostPtr[0])); 
 	xValHostPtr = (double *)malloc(nnz_vector*sizeof(xValHostPtr[0])); 
 	yHostPtr = (double *)malloc(n *sizeof(yHostPtr[0])); 
