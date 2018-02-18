@@ -281,6 +281,28 @@ int main(){
 	long long flop = nnz * 2;
 	double gflops = (flop / (milliseconds/1000))/1000000000;
 	printf("GFLOPS = %f\n", gflops);
+
+	cudaEventRecord(start);
+	for (int i = 0; i < 10; i++) 
+	{
+		status = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
+								n, n, nnz, 
+								&dtwo, descr, cooVal, 
+								csrRowPtr, cooColIndex, 
+								&y[0], &dthree, &y[n]); 
+	
+	}
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	milliseconds = 0;
+	cudaEventElapsedTime(&milliseconds, start, stop);
+	printf("cusparseDcsrmv_mp time = %f\n", milliseconds);
+	flop = nnz * 2;
+	gflops = (flop / (milliseconds/1000))/1000000000;
+	printf("GFLOPS = %f\n", gflops);
+
+
+
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
 		CLEANUP("Matrix-vector multiplication failed");
