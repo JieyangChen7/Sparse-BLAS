@@ -32,153 +32,221 @@ int main(){
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
 	int device;
-	for (device = 0; device < deviceCount; ++device) {
+	for (device = 0; device < deviceCount; ++device) 
+	{
 	    cudaDeviceProp deviceProp;
 	    cudaGetDeviceProperties(&deviceProp, device);
 	    printf("Device %d has compute capability %d.%d.\n",
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
+	cudaStream_t * stream = new cudaStream_t [deviceCount];
 
+	cudaError_t * cudaStat1 = new cudaError_t[deviceCount];
+	cudaError_t * cudaStat2 = new cudaError_t[deviceCount];
+	cudaError_t * cudaStat3 = new cudaError_t[deviceCount];
+	cudaError_t * cudaStat4 = new cudaError_t[deviceCount];
+	cudaError_t * cudaStat5 = new cudaError_t[deviceCount];
+	cudaError_t * cudaStat6 = new cudaError_t[deviceCount];
 
-	// cudaError_t cudaStat1,cudaStat2,cudaStat3,cudaStat4,cudaStat5,cudaStat6;
-	// cusparseStatus_t * status;
-	// cusparseHandle_t * handle=0;
-	// cusparseMatDescr_t * descr=0;
+	cusparseStatus_t * status = new cusparseStatus_t[deviceCount];
+	cusparseHandle_t * handle = new cusparseHandle_t[deviceCount];
+	cusparseMatDescr_t * descr = new cusparseMatDescr_t[deviceCount];
 
-	// // CPU A
-	// int * cooRowIndexHostPtr=0;
-	// int * cooColIndexHostPtr=0;
-	// double * cooValHostPtr=0;
+	// CPU A
+	int ** cooRowIndexHostPtr = new int * [deviceCount];
+	int ** cooColIndexHostPtr = new int * [deviceCount];
+	double ** cooValHostPtr = new double * [deviceCount];
 
-	// // CPU x
-	// int * xIndHostPtr=0;
-	// double * xValHostPtr=0;
+	// CPU x
+	int * xIndHostPtr;
+	double * xValHostPtr;
 
-	// // CPU y
-	// double * yHostPtr=0;
+	// CPU y
+	double * yHostPtr;
 	
-	// // GPU A
-	// int * cooRowIndex=0;
-	// int * cooColIndex=0;
-	// double * cooVal=0;
-	// int * csrRowPtr=0;
+	// GPU A
+	int ** cooRowIndex = new int * [deviceCount];
+	int ** cooColIndex = new int * [deviceCount];
+	double ** cooVal = new double * [deviceCount];
+	int ** csrRowPtr = new int * [deviceCount];
 
-	// // GPU x
-	// int * xInd=0;
-	// double * xVal=0;
+	// GPU x
+	int ** xInd = new int * [deviceCount];
+	double ** xVal = new double * [deviceCount];
 	
-	// // GPU y
-	// double * y=0;
+	// GPU y
+	double ** y = new double * [deviceCount];
 	
 
-	// int n, nnz, nnz_vector;
-	// double dzero =0.0;
-	// double dtwo =2.0;
-	// double dthree=3.0;
-	// double dfive =5.0;
+	int n = 10000; 
+	int nb = 5000;
+	int * nnz = new int[deviceCount];
+	int nnz_vector;
+	double dzero =0.0;
+	double dtwo =2.0;
+	double dthree=3.0;
+	double dfive =5.0;
 
 	// printf("testing example\n");
 	// /* create the  sparse test matrix in COO format */
-	// double r = 0.1;
-	// double r1 = 1;
-	// double r2 = 0.001;
- //  	n=10000; nnz=n*r*n*r1 + n*(1-r)*n*r2;
- // 	cooRowIndexHostPtr = (int *) malloc(nnz*sizeof(cooRowIndexHostPtr[0]));
- // 	cooColIndexHostPtr = (int *) malloc(nnz*sizeof(cooColIndexHostPtr[0]));
- // 	cooValHostPtr = (double *)malloc(nnz*sizeof(cooValHostPtr[0]));
-	// if ((!cooRowIndexHostPtr) || (!cooColIndexHostPtr) || (!cooValHostPtr))
-	// {
-	// 	CLEANUP("Host malloc failed (matrix)");
-	// 	return 1;
-	// }
-	// int counter = 0;
-	// for (int i = 0; i < n; i++) 
-	// {
-	// 	if (i < n * r) {
-	// 		for (int j = 0; j < n * r1 ; j++) 
-	// 		{
-	// 			cooRowIndexHostPtr[counter] = i;
-	// 			cooColIndexHostPtr[counter] = j;
-	// 			cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-	// 			counter++;
-	// 		}
-	// 	} else {
-	// 		for (int j = 0; j < n * r2 ; j++) 
-	// 		{
-	// 			cooRowIndexHostPtr[counter] = i;
-	// 			cooColIndexHostPtr[counter] = j;
-	// 			cooValHostPtr[counter] = ((double) rand() / (RAND_MAX));
-	// 			counter++;
-	// 		}
-	// 	}
-	// }
-	 
-	// nnz_vector = n; 
-	// xIndHostPtr = (int *) malloc(nnz_vector*sizeof(xIndHostPtr[0])); 
-	// xValHostPtr = (double *)malloc(nnz_vector*sizeof(xValHostPtr[0])); 
-	// yHostPtr = (double *)malloc(n *sizeof(yHostPtr[0])); 
-	// zHostPtr = (double *)malloc(2*(n+1) *sizeof(zHostPtr[0])); 
-	// if((!xIndHostPtr) || (!xValHostPtr) || (!yHostPtr) || (!zHostPtr))
-	// { 
-	// 	CLEANUP("Host malloc failed (vectors)"); 
-	// 	return 1; 
-	// } 
+
+	double * r = new double [deviceCount];  //0.1
+	double * r1 = new double [deviceCount]; //1
+	double * r2 = new double [deviceCount]; //0.001
+ 	
+ 	r[0] = 0.1;
+ 	r[1] = 0.1;
+ 	r1[0] = 1;
+ 	r1[1] = 1;
+ 	r2[0] = 0.1;
+ 	r2[1] = 0.1;
+ 	
+ 	for (int d = 0; d < deviceCount; ++d) 
+ 	{ 
+ 		cudaSetDevice(d);
+ 		cudaStreamCreate(stream[d]);
+
+ 		nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
+	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz*sizeof(int));
+	 	cooColIndexHostPtr[d] = (int *) malloc(nnz*sizeof(int))
+	 	cooValHostPtr[d] = (double *)malloc(nnz*sizeof(double));
+
+	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
+		{
+			CLEANUP("Host malloc failed (matrix)");
+			return 1;
+		}
+		int counter = 0;
+		for (int i = 0; i < nb; i++) 
+		{
+			if (i < n * r[d]) {
+				for (int j = 0; j < n * r1[d]; j++) 
+				{
+					cooRowIndexHostPtr[d][counter] = i;
+					cooColIndexHostPtr[d][counter] = j;
+					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+					counter++;
+				}
+			} else {
+				for (int j = 0; j < n * r2[d]; j++) 
+				{
+					cooRowIndexHostPtr[d][counter] = i;
+					cooColIndexHostPtr[d][counter] = j;
+					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+					counter++;
+				}
+			}
+		}
+
+		if (d == 0)
+		{
+			nnz_vector = n; 
+			xIndHostPtr = (int *) malloc(nnz_vector*sizeof(int)); 
+			xValHostPtr = (double *)malloc(nnz_vector*sizeof(double)); 
+			yHostPtr = (double *)malloc(n * sizeof(double)); 
+
+			if((!xIndHostPtr) || (!xValHostPtr) || (!yHostPtr) || (!zHostPtr))
+			{ 
+				CLEANUP("Host malloc failed (vectors)"); 
+				return 1; 
+			} 
+
+			for (int i = 0; i < n; i++)
+			{
+				xIndHostPtr[i] = i; 
+				xValHostPtr[i] = ((double) rand() / (RAND_MAX)); 
+				yHostPtr[i] = ((double) rand() / (RAND_MAX));
+			}
+
+		}
+
+		cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
+		cudaStat2[d] = cudaMalloc((void**)&cooColIndex[dd],nnz[d]*sizeof(int)); 
+		cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
+		cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
+		cudaStat5[d] = cudaMalloc((void**)&xInd[d],nnz_vector*sizeof(int)); 
+		cudaStat6[d] = cudaMalloc((void**)&xVal[d],nnz_vector*sizeof(double)); 
+		if ((cudaStat1 != cudaSuccess) || 
+			(cudaStat2 != cudaSuccess) || 
+			(cudaStat3 != cudaSuccess) || 
+			(cudaStat4 != cudaSuccess) || 
+			(cudaStat5 != cudaSuccess) || 
+			(cudaStat6 != cudaSuccess)) 
+		{ 
+			CLEANUP("Device malloc failed");
+			return 1; 
+		} 
+
+		cudaStat1 = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(int)), 
+							  cudaMemcpyHostToDevice);
+		cudaStat2 = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(int)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat3 = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat4 = cudaMemcpy(y[d], yHostPtr + d * nb, 
+							  (size_t)(n*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat5 = cudaMemcpy(xInd[d], xIndHostPtr[d], 
+							  (size_t)(nnz_vector*sizeof(int])), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat6 = cudaMemcpy(xVal[d], xValHostPtr[d], 
+							  (size_t)(nnz_vector*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
+
+		if ((cudaStat1 != cudaSuccess) ||
+		 	(cudaStat2 != cudaSuccess) ||
+		  	(cudaStat3 != cudaSuccess) ||
+		   	(cudaStat4 != cudaSuccess) ||
+		    (cudaStat5 != cudaSuccess) ||
+		    (cudaStat6 != cudaSuccess)) 
+		{ 
+			CLEANUP("Memcpy from Host to Device failed"); 
+			return 1; 
+		} 
+
+		/* initialize cusparse library */ 
+		status = cusparseCreate(&handle[d]); 
+		if (status != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("CUSPARSE Library initialization failed");
+			return 1; 
+		} 
+
+		status = cusparseSetStream(handle[d], stream[d]);
+		if (status != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("Stream bindind failed");
+			return 1;
+		} 
+
+		/* create and setup matrix descriptor */ 
+		status = cusparseCreateMatDescr(&descr[d]);
+		if (status != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("Matrix descriptor initialization failed");
+			return 1;
+		} 
+
 	
-	// for (int i = 0; i < n; i++)
-	// {
-	// 	xIndHostPtr[i] = i; 
-	// 	xValHostPtr[i] = ((double) rand() / (RAND_MAX)); 
-	// 	yHostPtr[i] = ((double) rand() / (RAND_MAX));
-	// }
+		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+
+
+	 
+	}
+	
+	
+	
+	
+	
+	
 	
 	// /* allocate GPU memory and copy the matrix and vectors into it */ 
-	// cudaStat1 = cudaMalloc((void**)&cooRowIndex,nnz*sizeof(cooRowIndex[0]));
-	// cudaStat2 = cudaMalloc((void**)&cooColIndex,nnz*sizeof(cooColIndex[0])); 
-	// cudaStat3 = cudaMalloc((void**)&cooVal, nnz*sizeof(cooVal[0])); 
-	// cudaStat4 = cudaMalloc((void**)&y, n*sizeof(y[0])); 
-	// cudaStat5 = cudaMalloc((void**)&xInd,nnz_vector*sizeof(xInd[0])); 
-	// cudaStat6 = cudaMalloc((void**)&xVal,nnz_vector*sizeof(xVal[0])); 
-	// if ((cudaStat1 != cudaSuccess) || 
-	// (cudaStat2 != cudaSuccess) || 
-	// (cudaStat3 != cudaSuccess) || 
-	// (cudaStat4 != cudaSuccess) || 
-	// (cudaStat5 != cudaSuccess) || 
-	// (cudaStat6 != cudaSuccess)) 
-	// { 
-	// 	CLEANUP("Device malloc failed");
-	// 	return 1; 
-	// } 
-
-	// cudaStat1 = cudaMemcpy(cooRowIndex, cooRowIndexHostPtr, 
-	// 					(size_t)(nnz*sizeof(cooRowIndex[0])), 
-	// 					cudaMemcpyHostToDevice);
-	// cudaStat2 = cudaMemcpy(cooColIndex, cooColIndexHostPtr, 
-	// 					(size_t)(nnz*sizeof(cooColIndex[0])), 
-	// 					cudaMemcpyHostToDevice); 
-	// cudaStat3 = cudaMemcpy(cooVal, cooValHostPtr, 
-	// 					(size_t)(nnz*sizeof(cooVal[0])), 
-	// 					cudaMemcpyHostToDevice); 
-	// cudaStat4 = cudaMemcpy(y, yHostPtr, 
-	// 					(size_t)(n*sizeof(y[0])), 
-	// 					cudaMemcpyHostToDevice); 
-	// cudaStat5 = cudaMemcpy(xInd, xIndHostPtr, 
-	// 					(size_t)(nnz_vector*sizeof(xInd[0])), 
-	// 					cudaMemcpyHostToDevice); 
-	// cudaStat6 = cudaMemcpy(xVal, xValHostPtr, 
-	// 					(size_t)(nnz_vector*sizeof(xVal[0])), 
-	// 					cudaMemcpyHostToDevice); 
-
-	// if ((cudaStat1 != cudaSuccess) ||
-	//  	(cudaStat2 != cudaSuccess) ||
-	//   	(cudaStat3 != cudaSuccess) ||
-	//    	(cudaStat4 != cudaSuccess) ||
-	//     (cudaStat5 != cudaSuccess) ||
-	//     (cudaStat6 != cudaSuccess)) 
-	// { 
-	// 	CLEANUP("Memcpy from Host to Device failed"); 
-	// 	return 1; 
-	// } 
+	// 
 
 
 	// /* initialize cusparse library */ 
