@@ -183,23 +183,23 @@ int main(){
 		} 
 
 		/* initialize cusparse library */ 
-		status = cusparseCreate(&handle[d]); 
-		if (status != CUSPARSE_STATUS_SUCCESS) 
+		status[d] = cusparseCreate(&(handle[d])); 
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			CLEANUP("CUSPARSE Library initialization failed");
 			return 1; 
 		} 
 
-		status = cusparseSetStream(handle[d], stream[d]);
-		if (status != CUSPARSE_STATUS_SUCCESS) 
+		status[d] = cusparseSetStream(handle[d], stream[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			CLEANUP("Stream bindind failed");
 			return 1;
 		} 
 
 		/* create and setup matrix descriptor */ 
-		status = cusparseCreateMatDescr(&descr[d]);
-		if (status != CUSPARSE_STATUS_SUCCESS) 
+		status[d] = cusparseCreateMatDescr(&descr[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			CLEANUP("Matrix descriptor initialization failed");
 			return 1;
@@ -217,10 +217,10 @@ int main(){
 			return 1; 
 		} 
 
-		status= cusparseXcoo2csr(handle,
+		status[d] = cusparseXcoo2csr(handle,
 								cooRowIndex[d],nnz[d],nb, 
 								csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
-		if (status != CUSPARSE_STATUS_SUCCESS) 
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			CLEANUP("Conversion from COO to CSR format failed"); 
 			return 1; 
@@ -234,7 +234,7 @@ int main(){
 		cudaEventRecord(start);
 		for (int i = 0; i < 10; i++) 
 		{
-			status = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
+			status[d] = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
 									nb, n, nnz[d], 
 									&dtwo, descr[d], cooVal[d], 
 									csrRowPtr[d], cooColIndex[d], 
