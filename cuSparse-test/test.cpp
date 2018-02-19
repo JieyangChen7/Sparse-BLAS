@@ -5,23 +5,6 @@
 #define CLEANUP(s) \
 	do { \
 		 printf ("%s\n", s); \
-		 if (yHostPtr) free(yHostPtr); \
-		 if (zHostPtr) free(zHostPtr); \
-		 if (xIndHostPtr) free(xIndHostPtr); \
-		 if (xValHostPtr) free(xValHostPtr); \
-		 if (cooRowIndexHostPtr) free(cooRowIndexHostPtr);\
-		 if (cooColIndexHostPtr) free(cooColIndexHostPtr);\
-		 if (cooValHostPtr) free(cooValHostPtr); \
-		 if (y) cudaFree(y); \
-		 if (z) cudaFree(z); \
-		 if (xInd) cudaFree(xInd); \
-		 if (xVal) cudaFree(xVal); \
-		 if (csrRowPtr) cudaFree(csrRowPtr); \
-		 if (cooRowIndex) cudaFree(cooRowIndex); \
-		 if (cooColIndex) cudaFree(cooColIndex); \
-		 if (cooVal) cudaFree(cooVal); \
-		 if (descr) cusparseDestroyMatDescr(descr);\
-		 if (handle) cusparseDestroy(handle); \
 		 cudaDeviceReset(); \
 		 fflush (stdout); \
 	} while (0)
@@ -103,12 +86,12 @@ int main(){
  	for (int d = 0; d < deviceCount; ++d) 
  	{ 
  		cudaSetDevice(d);
- 		cudaStreamCreate(stream[d]);
+ 		cudaStreamCreate(&(stream[d]));
 
  		nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
-	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz*sizeof(int));
-	 	cooColIndexHostPtr[d] = (int *) malloc(nnz*sizeof(int))
-	 	cooValHostPtr[d] = (double *)malloc(nnz*sizeof(double));
+	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
+	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int))
+	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
 
 	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
 		{
