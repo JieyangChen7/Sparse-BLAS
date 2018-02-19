@@ -217,7 +217,7 @@ int main(){
 			return 1; 
 		} 
 
-		status[d] = cusparseXcoo2csr(handle,
+		status[d] = cusparseXcoo2csr(handle[d],
 								cooRowIndex[d],nnz[d],nb, 
 								csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
@@ -234,7 +234,7 @@ int main(){
 		cudaEventRecord(start);
 		for (int i = 0; i < 10; i++) 
 		{
-			status[d] = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
+			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
 									nb, n, nnz[d], 
 									&dtwo, descr[d], cooVal[d], 
 									csrRowPtr[d], cooColIndex[d], 
