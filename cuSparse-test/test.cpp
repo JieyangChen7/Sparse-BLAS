@@ -90,10 +90,10 @@ int main(){
  		cudaSetDevice(d);
  		cudaStreamCreate(&(stream[d]));
 
- 	// 	nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
-	 // 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 // 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 // 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
+ 		nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
+	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
+	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
+	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
 
 	 // 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
 		// {
