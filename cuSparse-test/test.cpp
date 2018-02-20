@@ -231,9 +231,9 @@ int main(){
 
 	}
 
-	
+	int repeat_test = 10;
 	time_t start = time(0);
-	for (int i = 0; i < 10; i++) 
+	for (int i = 0; i < repeat_test; i++) 
 	{
 		for (int d = 0; d < deviceCount; ++d) 
 		{
@@ -266,8 +266,17 @@ int main(){
 	time_t end = time(0);
 	double time = difftime(end, start);
 
+
 	printf("cusparseDcsrmv time = %f s\n", time);
-	long long flop = nnz[d] * 2;
+	
+
+	long long flop = 0;
+	for (int d = 0; d < deviceCount; ++d)
+	{
+		flop += nnz[d] * 2;
+	}
+	flop *= 10;
+	
 	double gflops = (flop / (time))/1000000000;
 	printf("GFLOPS = %f\n", gflops);
 
