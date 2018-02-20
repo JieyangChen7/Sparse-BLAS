@@ -229,28 +229,28 @@ int main(){
 		} 
 
 
-		// cudaEvent_t start, stop;
-		// cudaEventCreate(&start);
-		// cudaEventCreate(&stop);
+		cudaEvent_t start, stop;
+		cudaEventCreate(&start);
+		cudaEventCreate(&stop);
 
-		// cudaEventRecord(start);
-		// for (int i = 0; i < 10; i++) 
-		// {
-		// 	status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-		// 								nb, n, nnz[d], 
-		// 								&dtwo, descr[d], cooVal[d], 
-		// 								csrRowPtr[d], cooColIndex[d], 
-		// 								x[d], &dthree, y[d]); 
+		cudaEventRecord(start);
+		for (int i = 0; i < 10; i++) 
+		{
+			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+										nb, n, nnz[d], 
+										&dtwo, descr[d], cooVal[d], 
+										csrRowPtr[d], cooColIndex[d], 
+										x[d], &dthree, y[d]); 
 		
-		// }
-		// cudaEventRecord(stop);
-		// cudaEventSynchronize(stop);
-		// float milliseconds = 0;
-		// cudaEventElapsedTime(&milliseconds, start, stop);
-		// printf("cusparseDcsrmv time = %f\n", milliseconds);
-		// long long flop = nnz[d] * 2;
-		// double gflops = (flop / (milliseconds/1000))/1000000000;
-		// printf("GFLOPS = %f\n", gflops);
+		}
+		cudaEventRecord(stop);
+		cudaEventSynchronize(stop);
+		float milliseconds = 0;
+		cudaEventElapsedTime(&milliseconds, start, stop);
+		printf("cusparseDcsrmv time = %f\n", milliseconds);
+		long long flop = nnz[d] * 2;
+		double gflops = (flop / (milliseconds/1000))/1000000000;
+		printf("GFLOPS = %f\n", gflops);
 	 
 	}
 	
