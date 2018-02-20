@@ -184,28 +184,28 @@ int main(){
 			return 1; 
 		} 
 
-		//  initialize cusparse library  
-		// status[d] = cusparseCreate(&(handle[d])); 
-		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// { 
-		// 	CLEANUP("CUSPARSE Library initialization failed");
-		// 	return 1; 
-		// } 
+		 initialize cusparse library  
+		status[d] = cusparseCreate(&(handle[d])); 
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("CUSPARSE Library initialization failed");
+			return 1; 
+		} 
 
-		// status[d] = cusparseSetStream(handle[d], stream[d]);
-		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// { 
-		// 	CLEANUP("Stream bindind failed");
-		// 	return 1;
-		// } 
+		status[d] = cusparseSetStream(handle[d], stream[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("Stream bindind failed");
+			return 1;
+		} 
 
-		// /* create and setup matrix descriptor */ 
-		// status[d] = cusparseCreateMatDescr(&descr[d]);
-		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// { 
-		// 	CLEANUP("Matrix descriptor initialization failed");
-		// 	return 1;
-		// } 
+		/* create and setup matrix descriptor */ 
+		status[d] = cusparseCreateMatDescr(&descr[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("Matrix descriptor initialization failed");
+			return 1;
+		} 
 
 	
 		// cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
