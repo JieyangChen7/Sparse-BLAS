@@ -235,10 +235,10 @@ int main(){
 		for (int i = 0; i < 10; i++) 
 		{
 			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-									nb, n, nnz[d], 
-									&dtwo, descr[d], cooVal[d], 
-									csrRowPtr[d], cooColIndex[d], 
-									&x[d], &dthree, &y[d]); 
+										nb, n, nnz[d], 
+										&dtwo, descr[d], cooVal[d], 
+										csrRowPtr[d], cooColIndex[d], 
+										x[d], &dthree, y[d]); 
 		
 		}
 		cudaEventRecord(stop);
