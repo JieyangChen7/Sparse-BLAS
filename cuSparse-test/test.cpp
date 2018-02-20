@@ -158,31 +158,31 @@ int main(){
 			return 1; 
 		} 
 
-		// cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
-		// 					  (size_t)(nnz[d]*sizeof(int)), 
-		// 					  cudaMemcpyHostToDevice);
-		// cudaStat2[d] = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
-		// 					  (size_t)(nnz[d]*sizeof(int)), 
-		// 					  cudaMemcpyHostToDevice); 
-		// cudaStat3[d] = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
-		// 					  (size_t)(nnz[d]*sizeof(double)), 
-		// 					  cudaMemcpyHostToDevice); 
-		// cudaStat4[d] = cudaMemcpy(y[d], yHostPtr + d * nb, 
-		// 					  (size_t)(nb*sizeof(double)), 
-		// 					  cudaMemcpyHostToDevice); 
-		// cudaStat5[d] = cudaMemcpy(x[d], xHostPtr, 
-		// 					  (size_t)(n*sizeof(double)), 
-		// 					  cudaMemcpyHostToDevice); 
+		cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(int)), 
+							  cudaMemcpyHostToDevice);
+		cudaStat2[d] = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(int)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat3[d] = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
+							  (size_t)(nnz[d]*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat4[d] = cudaMemcpy(y[d], yHostPtr + d * nb, 
+							  (size_t)(nb*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
+		cudaStat5[d] = cudaMemcpy(x[d], xHostPtr, 
+							  (size_t)(n*sizeof(double)), 
+							  cudaMemcpyHostToDevice); 
 
-		// if ((cudaStat1[d] != cudaSuccess) ||
-		//  	(cudaStat2[d] != cudaSuccess) ||
-		//   	(cudaStat3[d] != cudaSuccess) ||
-		//    	(cudaStat4[d] != cudaSuccess) ||
-		//     (cudaStat5[d] != cudaSuccess)) 
-		// { 
-		// 	CLEANUP("Memcpy from Host to Device failed"); 
-		// 	return 1; 
-		// } 
+		if ((cudaStat1[d] != cudaSuccess) ||
+		 	(cudaStat2[d] != cudaSuccess) ||
+		  	(cudaStat3[d] != cudaSuccess) ||
+		   	(cudaStat4[d] != cudaSuccess) ||
+		    (cudaStat5[d] != cudaSuccess)) 
+		{ 
+			CLEANUP("Memcpy from Host to Device failed"); 
+			return 1; 
+		} 
 
 		//  initialize cusparse library  
 		// status[d] = cusparseCreate(&(handle[d])); 
