@@ -3,6 +3,8 @@
 #include <ctime>
 #include <cuda_runtime.h>
 #include "cusparse.h"
+#include <iostream>
+using namespace std;
 #define CLEANUP(s) \
 	do { \
 		 printf ("%s\n", s); \
@@ -264,6 +266,9 @@ int main(){
 		}
 	}
 	time_t end = time(0);
+
+	cout << start << "  " << end << endl;
+
 	double time = difftime(end, start);
 
 
