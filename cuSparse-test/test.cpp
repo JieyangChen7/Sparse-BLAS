@@ -291,7 +291,7 @@ int main(){
 	}
 	flop *= repeat_test;
 	
-	double gflops = ((double)flop / (double)(time/1000))/1000000000;
+	double gflops = ((double)flop/1000000000) / (double)(time/1000);
 	printf("GFLOPS = %f\n", gflops);
 
 
