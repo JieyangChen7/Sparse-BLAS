@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
+#include <sys/time.h>
 #include <cuda_runtime.h>
 #include "cusparse.h"
 #include <iostream>
@@ -12,6 +13,14 @@ using namespace std;
 		 fflush (stdout); \
 	} while (0)
 
+
+long int get_time()
+{
+	struct timeval tp;
+	gettimeofday(&tp, NULL);
+	long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000; //get current timestamp in milliseconds
+	return ms;
+}
 
 int main(){
 
@@ -234,7 +243,7 @@ int main(){
 	}
 
 	int repeat_test = 10;
-	time_t start = time(0);
+	long int start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
 	{
 		for (int d = 0; d < deviceCount; ++d) 
@@ -265,14 +274,14 @@ int main(){
 			cudaDeviceSynchronize();
 		}
 	}
-	time_t end = time(0);
+	long int end = get_time();
 
 	cout << start << "  " << end << endl;
 
-	double time = difftime(end, start);
+	long int time = end - start;
 
 
-	printf("cusparseDcsrmv time = %f s\n", time);
+	printf("cusparseDcsrmv time = %d s\n", time);
 	
 
 	long long flop = 0;
