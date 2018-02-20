@@ -279,7 +279,7 @@ int main(){
 	cout << start << "  " << end << endl;
 
 	long int mtime = end - start;
-	double time = (double)(time/1000);
+	double time = (double)time/1000;
 
 	printf("cusparseDcsrmv time = %f s\n", time);
 	
