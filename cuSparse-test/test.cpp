@@ -82,6 +82,8 @@ int main(){
  	r1[1] = 1;
  	r2[0] = 0.1;
  	r2[1] = 0.1;
+
+ 	printf("done\n");
  	
  	for (int d = 0; d < deviceCount; ++d) 
  	{ 
