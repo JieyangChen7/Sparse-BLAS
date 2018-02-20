@@ -90,37 +90,37 @@ int main(){
  		cudaSetDevice(d);
  		cudaStreamCreate(&(stream[d]));
 
- 		nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
-	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
+ 	// 	nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
+	 // 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
+	 // 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
+	 // 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
 
-	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
-		{
-			CLEANUP("Host malloc failed (matrix)");
-			return 1;
-		}
-		int counter = 0;
-		for (int i = 0; i < nb; i++) 
-		{
-			if (i < n * r[d]) {
-				for (int j = 0; j < n * r1[d]; j++) 
-				{
-					cooRowIndexHostPtr[d][counter] = i;
-					cooColIndexHostPtr[d][counter] = j;
-					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-					counter++;
-				}
-			} else {
-				for (int j = 0; j < n * r2[d]; j++) 
-				{
-					cooRowIndexHostPtr[d][counter] = i;
-					cooColIndexHostPtr[d][counter] = j;
-					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-					counter++;
-				}
-			}
-		}
+	 // 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
+		// {
+		// 	CLEANUP("Host malloc failed (matrix)");
+		// 	return 1;
+		// }
+		// int counter = 0;
+		// for (int i = 0; i < nb; i++) 
+		// {
+		// 	if (i < n * r[d]) {
+		// 		for (int j = 0; j < n * r1[d]; j++) 
+		// 		{
+		// 			cooRowIndexHostPtr[d][counter] = i;
+		// 			cooColIndexHostPtr[d][counter] = j;
+		// 			cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+		// 			counter++;
+		// 		}
+		// 	} else {
+		// 		for (int j = 0; j < n * r2[d]; j++) 
+		// 		{
+		// 			cooRowIndexHostPtr[d][counter] = i;
+		// 			cooColIndexHostPtr[d][counter] = j;
+		// 			cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+		// 			counter++;
+		// 		}
+		// 	}
+		// }
 
 
 
