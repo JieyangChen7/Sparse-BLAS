@@ -275,7 +275,7 @@ int main(){
 	{
 		flop += nnz[d] * 2;
 	}
-	flop *= 10;
+	flop *= repeat_test;
 	
 	double gflops = (flop / (time))/1000000000;
 	printf("GFLOPS = %f\n", gflops);
