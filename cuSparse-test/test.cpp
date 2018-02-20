@@ -278,10 +278,10 @@ int main(){
 
 	cout << start << "  " << end << endl;
 
-	long int time = end - start;
+	long int mtime = end - start;
+	double time = (double)(time/1000);
 
-
-	printf("cusparseDcsrmv time = %d s\n", time);
+	printf("cusparseDcsrmv time = %f s\n", time);
 	
 
 	long long flop = 0;
@@ -290,8 +290,9 @@ int main(){
 		flop += nnz[d] * 2;
 	}
 	flop *= repeat_test;
-	
-	double gflops = ((double)flop/1000000000) / (double)(time/1000);
+	double gflop = (double)flop/1e9;
+	printf("gflop = %f s\n", gflop);
+	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
 
 
