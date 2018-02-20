@@ -124,24 +124,24 @@ int main(){
 
 
 
-		// if (d == 0)
-		// {		
-		// 	xHostPtr = (double *)malloc(n * sizeof(double)); 
-		// 	yHostPtr = (double *)malloc(n * sizeof(double)); 
+		if (d == 0)
+		{		
+			xHostPtr = (double *)malloc(n * sizeof(double)); 
+			yHostPtr = (double *)malloc(n * sizeof(double)); 
 
-		// 	if((!yHostPtr) || (!xHostPtr))
-		// 	{ 
-		// 		CLEANUP("Host malloc failed (vectors)"); 
-		// 		return 1; 
-		// 	} 
+			if((!yHostPtr) || (!xHostPtr))
+			{ 
+				CLEANUP("Host malloc failed (vectors)"); 
+				return 1; 
+			} 
 
-		// 	for (int i = 0; i < n; i++)
-		// 	{
-		// 		xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
-		// 		yHostPtr[i] = 0.0;
-		// 	}
+			for (int i = 0; i < n; i++)
+			{
+				xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
+				yHostPtr[i] = 0.0;
+			}
 
-		// }
+		}
 
 		// cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
 		// cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
