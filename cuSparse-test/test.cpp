@@ -208,25 +208,25 @@ int main(){
 		} 
 
 	
-		// cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-		// cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
-		// /* exercise conversion routines (convert matrix from COO 2 CSR format) */ 
-		// cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
-		// if (cudaStat1[d] != cudaSuccess) 
-		// { 
-		// 	CLEANUP("Device malloc failed (csrRowPtr)"); 
-		// 	return 1; 
-		// } 
+		/* exercise conversion routines (convert matrix from COO 2 CSR format) */ 
+		cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
+		if (cudaStat1[d] != cudaSuccess) 
+		{ 
+			CLEANUP("Device malloc failed (csrRowPtr)"); 
+			return 1; 
+		} 
 
-		// status[d] = cusparseXcoo2csr(handle[d],
-		// 						cooRowIndex[d],nnz[d],nb, 
-		// 						csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
-		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// { 
-		// 	CLEANUP("Conversion from COO to CSR format failed"); 
-		// 	return 1; 
-		// } 
+		status[d] = cusparseXcoo2csr(handle[d],
+								cooRowIndex[d],nnz[d],nb, 
+								csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			CLEANUP("Conversion from COO to CSR format failed"); 
+			return 1; 
+		} 
 
 
 		// cudaEvent_t start, stop;
