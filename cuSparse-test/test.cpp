@@ -95,11 +95,11 @@ int main(){
 	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
 	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
 
-	 // 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
-		// {
-		// 	CLEANUP("Host malloc failed (matrix)");
-		// 	return 1;
-		// }
+	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
+		{
+			CLEANUP("Host malloc failed (matrix)");
+			return 1;
+		}
 		// int counter = 0;
 		// for (int i = 0; i < nb; i++) 
 		// {
