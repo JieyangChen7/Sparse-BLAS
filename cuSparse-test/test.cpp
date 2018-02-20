@@ -249,8 +249,6 @@ int main(){
 											&dtwo, descr[d], cooVal[d], 
 											csrRowPtr[d], cooColIndex[d], 
 											x[d], &dthree, y[d]); 
-			
-			}
 			// cudaEventRecord(stop);
 			// cudaEventSynchronize(stop);
 			// float milliseconds = 0;
