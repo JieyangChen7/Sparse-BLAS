@@ -14,12 +14,12 @@ using namespace std;
 	} while (0)
 
 
-long int get_time()
+double get_time()
 {
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
-	long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000; //get current timestamp in milliseconds
-	return ms;
+	double ms = (double)tp.tv_sec * 1000 + (double)tp.tv_usec / 1000; //get current timestamp in milliseconds
+	double ms / 1000;
 }
 
 int main(){
@@ -278,8 +278,7 @@ int main(){
 
 	cout << start << "  " << end << endl;
 
-	long int mtime = end - start;
-	double time = (double)time/1000;
+	long int time = end - start;
 
 	printf("cusparseDcsrmv time = %f s\n", time);
 	
