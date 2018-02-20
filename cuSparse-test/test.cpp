@@ -83,7 +83,7 @@ int main(){
  	r2[0] = 0.1;
  	r2[1] = 0.1;
 
- 	printf("done\n");
+ 	
  	
  	for (int d = 0; d < deviceCount; ++d) 
  	{ 
@@ -124,133 +124,133 @@ int main(){
 
 
 
-		if (d == 0)
-		{		
-			xHostPtr = (double *)malloc(n * sizeof(double)); 
-			yHostPtr = (double *)malloc(n * sizeof(double)); 
+		// if (d == 0)
+		// {		
+		// 	xHostPtr = (double *)malloc(n * sizeof(double)); 
+		// 	yHostPtr = (double *)malloc(n * sizeof(double)); 
 
-			if((!yHostPtr) || (!xHostPtr))
-			{ 
-				CLEANUP("Host malloc failed (vectors)"); 
-				return 1; 
-			} 
+		// 	if((!yHostPtr) || (!xHostPtr))
+		// 	{ 
+		// 		CLEANUP("Host malloc failed (vectors)"); 
+		// 		return 1; 
+		// 	} 
 
-			for (int i = 0; i < n; i++)
-			{
-				xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
-				yHostPtr[i] = 0.0;
-			}
+		// 	for (int i = 0; i < n; i++)
+		// 	{
+		// 		xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
+		// 		yHostPtr[i] = 0.0;
+		// 	}
 
-		}
+		// }
 
-		cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
-		cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
-		cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
-		cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
-		cudaStat5[d] = cudaMalloc((void**)&x[d], n*sizeof(double)); 
-		if ((cudaStat1[d] != cudaSuccess) || 
-			(cudaStat2[d] != cudaSuccess) || 
-			(cudaStat3[d] != cudaSuccess) || 
-			(cudaStat4[d] != cudaSuccess) || 
-			(cudaStat5[d] != cudaSuccess)) 
-		{ 
-			CLEANUP("Device malloc failed");
-			return 1; 
-		} 
+		// cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
+		// cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
+		// cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
+		// cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
+		// cudaStat5[d] = cudaMalloc((void**)&x[d], n*sizeof(double)); 
+		// if ((cudaStat1[d] != cudaSuccess) || 
+		// 	(cudaStat2[d] != cudaSuccess) || 
+		// 	(cudaStat3[d] != cudaSuccess) || 
+		// 	(cudaStat4[d] != cudaSuccess) || 
+		// 	(cudaStat5[d] != cudaSuccess)) 
+		// { 
+		// 	CLEANUP("Device malloc failed");
+		// 	return 1; 
+		// } 
 
-		cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(int)), 
-							  cudaMemcpyHostToDevice);
-		cudaStat2[d] = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(int)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat3[d] = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat4[d] = cudaMemcpy(y[d], yHostPtr + d * nb, 
-							  (size_t)(nb*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat5[d] = cudaMemcpy(x[d], xHostPtr, 
-							  (size_t)(n*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
+		// cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
+		// 					  (size_t)(nnz[d]*sizeof(int)), 
+		// 					  cudaMemcpyHostToDevice);
+		// cudaStat2[d] = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
+		// 					  (size_t)(nnz[d]*sizeof(int)), 
+		// 					  cudaMemcpyHostToDevice); 
+		// cudaStat3[d] = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
+		// 					  (size_t)(nnz[d]*sizeof(double)), 
+		// 					  cudaMemcpyHostToDevice); 
+		// cudaStat4[d] = cudaMemcpy(y[d], yHostPtr + d * nb, 
+		// 					  (size_t)(nb*sizeof(double)), 
+		// 					  cudaMemcpyHostToDevice); 
+		// cudaStat5[d] = cudaMemcpy(x[d], xHostPtr, 
+		// 					  (size_t)(n*sizeof(double)), 
+		// 					  cudaMemcpyHostToDevice); 
 
-		if ((cudaStat1[d] != cudaSuccess) ||
-		 	(cudaStat2[d] != cudaSuccess) ||
-		  	(cudaStat3[d] != cudaSuccess) ||
-		   	(cudaStat4[d] != cudaSuccess) ||
-		    (cudaStat5[d] != cudaSuccess)) 
-		{ 
-			CLEANUP("Memcpy from Host to Device failed"); 
-			return 1; 
-		} 
+		// if ((cudaStat1[d] != cudaSuccess) ||
+		//  	(cudaStat2[d] != cudaSuccess) ||
+		//   	(cudaStat3[d] != cudaSuccess) ||
+		//    	(cudaStat4[d] != cudaSuccess) ||
+		//     (cudaStat5[d] != cudaSuccess)) 
+		// { 
+		// 	CLEANUP("Memcpy from Host to Device failed"); 
+		// 	return 1; 
+		// } 
 
-		/* initialize cusparse library */ 
-		status[d] = cusparseCreate(&(handle[d])); 
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			CLEANUP("CUSPARSE Library initialization failed");
-			return 1; 
-		} 
+		//  initialize cusparse library  
+		// status[d] = cusparseCreate(&(handle[d])); 
+		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		// { 
+		// 	CLEANUP("CUSPARSE Library initialization failed");
+		// 	return 1; 
+		// } 
 
-		status[d] = cusparseSetStream(handle[d], stream[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			CLEANUP("Stream bindind failed");
-			return 1;
-		} 
+		// status[d] = cusparseSetStream(handle[d], stream[d]);
+		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		// { 
+		// 	CLEANUP("Stream bindind failed");
+		// 	return 1;
+		// } 
 
-		/* create and setup matrix descriptor */ 
-		status[d] = cusparseCreateMatDescr(&descr[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			CLEANUP("Matrix descriptor initialization failed");
-			return 1;
-		} 
+		// /* create and setup matrix descriptor */ 
+		// status[d] = cusparseCreateMatDescr(&descr[d]);
+		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		// { 
+		// 	CLEANUP("Matrix descriptor initialization failed");
+		// 	return 1;
+		// } 
 
 	
-		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+		// cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+		// cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
-		/* exercise conversion routines (convert matrix from COO 2 CSR format) */ 
-		cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
-		if (cudaStat1[d] != cudaSuccess) 
-		{ 
-			CLEANUP("Device malloc failed (csrRowPtr)"); 
-			return 1; 
-		} 
+		// /* exercise conversion routines (convert matrix from COO 2 CSR format) */ 
+		// cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
+		// if (cudaStat1[d] != cudaSuccess) 
+		// { 
+		// 	CLEANUP("Device malloc failed (csrRowPtr)"); 
+		// 	return 1; 
+		// } 
 
-		status[d] = cusparseXcoo2csr(handle[d],
-								cooRowIndex[d],nnz[d],nb, 
-								csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			CLEANUP("Conversion from COO to CSR format failed"); 
-			return 1; 
-		} 
+		// status[d] = cusparseXcoo2csr(handle[d],
+		// 						cooRowIndex[d],nnz[d],nb, 
+		// 						csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
+		// if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		// { 
+		// 	CLEANUP("Conversion from COO to CSR format failed"); 
+		// 	return 1; 
+		// } 
 
 
-		cudaEvent_t start, stop;
-		cudaEventCreate(&start);
-		cudaEventCreate(&stop);
+		// cudaEvent_t start, stop;
+		// cudaEventCreate(&start);
+		// cudaEventCreate(&stop);
 
-		cudaEventRecord(start);
-		for (int i = 0; i < 10; i++) 
-		{
-			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-										nb, n, nnz[d], 
-										&dtwo, descr[d], cooVal[d], 
-										csrRowPtr[d], cooColIndex[d], 
-										x[d], &dthree, y[d]); 
+		// cudaEventRecord(start);
+		// for (int i = 0; i < 10; i++) 
+		// {
+		// 	status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+		// 								nb, n, nnz[d], 
+		// 								&dtwo, descr[d], cooVal[d], 
+		// 								csrRowPtr[d], cooColIndex[d], 
+		// 								x[d], &dthree, y[d]); 
 		
-		}
-		cudaEventRecord(stop);
-		cudaEventSynchronize(stop);
-		float milliseconds = 0;
-		cudaEventElapsedTime(&milliseconds, start, stop);
-		printf("cusparseDcsrmv time = %f\n", milliseconds);
-		long long flop = nnz[d] * 2;
-		double gflops = (flop / (milliseconds/1000))/1000000000;
-		printf("GFLOPS = %f\n", gflops);
+		// }
+		// cudaEventRecord(stop);
+		// cudaEventSynchronize(stop);
+		// float milliseconds = 0;
+		// cudaEventElapsedTime(&milliseconds, start, stop);
+		// printf("cusparseDcsrmv time = %f\n", milliseconds);
+		// long long flop = nnz[d] * 2;
+		// double gflops = (flop / (milliseconds/1000))/1000000000;
+		// printf("GFLOPS = %f\n", gflops);
 	 
 	}
 	
