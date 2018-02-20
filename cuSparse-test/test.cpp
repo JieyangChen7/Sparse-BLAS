@@ -243,7 +243,7 @@ int main(){
 	}
 
 	int repeat_test = 10;
-	long int start = get_time();
+	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
 	{
 		for (int d = 0; d < deviceCount; ++d) 
@@ -274,11 +274,11 @@ int main(){
 			cudaDeviceSynchronize();
 		}
 	}
-	long int end = get_time();
+	double end = get_time();
 
 	cout << start << "  " << end << endl;
 
-	long int time = end - start;
+	double time = end - start;
 
 	printf("cusparseDcsrmv time = %f s\n", time);
 	
@@ -290,7 +290,7 @@ int main(){
 	}
 	flop *= repeat_test;
 	double gflop = (double)flop/1e9;
-	printf("gflop = %f s\n", gflop);
+	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
 
