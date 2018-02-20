@@ -100,27 +100,27 @@ int main(){
 			CLEANUP("Host malloc failed (matrix)");
 			return 1;
 		}
-		// int counter = 0;
-		// for (int i = 0; i < nb; i++) 
-		// {
-		// 	if (i < n * r[d]) {
-		// 		for (int j = 0; j < n * r1[d]; j++) 
-		// 		{
-		// 			cooRowIndexHostPtr[d][counter] = i;
-		// 			cooColIndexHostPtr[d][counter] = j;
-		// 			cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-		// 			counter++;
-		// 		}
-		// 	} else {
-		// 		for (int j = 0; j < n * r2[d]; j++) 
-		// 		{
-		// 			cooRowIndexHostPtr[d][counter] = i;
-		// 			cooColIndexHostPtr[d][counter] = j;
-		// 			cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-		// 			counter++;
-		// 		}
-		// 	}
-		// }
+		int counter = 0;
+		for (int i = 0; i < nb; i++) 
+		{
+			if (i < n * r[d]) {
+				for (int j = 0; j < n * r1[d]; j++) 
+				{
+					cooRowIndexHostPtr[d][counter] = i;
+					cooColIndexHostPtr[d][counter] = j;
+					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+					counter++;
+				}
+			} else {
+				for (int j = 0; j < n * r2[d]; j++) 
+				{
+					cooRowIndexHostPtr[d][counter] = i;
+					cooColIndexHostPtr[d][counter] = j;
+					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
+					counter++;
+				}
+			}
+		}
 
 
 
