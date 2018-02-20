@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctime>
 #include <cuda_runtime.h>
 #include "cusparse.h"
 #define CLEANUP(s) \
@@ -61,7 +62,7 @@ int main(){
 	
 
 	int n = 10000; 
-	int nb = 5000;
+	int nb = n/deviceCount;
 	int * nnz = new int[deviceCount];
 	int nnz_vector;
 	double dzero =0.0;
@@ -80,8 +81,8 @@ int main(){
  	r[1] = 0.1;
  	r1[0] = 1;
  	r1[1] = 1;
- 	r2[0] = 0.01;
- 	r2[1] = 0.1;
+ 	r2[0] = 0.001;
+ 	r2[1] = 1;
 
 
  	
@@ -228,33 +229,50 @@ int main(){
 			return 1; 
 		} 
 
-
-		cudaEvent_t start, stop;
-		cudaEventCreate(&start);
-		cudaEventCreate(&stop);
-
-		cudaEventRecord(start);
-		for (int i = 0; i < 10; i++) 
-		{
-			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-										nb, n, nnz[d], 
-										&dtwo, descr[d], cooVal[d], 
-										csrRowPtr[d], cooColIndex[d], 
-										x[d], &dthree, y[d]); 
-		
-		}
-		cudaEventRecord(stop);
-		cudaEventSynchronize(stop);
-		float milliseconds = 0;
-		cudaEventElapsedTime(&milliseconds, start, stop);
-		printf("cusparseDcsrmv time = %f\n", milliseconds);
-		long long flop = nnz[d] * 2;
-		double gflops = (flop / (milliseconds/1000))/1000000000;
-		printf("GFLOPS = %f\n", gflops);
-	 
 	}
+
 	
-	
+	time_t start = time(0);
+	for (int i = 0; i < 10; i++) 
+	{
+		for (int d = 0; d < deviceCount; ++d) 
+		{
+			cudaSetDevice(d);
+			// cudaEvent_t start, stop;
+			// cudaEventCreate(&start);
+			// cudaEventCreate(&stop);
+
+			//cudaEventRecord(start);
+			
+				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+											nb, n, nnz[d], 
+											&dtwo, descr[d], cooVal[d], 
+											csrRowPtr[d], cooColIndex[d], 
+											x[d], &dthree, y[d]); 
+			
+			}
+			// cudaEventRecord(stop);
+			// cudaEventSynchronize(stop);
+			// float milliseconds = 0;
+			// cudaEventElapsedTime(&milliseconds, start, stop);
+
+			
+		 
+		}
+		for (int d = 0; d < deviceCount; ++d) 
+		{
+			cudaSetDevice(d);
+			cudaDeviceSynchronize();
+		}
+	}
+	time_t end = time(0);
+	double time = difftime(end, start);
+
+	printf("cusparseDcsrmv time = %f s\n", time);
+	long long flop = nnz[d] * 2;
+	double gflops = (flop / (time))/1000000000;
+	printf("GFLOPS = %f\n", gflops);
+
 
 	
 	
