@@ -184,7 +184,7 @@ int main(){
 			return 1; 
 		} 
 
-		 initialize cusparse library  
+		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
