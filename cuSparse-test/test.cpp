@@ -143,20 +143,20 @@ int main(){
 
 		}
 
-		// cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
-		// cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
-		// cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
-		// cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
-		// cudaStat5[d] = cudaMalloc((void**)&x[d], n*sizeof(double)); 
-		// if ((cudaStat1[d] != cudaSuccess) || 
-		// 	(cudaStat2[d] != cudaSuccess) || 
-		// 	(cudaStat3[d] != cudaSuccess) || 
-		// 	(cudaStat4[d] != cudaSuccess) || 
-		// 	(cudaStat5[d] != cudaSuccess)) 
-		// { 
-		// 	CLEANUP("Device malloc failed");
-		// 	return 1; 
-		// } 
+		cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
+		cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
+		cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
+		cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
+		cudaStat5[d] = cudaMalloc((void**)&x[d], n*sizeof(double)); 
+		if ((cudaStat1[d] != cudaSuccess) || 
+			(cudaStat2[d] != cudaSuccess) || 
+			(cudaStat3[d] != cudaSuccess) || 
+			(cudaStat4[d] != cudaSuccess) || 
+			(cudaStat5[d] != cudaSuccess)) 
+		{ 
+			CLEANUP("Device malloc failed");
+			return 1; 
+		} 
 
 		// cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
 		// 					  (size_t)(nnz[d]*sizeof(int)), 
