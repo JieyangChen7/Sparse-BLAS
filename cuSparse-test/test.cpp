@@ -83,7 +83,7 @@ int main(){
  	r2[0] = 0.1;
  	r2[1] = 0.1;
 
- 	
+
  	
  	for (int d = 0; d < deviceCount; ++d) 
  	{ 
@@ -103,7 +103,7 @@ int main(){
 		int counter = 0;
 		for (int i = 0; i < nb; i++) 
 		{
-			if (i < n * r[d]) {
+			if (i < nb * r[d]) {
 				for (int j = 0; j < n * r1[d]; j++) 
 				{
 					cooRowIndexHostPtr[d][counter] = i;
