@@ -5,6 +5,7 @@
 #include <cuda_runtime.h>
 #include "cusparse.h"
 #include <iostream>
+#include <cmath>
 using namespace std;
 #define CLEANUP(s) \
 	do { \
@@ -14,6 +15,7 @@ using namespace std;
 	} while (0)
 
 
+int test(int iban_gpus, double r1, double r2);
 double get_time()
 {
 	struct timeval tp;
@@ -22,7 +24,22 @@ double get_time()
 	return ms / 1000;
 }
 
-int main(){
+int main(int argc, char *argv[]){
+
+	//for (int i = 0; i < 8; i++){
+	int i = atoi(argv[1]);
+	
+	double r = atof(argv[2]);
+	//for (double r = 0; r <= 1; r += 0.1){	
+		printf("i=%d, r=%f\n", i, r);
+			test(i, r, r);
+	//}
+	//}
+
+
+}
+
+int test(int iban_gpus, double  r11, double r22){
 
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
@@ -31,8 +48,8 @@ int main(){
 	{
 	    cudaDeviceProp deviceProp;
 	    cudaGetDeviceProperties(&deviceProp, device);
-	    printf("Device %d has compute capability %d.%d.\n",
-	           device, deviceProp.major, deviceProp.minor);
+	    //printf("Device %d has compute capability %d.%d.\n",
+	    //       device, deviceProp.major, deviceProp.minor);
 	}
 
 	cudaStream_t * stream = new cudaStream_t [deviceCount];
@@ -73,7 +90,8 @@ int main(){
 	
 
 	int n = 10000; 
-	int nb = n/deviceCount;
+	//int nb = n/deviceCount;
+	int nb = 10000;
 	int * nnz = new int[deviceCount];
 	int nnz_vector;
 	double dzero =0.0;
@@ -88,15 +106,51 @@ int main(){
 	double * r1 = new double [deviceCount]; //1
 	double * r2 = new double [deviceCount]; //0.001
  	
- 	r[0] = 0.1;
- 	r[1] = 0.1;
- 	r1[0] = 1;
- 	r1[1] = 1;
- 	r2[0] = 1;
+ 	r[0] = 1;
+ 	r[1] = 1;
+	r[2] = 1;
+	r[3] = 1;
+	r[4] = 1;
+	r[5] = 1;
+	r[6] = 1;
+	r[7] = 1;
+//	cout << "test" << endl;
+	for (int i = 0; i < deviceCount; i++){
+		if (i < iban_gpus){
+			r1[i] = r11;
+        		r2[i] = r22;
+		}else{
+			r1[i] = 1;
+        		r2[i] = 1;
+		}
+
+	}
+//	cout << "test1" << endl;
+/*
+ 	r1[0] = r1;
+ 	r2[0] = r2;
+
+	r1[1] = 1;
  	r2[1] = 1;
 
+	r1[2] = 1;
+        r2[2] = 1;
 
+	r1[3] = 1;
+        r2[3] = 1;
  	
+	r1[4] = 1;
+        r2[4] = 1;
+
+	r1[5] = 1;
+        r2[5] = 1;
+
+	r1[6] = 1;
+        r2[6] = 1;	
+
+	r1[7] = 1;
+        r2[7] = 1;
+*/
  	for (int d = 0; d < deviceCount; ++d) 
  	{ 
  		cudaSetDevice(d);
@@ -106,18 +160,24 @@ int main(){
 	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
 	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
 	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
+		cout <<"nnz=" << nnz[d] << endl;
+//cout << "test2" << endl;
+
 
 	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
 		{
 			CLEANUP("Host malloc failed (matrix)");
 			return 1;
 		}
+
 		int counter = 0;
 		for (int i = 0; i < nb; i++) 
 		{
+			if (counter < nnz[d]){
 			if (i < nb * r[d]) {
 				for (int j = 0; j < n * r1[d]; j++) 
 				{
+					
 					cooRowIndexHostPtr[d][counter] = i;
 					cooColIndexHostPtr[d][counter] = j;
 					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
@@ -132,9 +192,10 @@ int main(){
 					counter++;
 				}
 			}
+			}
 		}
 
-
+//cout << "test3" << endl;
 
 		if (d == 0)
 		{		
@@ -154,6 +215,7 @@ int main(){
 			}
 
 		}
+//cout << "test3-2" << endl;
 
 		cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
 		cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
@@ -169,6 +231,8 @@ int main(){
 			CLEANUP("Device malloc failed");
 			return 1; 
 		} 
+
+//cout << "test4" << endl;
 
 		cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
 							  (size_t)(nnz[d]*sizeof(int)), 
@@ -195,7 +259,7 @@ int main(){
 			CLEANUP("Memcpy from Host to Device failed"); 
 			return 1; 
 		} 
-
+//cout << "test5" << endl;
 		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
@@ -211,7 +275,7 @@ int main(){
 			return 1;
 		} 
 
-		/* create and setup matrix descriptor */ 
+ 
 		status[d] = cusparseCreateMatDescr(&descr[d]);
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
@@ -219,11 +283,12 @@ int main(){
 			return 1;
 		} 
 
+//cout << "test6" << endl;
 	
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
-		/* exercise conversion routines (convert matrix from COO 2 CSR format) */ 
+ 
 		cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
 		if (cudaStat1[d] != cudaSuccess) 
 		{ 
@@ -239,6 +304,7 @@ int main(){
 			CLEANUP("Conversion from COO to CSR format failed"); 
 			return 1; 
 		} 
+
 
 	}
 
@@ -296,62 +362,6 @@ int main(){
 
 
 	
-	
-	// //y = [10 20 30 40 | 100 200 70 400] 
-	// /* exercise Level 2 routines (csrmv) */
-
-	// cudaEvent_t start, stop;
-	// cudaEventCreate(&start);
-	// cudaEventCreate(&stop);
-
-	// cudaEventRecord(start);
-	// for (int i = 0; i < 10; i++) 
-	// {
-	// 	status = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
-	// 							n, n, nnz, 
-	// 							&dtwo, descr, cooVal, 
-	// 							csrRowPtr, cooColIndex, 
-	// 							&y[0], &dthree, &y[n]); 
-	
-	// }
-	// cudaEventRecord(stop);
-	// cudaEventSynchronize(stop);
-	// float milliseconds = 0;
-	// cudaEventElapsedTime(&milliseconds, start, stop);
-	// printf("cusparseDcsrmv time = %f\n", milliseconds);
-	// long long flop = nnz * 2;
-	// double gflops = (flop / (milliseconds/1000))/1000000000;
-	// printf("GFLOPS = %f\n", gflops);
-
-	// cudaEventRecord(start);
-	// for (int i = 0; i < 10; i++) 
-	// {
-	// 	status = cusparseDcsrmv(handle,CUSPARSE_OPERATION_NON_TRANSPOSE, 
-	// 							n, n, nnz, 
-	// 							&dtwo, descr, cooVal, 
-	// 							csrRowPtr, cooColIndex, 
-	// 							&y[0], &dthree, &y[n]); 
-	
-	// }
-	// cudaEventRecord(stop);
-	// cudaEventSynchronize(stop);
-	// milliseconds = 0;
-	// cudaEventElapsedTime(&milliseconds, start, stop);
-	// printf("cusparseDcsrmv_mp time = %f\n", milliseconds);
-	// flop = nnz * 2;
-	// gflops = (flop / (milliseconds/1000))/1000000000;
-	// printf("GFLOPS = %f\n", gflops);
-
-
-
-	// if (status != CUSPARSE_STATUS_SUCCESS) 
-	// { 
-	// 	CLEANUP("Matrix-vector multiplication failed");
-	//  	return 1;
-	// } 
-
-	// //y = [10 20 30 40 | 680 760 1230 2240] 
-	// cudaMemcpy(yHostPtr, y, (size_t)(n*sizeof(y[0])), cudaMemcpyDeviceToHost); 
 
 	
 	 }
