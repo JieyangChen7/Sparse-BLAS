@@ -6,6 +6,7 @@
 #include "cusparse.h"
 #include <iostream>
 #include <cmath>
+#include "mmio.h"
 using namespace std;
 #define CLEANUP(s) \
 	do { \
@@ -24,22 +25,61 @@ double get_time()
 	return ms / 1000;
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 
-	//for (int i = 0; i < 8; i++){
-	int i = atoi(argv[1]);
-	
-	double r = atof(argv[2]);
-	//for (double r = 0; r <= 1; r += 0.1){	
-		printf("i=%d, r=%f\n", i, r);
-			test(i, r, r);
-	//}
-	//}
+	char * filename = argv[1];
+	int ret_code;
+    MM_typecode matcode;
+    FILE *f;
+    int m, n, nnz;   
+    int * cooRowIndex;
+    int * cooColIndex;
+    double * cooVal;
+    int * csrRowPtr;
 
 
-}
+    if ((f = fopen(filename, "r")) == NULL) {
+        exit(1);
+    }
 
-int test(int iban_gpus, double  r11, double r22){
+    if (mm_read_banner(f, &matcode) != 0) {
+        printf("Could not process Matrix Market banner.\n");
+        exit(1);
+    }
+
+    if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
+        exit(1);
+    }
+
+    cooRowIndex = (int *) malloc(nnz * sizeof(int));
+    cooColIndex = (int *) malloc(nnz * sizeof(int));
+    cooVal      = (double *) malloc(nnz * sizeof(double));
+
+
+    for (int i = 0; i < nz; i++) {
+        fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
+        cooRowIndex[i]--;  /* adjust from 1-based to 0-based */
+        cooColIndex[i]--;
+    }
+
+    csrRowPtr = (int *) malloc((n+1) * sizeof(int));
+    int * counter = new int[m];
+	for (int i = 0; i < nnz; i++) {
+		counter[cooRowIndex[i]]++;
+	}
+	csrRowPtr[0] = 0;
+	for (int i = 1; i <= m; i++) {
+		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i];
+	}
+
+	double * x = (double *)malloc(n * sizeof(double)); 
+	double * y = (double *)malloc(n * sizeof(double)); 
+
+	for (int i = 0; i < n; i++)
+	{
+		xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
+		yHostPtr[i] = 0.0;
+	}
 
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
@@ -52,148 +92,68 @@ int test(int iban_gpus, double  r11, double r22){
 	    //       device, deviceProp.major, deviceProp.minor);
 	}
 
-	cudaStream_t * stream = new cudaStream_t [deviceCount];
 
-	cudaError_t * cudaStat1 = new cudaError_t[deviceCount];
-	cudaError_t * cudaStat2 = new cudaError_t[deviceCount];
-	cudaError_t * cudaStat3 = new cudaError_t[deviceCount];
-	cudaError_t * cudaStat4 = new cudaError_t[deviceCount];
-	cudaError_t * cudaStat5 = new cudaError_t[deviceCount];
-	cudaError_t * cudaStat6 = new cudaError_t[deviceCount];
+}
 
-	cusparseStatus_t * status = new cusparseStatus_t[deviceCount];
-	cusparseHandle_t * handle = new cusparseHandle_t[deviceCount];
-	cusparseMatDescr_t * descr = new cusparseMatDescr_t[deviceCount];
 
-	// CPU A
-	int ** cooRowIndexHostPtr = new int * [deviceCount];
-	int ** cooColIndexHostPtr = new int * [deviceCount];
-	double ** cooValHostPtr = new double * [deviceCount];
 
-	// CPU x
-	double * xHostPtr;
 
-	// CPU y
-	double * yHostPtr;
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+				 double * csrVal, int * csrRowPtr, int * csrColInd, 
+				 double * x, double * beta,
+				 double * y,
+				 int ngpu){
+
+	cudaStream_t * stream = new cudaStream_t [ngpu];
+
+	cudaError_t * cudaStat1 = new cudaError_t[ngpu];
+	cudaError_t * cudaStat2 = new cudaError_t[ngpu];
+	cudaError_t * cudaStat3 = new cudaError_t[ngpu];
+	cudaError_t * cudaStat4 = new cudaError_t[ngpu];
+	cudaError_t * cudaStat5 = new cudaError_t[ngpu];
+	cudaError_t * cudaStat6 = new cudaError_t[ngpu];
+
+	cusparseStatus_t * status = new cusparseStatus_t[ngpu];
+	cusparseHandle_t * handle = new cusparseHandle_t[ngpu];
+	cusparseMatDescr_t * descr = new cusparseMatDescr_t[ngpu];
+
 	
-	// GPU A
-	int ** cooRowIndex = new int * [deviceCount];
-	int ** cooColIndex = new int * [deviceCount];
-	double ** cooVal = new double * [deviceCount];
-	int ** csrRowPtr = new int * [deviceCount];
+	int * dev_m            = new int      [ngpu];
+	int * dev_n            = new int      [ngpu];
+	int * dev_nnz          = new int      [ngpu];
+	int ** host_csrRowPtr  = new int    * [ngpu];
+	int ** dev_csrRowPtr   = new int    * [ngpu];
+	int ** dev_csrColIndex = new int    * [ngpu];
+	double ** dev_csrVal   = new double * [ngpu];
 
-	// CPU x
-	double ** x = new double * [deviceCount];
 
-	// GPU y
-	double ** y = new double * [deviceCount];
+	double ** dev_x = new double * [ngpu];
+	double ** dev_y = new double * [ngpu];
+
+
 	
+	for (int d; d < ngpu; d++){
 
-	int n = 10000; 
-	//int nb = n/deviceCount;
-	int nb = 10000;
-	int * nnz = new int[deviceCount];
-	int nnz_vector;
-	double dzero =0.0;
-	double dtwo =2.0;
-	double dthree=3.0;
-	double dfive =5.0;
+		cudaSetDevice(d);
 
-	// printf("testing example\n");
-	// /* create the  sparse test matrix in COO format */
+		int start_row = floor((d)     * m / ngpu);
+		int end_row   = floor((d + 1) * m / ngpu);
 
-	double * r = new double [deviceCount];  //0.1
-	double * r1 = new double [deviceCount]; //1
-	double * r2 = new double [deviceCount]; //0.001
- 	
- 	r[0] = 1;
- 	r[1] = 1;
-	r[2] = 1;
-	r[3] = 1;
-	r[4] = 1;
-	r[5] = 1;
-	r[6] = 1;
-	r[7] = 1;
+		dev_m[d]   = end_row - start_row + 1;
+		dev_n[d]   = n;
+		dev_nnz[d] = csrRowPtr[end_row + 1] - csrRowPtr[start_row];
 
-	for (int i = 0; i < deviceCount; i++){
-		if (i < iban_gpus){
-			r1[i] = r11;
-        		r2[i] = r22;
-		}else{
-			r1[i] = 1;
-        		r2[i] = 1;
-		}
-
-	}
-
- 	for (int d = 0; d < deviceCount; ++d) 
- 	{ 
- 		cudaSetDevice(d);
- 		cudaStreamCreate(&(stream[d]));
-
- 		nnz[d]=nb*r[d]*n*r1[d] + nb*(1-r[d])*n*r2[d];
-	 	cooRowIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 	cooColIndexHostPtr[d] = (int *) malloc(nnz[d]*sizeof(int));
-	 	cooValHostPtr[d] = (double *)malloc(nnz[d]*sizeof(double));
-		cout <<"nnz=" << nnz[d] << endl;
-//cout << "test2" << endl;
+		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
 
-	 	if ((!cooRowIndexHostPtr[d]) || (!cooColIndexHostPtr[d]) || (!cooValHostPtr[d]))
-		{
-			CLEANUP("Host malloc failed (matrix)");
-			return 1;
-		}
+		cudaStat1[d] = cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int));
+		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d] * sizeof(int)); 
+		cudaStat3[d] = cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d] * sizeof(double)); 
 
-		int counter = 0;
-		for (int i = 0; i < nb; i++) 
-		{
-			if (counter < nnz[d]){
-			if (i < nb * r[d]) {
-				for (int j = 0; j < n * r1[d]; j++) 
-				{
-					
-					cooRowIndexHostPtr[d][counter] = i;
-					cooColIndexHostPtr[d][counter] = j;
-					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-					counter++;
-				}
-			} else {
-				for (int j = 0; j < n * r2[d]; j++) 
-				{
-					cooRowIndexHostPtr[d][counter] = i;
-					cooColIndexHostPtr[d][counter] = j;
-					cooValHostPtr[d][counter] = ((double) rand() / (RAND_MAX));
-					counter++;
-				}
-			}
-			}
-		}
+		cudaStat4[d] = cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
+		cudaStat5[d] = cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
+		
 
-		if (d == 0)
-		{		
-			xHostPtr = (double *)malloc(n * sizeof(double)); 
-			yHostPtr = (double *)malloc(n * sizeof(double)); 
-
-			if((!yHostPtr) || (!xHostPtr))
-			{ 
-				CLEANUP("Host malloc failed (vectors)"); 
-				return 1; 
-			} 
-
-			for (int i = 0; i < n; i++)
-			{
-				xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
-				yHostPtr[i] = 0.0;
-			}
-
-		}
-
-		cudaStat1[d] = cudaMalloc((void**)&cooRowIndex[d],nnz[d]*sizeof(int));
-		cudaStat2[d] = cudaMalloc((void**)&cooColIndex[d],nnz[d]*sizeof(int)); 
-		cudaStat3[d] = cudaMalloc((void**)&cooVal[d], nnz[d]*sizeof(double)); 
-		cudaStat4[d] = cudaMalloc((void**)&y[d], nb*sizeof(double)); 
-		cudaStat5[d] = cudaMalloc((void**)&x[d], n*sizeof(double)); 
 		if ((cudaStat1[d] != cudaSuccess) || 
 			(cudaStat2[d] != cudaSuccess) || 
 			(cudaStat3[d] != cudaSuccess) || 
@@ -204,22 +164,21 @@ int test(int iban_gpus, double  r11, double r22){
 			return 1; 
 		} 
 
+		memcpy((void *)host_csrRowPtr[d], 
+			   (void *)&csrRowPtr[start_row], 
+			   (dev_m[d] + 1) * sizeof(int));
 
-		cudaStat1[d] = cudaMemcpy(cooRowIndex[d], cooRowIndexHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(int)), 
-							  cudaMemcpyHostToDevice);
-		cudaStat2[d] = cudaMemcpy(cooColIndex[d], cooColIndexHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(int)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat3[d] = cudaMemcpy(cooVal[d], cooValHostPtr[d], 
-							  (size_t)(nnz[d]*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat4[d] = cudaMemcpy(y[d], yHostPtr + d * nb, 
-							  (size_t)(nb*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
-		cudaStat5[d] = cudaMemcpy(x[d], xHostPtr, 
-							  (size_t)(n*sizeof(double)), 
-							  cudaMemcpyHostToDevice); 
+		for (int i = 0; i < dev_m[d] + 1; i++) {
+			host_csrRowPtr[d][i] -= csrRowPtr[start_row];
+		}
+
+
+		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                     (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+		cudaStat3[d] = cudaMemcpy(dev_csrVal[d], csrVal[csrRowPtr[start_row]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+
+		cudaStat4[d] = cudaMemcpy(dev_y[d], y[start_row],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat5[d] = cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 
 		if ((cudaStat1[d] != cudaSuccess) ||
 		 	(cudaStat2[d] != cudaSuccess) ||
@@ -252,24 +211,6 @@ int test(int iban_gpus, double  r11, double r22){
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
- 
-		cudaStat1[d] = cudaMalloc((void**)&csrRowPtr[d],(nb+1)*sizeof(int)); 
-		if (cudaStat1[d] != cudaSuccess) 
-		{ 
-			CLEANUP("Device malloc failed (csrRowPtr)"); 
-			return 1; 
-		} 
-
-		status[d] = cusparseXcoo2csr(handle[d],
-								     cooRowIndex[d],nnz[d],nb, 
-								     csrRowPtr[d],CUSPARSE_INDEX_BASE_ZERO);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			CLEANUP("Conversion from COO to CSR format failed"); 
-			return 1; 
-		} 
-
-
 	}
 
 	int repeat_test = 10;
@@ -279,24 +220,12 @@ int test(int iban_gpus, double  r11, double r22){
 		for (int d = 0; d < deviceCount; ++d) 
 		{
 			cudaSetDevice(d);
-			// cudaEvent_t start, stop;
-			// cudaEventCreate(&start);
-			// cudaEventCreate(&stop);
-
-			//cudaEventRecord(start);
-			
-				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-											nb, n, nnz[d], 
-											&dtwo, descr[d], cooVal[d], 
-											csrRowPtr[d], cooColIndex[d], 
-											x[d], &dthree, y[d]); 
-			// cudaEventRecord(stop);
-			// cudaEventSynchronize(stop);
-			// float milliseconds = 0;
-			// cudaEventElapsedTime(&milliseconds, start, stop);
-
-			
-		 
+	
+			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+										dev_m[d], dev_n[d], dev_nnz[d], 
+										&alpha, descr[d], dev_csrVal[d], 
+										dev_csrRowPtr[d], dev_csrColIndex[d], 
+										dev_x[d], &beta, dev_y[d]); 	 
 		}
 		for (int d = 0; d < deviceCount; ++d) 
 		{
@@ -313,94 +242,115 @@ int test(int iban_gpus, double  r11, double r22){
 	printf("cusparseDcsrmv time = %f s\n", time);
 	
 
-	long long flop = 0;
-	for (int d = 0; d < deviceCount; ++d)
-	{
-		flop += nnz[d] * 2;
-	}
+	long long flop = nnz * 2;
 	flop *= repeat_test;
 	double gflop = (double)flop/1e9;
 	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
 
-	 }
+}
 
-	spMV_mgpu(char transA, 
-              int m, int n, int nnz, double * alpha, 
-              double * csrValA, int * csrRowPtrA, int * csrColIndA,
-              double * x, double * beta, 
-              double * y,
-              int ngpu){
-		int * start_idx = new int[ngpu];
-		int * end_idx   = new int[ngpu];
-		int * start_row = new int[ngpu];
-		int * end_row   = new int[ngpu];
+void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+				  double * csrVal, int * csrRowPtr, int * csrColInd, 
+				  double * x, double * beta,
+				  double * y,
+				  int ngpu){
+
+		int 	* start_idx  = new int[ngpu];
+		int 	* end_idx    = new int[ngpu];
+		int 	* start_row  = new int[ngpu];
+		int 	* end_row    = new int[ngpu];
+		boolean * start_flag = new boolean[ngpu];
+		boolean * end_flag   = new boolean[ngpu];
 
 		int curr_row;
 
-		double **    csrValA_partial = new double * [ngpu];
-		int    ** csrRowPtrA_partial = new int    * [ngpu];
-		int    ** csrColIndA_partial = new int    * [ngpu];
-		int    *         nnz_partial = new int      [ngpu];
-		int    *           m_partial = new int    * [ngpu];
-		int    *           n_partial = new int    * [ngpu];
-
-		for (int i = 0; i < ngpu; i++) {
-			start_idx[i]   = floor((i)     * nnz / ngpu);
-			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
-			nnz_partial[i] = end_idx[i] - start_idx[i] + 1;
-		}
-
-		curr_row = 0;
-		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtrA[curr_row] < start_idx[i]) curr_row++;
-			start_row[i] = curr_row - 1;
-		}
-
-		curr_row = 0;
-		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtrA[curr_row] < end_idx[i]) curr_row++;
-			end_row[i] = curr_row - 1;
-		}
-
-		for (int i = 0; i < ngpu; i++) {
-			m_partial[i] = end_row[i] - start_row[i] + 1;
-			n_partial[i] = n;
-		}
-
-		for (int i = 0; i < ngpu; i++) {
-			csrValA_partial[i] = new double[nnz_partial[i]];
-			memcpy((void *)csrValA_partial[i], 
-				   (void *)&csrValA[start_idx[i]], 
-				   sizeof(double) * nnz_partial[i]);
-		}
-
-		curr_row = 0;
-		for (int i = 0; i < ngpu; i++) {
-			csrRowPtrA_partial[i] = new int [m_partial[i] + 1];
-			csrRowPtrA_partial[i][0] = 0;
-			csrRowPtrA_partial[i][m_partial[i]] = nnz_partial[i];
-
-			for (int j = 1; j < m_partial[i]; i++) {
-				csrRowPtrA_partial[i][j] = csrRowPtrA[start_row[i] + j];
-			}
-			for (int j = 1; j < m_partial[i]; i++) {
-				csrRowPtrA_partial[i][j] -= start_idx[i];
-			}
-		}
-
-		for (int i = 0; i < ngpu; i++) {
-			csrColIndA_partial[i] = new double[nnz_partial[i]];
-			memcpy((void *)csrColIndA_partial[i], 
-				   (void *)&csrColIndA[start_idx[i]], 
-				   sizeof(double) * nnz_partial[i]);
-		}
+		double ** dev_csrVal     = new double * [ngpu];
+		double ** host_csrRowPtr = new int    * [ngpu];
+		int    ** dev_csrRowPtr  = new int    * [ngpu];
+		int    ** dev_csrColInd  = new int    * [ngpu];
+		int    *         dev_nnz = new int      [ngpu];
+		int    *           dev_m = new int      [ngpu];
+		int    *           dev_n = new int      [ngpu];
 
 		cudaStream_t       * stream = new cudaStream_t [deviceCount];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
 		cusparseHandle_t   * handle = new cusparseHandle_t[ngpu];
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
+
+		// Calculate the start and end index
+		for (int i = 0; i < ngpu; i++) {
+			start_idx[i]   = floor((i)     * nnz / ngpu);
+			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
+			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
+		}
+
+		// Calculate the start and end row
+		curr_row = 0;
+		for (int i = 0; i < ngpu; i++) {
+			while (csrRowPtr[curr_row] < start_idx[i]) {
+				curr_row++;
+			}
+
+			start_row[i] = curr_row - 1; 
+
+			// Mark imcomplete rows
+			// True: imcomplete
+			if (start_idx[i] > csrRowPtr[start_row[i]]) {
+				start_flag[i] = true;
+			}
+		}
+
+		curr_row = 0;
+		for (int i = 0; i < ngpu; i++) {
+			while (csrRowPtr[curr_row] < end_idx[i]) {
+				curr_row++;
+			}
+
+			end_row[i] = curr_row - 1;
+
+			// Mark imcomplete rows
+			// True: imcomplete
+			if (end_idx[i] > csrRowPtr[end_row[i]]) {
+				end_flag[i] = true;
+			}
+		}
+
+		// Cacluclate dimensions
+		for (int i = 0; i < ngpu; i++) {
+			dev_m[i] = end_row[i] - start_row[i] + 1;
+			dev_n[i] = n;
+		}
+
+		// for (int i = 0; i < ngpu; i++) {
+		// 	csrValA_partial[i] = new double[nnz_partial[i]];
+		// 	memcpy((void *)csrValA_partial[i], 
+		// 		   (void *)&csrValA[start_idx[i]], 
+		// 		   sizeof(double) * nnz_partial[i]);
+		// }
+
+		for (int i = 0; i < ngpu; i++) {
+			host_csrRowPtr[i] = new int [dev_m[i] + 1];
+			host_csrRowPtr[i][0] = 0;
+			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
+
+			for (int j = 1; j < dev_m[i]; i++) {
+				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
+			}
+			for (int j = 1; j < dev_m[i]; i++) {
+				host_csrRowPtr[i][j] -= start_idx[i];
+			}
+		}
+
+		// for (int i = 0; i < ngpu; i++) {
+		// 	csrColIndA_partial[i] = new double[nnz_partial[i]];
+		// 	memcpy((void *)csrColIndA_partial[i], 
+		// 		   (void *)&csrColIndA[start_idx[i]], 
+		// 		   sizeof(double) * nnz_partial[i]);
+		// }
+
+
 		
 		for (int d = 0; d < ngpu; d++) {
 
@@ -429,15 +379,20 @@ int test(int iban_gpus, double  r11, double r22){
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
-		double **    d_csrValA_partial = new double * [ngpu];
-		int    ** d_csrRowPtrA_partial = new int    * [ngpu];
-		int    ** d_csrColIndA_partial = new int    * [ngpu];
-
 		for (int i = 0; i < ngpu; i++) {
 			cudaSetDevice(d);
-			cudaMalloc((void**)d_csrValA_partial[i],    nnz_partial[i]     * sizeof(double));
-			cudaMalloc((void**)d_csrRowPtrA_partial[i], (m_partial[i] + 1) * sizeof(int)   );
-			cudaMalloc((void**)d_csrColIndA_partial[i], nnz_partial[i]     * sizeof(int)   );
+			cudaMalloc((void**)dev_csrVal[i],    dev_nnz[i]     * sizeof(double));
+			cudaMalloc((void**)dev_csrRowPtr[i], (dev_m[i] + 1) * sizeof(int)   );
+			cudaMalloc((void**)dev_csrColInd[i], dev_nnz[i]     * sizeof(int)   );
+		}
+
+		for (int d = 0; d < ngpu; d++) {
+			cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                     (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+			cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_csrVal[d], csrVal[csrRowPtr[start_row]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+
+			cudaMemcpy(dev_y[d], y[start_row],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
 		int repeat_test = 10;
@@ -448,10 +403,10 @@ int test(int iban_gpus, double  r11, double r22){
 			{
 				cudaSetDevice(d);				
 				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-											m_partial[d], n_partial[d], nnz_partial[d], 
-											alpha, descr[d], d_csrValA_partial[d], 
-											d_csrRowPtrA_partial[d], d_csrColIndA_partial[d], 
-											x[d],  beta, y[d]); 
+											dev_m[d], dev_n[d], dev_nnz[d], 
+											alpha, descr[d], dev_csrVal[d], 
+											dev_csrRowPtr[d], dev_csrColIndex[d], 
+											dev_x[d],  beta, dev_y[d]); 
 			}
 			for (int d = 0; d < deviceCount; ++d) 
 			{
