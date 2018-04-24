@@ -235,6 +235,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << endl;
 
 
+		cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
@@ -251,6 +252,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			printf("Memcpy from Host to Device failed"); 
 			return 1; 
 		} 
+
+		cout << "Done" << endl;
+
+		cout << "initialize cuSparse ...";
 		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
@@ -272,6 +277,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		} 	
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+		cout << "Done" << endl;
 
 	}
 	for (int d = 0; d < ngpu; ++d) 
@@ -280,6 +286,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cudaDeviceSynchronize();
 	}
 
+	cout << "Start computation ..." << endl;
 	int repeat_test = 10;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
