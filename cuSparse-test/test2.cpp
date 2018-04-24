@@ -107,8 +107,8 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < n; i++)
 	{
-		xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
-		yHostPtr[i] = 0.0;
+		x[i] = ((double) rand() / (RAND_MAX)); 
+		y[i] = 0.0;
 	}
 
 
