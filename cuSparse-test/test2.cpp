@@ -14,6 +14,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * x, double * beta,
 				 double * y,
 				 int ngpu);
+int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+				  double * csrVal, int * csrRowPtr, int * csrColInd, 
+				  double * x, double * beta,
+				  double * y,
+				  int ngpu);
 
 double get_time()
 {
@@ -132,7 +137,13 @@ int main(int argc, char *argv[]) {
 
 	double ONE = 1.0;
 	double ZERO = 0.0;
-	spMV_mgpu_v1(m, n, nnz, &ONE,
+	// spMV_mgpu_v1(m, n, nnz, &ONE,
+	// 			 cooVal, csrRowPtr, cooColIndex, 
+	// 			 x, &ZERO,
+	// 			 y,
+	// 			 ngpu);
+
+	spMV_mgpu_v2(m, n, nnz, &ONE,
 				 cooVal, csrRowPtr, cooColIndex, 
 				 x, &ZERO,
 				 y,
@@ -321,8 +332,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	printf("GFLOPS = %f\n", gflops);
 
 }
-/*
-void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+
+int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColInd, 
 				  double * x, double * beta,
 				  double * y,
@@ -392,6 +403,21 @@ void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int i = 0; i < ngpu; i++) {
 			dev_m[i] = end_row[i] - start_row[i] + 1;
 			dev_n[i] = n;
+		}
+
+		for (int i = 0; i < ngpu; i++) {
+			cout << "GPU" << i << ":"
+			cout << " start_idx: " << start_idx[d];
+			cout << " end_idx: " << end_idx[d];
+			cout << " start_row: " << start_row[d];
+			cout << " end_row: " << end_row[d];
+			cout << " start_flag: " << start_flag[d];
+			cout << " end_flag: " << end_flag[d];
+			cout << " dev_m: " << dev_m[d];
+			cout << " dev_n: " << dev_n[d];
+			cout << " dev_nnz: " << dev_nnz[d];
+			cout << endl;
+
 		}
 
 		// for (int i = 0; i < ngpu; i++) {
@@ -498,4 +524,4 @@ void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 	}
-*/
+
