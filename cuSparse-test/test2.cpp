@@ -266,9 +266,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		} 	
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
-
+*/
 	}
-
+/*
 	int repeat_test = 10;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
