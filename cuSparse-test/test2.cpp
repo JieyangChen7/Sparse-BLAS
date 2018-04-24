@@ -387,6 +387,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// True: imcomplete
 			if (start_idx[i] > csrRowPtr[start_row[i]]) {
 				start_flag[i] = true;
+			} else {
+				start_flag[i] = false;
 			}
 		}
 
@@ -402,6 +404,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// True: imcomplete
 			if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
 				end_flag[i] = true;
+			} else {
+				end_flag[i] = false;
 			}
 		}
 
@@ -517,38 +521,38 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cudaDeviceSynchronize();
-		}
+		// for (int d = 0; d < ngpu; ++d) 
+		// {
+		// 	cudaSetDevice(d);
+		// 	cudaDeviceSynchronize();
+		// }
 
-		int repeat_test = 10;
-		double start = get_time();
-		for (int i = 0; i < repeat_test; i++) 
-		{
-			for (int d = 0; d < ngpu; ++d) 
-			{
-				cudaSetDevice(d);				
-				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-											dev_m[d], dev_n[d], dev_nnz[d], 
-											alpha, descr[d], dev_csrVal[d], 
-											dev_csrRowPtr[d], dev_csrColIndex[d], 
-											dev_x[d],  beta, dev_y[d]); 
-			}
-			for (int d = 0; d < ngpu; ++d) 
-			{
-				cudaSetDevice(d);
-				cudaDeviceSynchronize();
-			}
-		}
-		double end = get_time();
+		// int repeat_test = 10;
+		// double start = get_time();
+		// for (int i = 0; i < repeat_test; i++) 
+		// {
+		// 	for (int d = 0; d < ngpu; ++d) 
+		// 	{
+		// 		cudaSetDevice(d);				
+		// 		status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+		// 									dev_m[d], dev_n[d], dev_nnz[d], 
+		// 									alpha, descr[d], dev_csrVal[d], 
+		// 									dev_csrRowPtr[d], dev_csrColIndex[d], 
+		// 									dev_x[d],  beta, dev_y[d]); 
+		// 	}
+		// 	for (int d = 0; d < ngpu; ++d) 
+		// 	{
+		// 		cudaSetDevice(d);
+		// 		cudaDeviceSynchronize();
+		// 	}
+		// }
+		// double end = get_time();
 
-		cout << start << "  " << end << endl;
+		// cout << start << "  " << end << endl;
 
-		double time = end - start;
+		// double time = end - start;
 
-		printf("cusparseDcsrmv time = %f s\n", time);
+		// printf("cusparseDcsrmv time = %f s\n", time);
 
 
 		
