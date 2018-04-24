@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 				 cooVal, csrRowPtr, cooColIndex, 
 				 x, &ZERO,
 				 y,
-				 2);
+				 4);
 
 
 }
