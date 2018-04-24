@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
 
 
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
-				 double * csrVal, int * csrRowPtr, int * csrColInd, 
+				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
 				 int ngpu){
