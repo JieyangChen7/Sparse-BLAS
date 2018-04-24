@@ -9,6 +9,12 @@
 #include "mmio.h"
 using namespace std;
 
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+				 double * csrVal, int * csrRowPtr, int * csrColInd, 
+				 double * x, double * beta,
+				 double * y,
+				 int ngpu);
+
 double get_time()
 {
 	struct timeval tp;
