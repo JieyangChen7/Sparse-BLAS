@@ -6,7 +6,7 @@
 #include "cusparse.h"
 #include <iostream>
 #include <cmath>
-#include "mmio.h"
+#include <mmio.h>
 using namespace std;
 
 int test(int iban_gpus, double r1, double r2);
