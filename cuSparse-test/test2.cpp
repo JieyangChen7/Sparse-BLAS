@@ -374,7 +374,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// Calculate the start and end row
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] >= start_idx[i]) {
+			while (csrRowPtr[curr_row] <= start_idx[i]) {
 				curr_row++;
 			}
 
@@ -389,7 +389,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] >= end_idx[i]) {
+			while (csrRowPtr[curr_row] <= end_idx[i]) {
 				curr_row++;
 			}
 
