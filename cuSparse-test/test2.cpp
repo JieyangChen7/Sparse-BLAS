@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     cooVal      = (double *) malloc(nnz * sizeof(double));
 
 
-    for (int i = 0; i < nz; i++) {
+    for (int i = 0; i < nnz; i++) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         cooRowIndex[i]--;  
         cooColIndex[i]--;
