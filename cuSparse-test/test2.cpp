@@ -61,19 +61,19 @@ int main(int argc, char *argv[]) {
 
     cout << "cooVal: ";
 	for (int i = 0; i < nnz; i++) {
-		cout << ooVal[i] << ", "
+		cout << cooVal[i] << ", ";
 	}
 	cout << endl;
 
 	cout << "cooRowIndex: ";
 	for (int i = 0; i < nnz; i++) {
-		cout << cooRowIndex[i] << ", "
+		cout << cooRowIndex[i] << ", ";
 	}
 	cout << endl;
 
 	cout << "cooColIndex: ";
 	for (int i = 0; i < nnz; i++) {
-		cout << cooColIndex[i] << ", "
+		cout << cooColIndex[i] << ", ";
 	}
 	cout << endl;
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 	cout << "counter: ";
 	for (int i = 0; i < m; i++) {
-		cout << counter[i] << ", "
+		cout << counter[i] << ", ";
 	}
 	cout << endl;
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 
 	cout << "csrRowPtr: ";
 	for (int i = 0; i < m; i++) {
-		cout << csrRowPtr[i] << ", "
+		cout << csrRowPtr[i] << ", ";
 	}
 	cout << endl;
 
