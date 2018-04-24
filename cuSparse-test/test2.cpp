@@ -191,7 +191,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row + 1] - csrRowPtr[start_row];
 
-		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]" << dev_n[d] << ", dev_nnz[d]" << dev_nnz[d] << endl;
+		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
