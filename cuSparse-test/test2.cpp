@@ -124,12 +124,20 @@ int main(int argc, char *argv[]) {
 	    //       device, deviceProp.major, deviceProp.minor);
 	}
 
+	double ONE = 1.0;
+	double ZERO = 0.0;
+	spMV_mgpu_v1(m, n, nnz, &ONE,
+				 cooVal, csrRowPtr, cooColIndex, 
+				 x, &ZERO,
+				 y,
+				 2);
+
 
 }
 
 
 
-/*
+
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColInd, 
 				 double * x, double * beta,
@@ -162,18 +170,22 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	double ** dev_x = new double * [ngpu];
 	double ** dev_y = new double * [ngpu];
 
-
-	
 	for (int d; d < ngpu; d++){
 
 		cudaSetDevice(d);
 
+		cout << "GPU " << d << ":" << endl;
+
 		int start_row = floor((d)     * m / ngpu);
 		int end_row   = floor((d + 1) * m / ngpu);
+
+		cout << "start_row: " << start_row << ", " << "end_row: "<< end_row << endl;
 
 		dev_m[d]   = end_row - start_row + 1;
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row + 1] - csrRowPtr[start_row];
+
+		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]" << dev_n[d] << ", dev_nnz[d]" << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -200,11 +212,23 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			   (void *)&csrRowPtr[start_row], 
 			   (dev_m[d] + 1) * sizeof(int));
 
+		cout << "csrRowPtr (before): ";
+		for (int i = 0; i <= dev_m[d]; i++) {
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
+
 		for (int i = 0; i < dev_m[d] + 1; i++) {
 			host_csrRowPtr[d][i] -= csrRowPtr[start_row];
 		}
 
+		cout << "csrRowPtr (after): ";
+		for (int i = 0; i <= dev_m[d]; i++) {
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
 
+/*
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                     (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d], csrVal[csrRowPtr[start_row]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
@@ -280,9 +304,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
-
+*/
 }
-
+/*
 void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColInd, 
 				  double * x, double * beta,
