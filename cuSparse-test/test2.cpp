@@ -25,7 +25,7 @@ double get_time()
 
 int main(int argc, char *argv[]) {
 	cout << "asd";
-
+	int ngpu = atoi(argv[2]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 				 cooVal, csrRowPtr, cooColIndex, 
 				 x, &ZERO,
 				 y,
-				 4);
+				 ngpu);
 
 
 }
