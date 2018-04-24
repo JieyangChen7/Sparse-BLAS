@@ -47,14 +47,19 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    cout << "test1" << endl;
+
     if (mm_read_banner(f, &matcode) != 0) {
         printf("Could not process Matrix Market banner.\n");
         exit(1);
     }
 
+    cout << "test2" << endl;
+
     if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
         exit(1);
     }
+
 
     cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
