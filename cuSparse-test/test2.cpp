@@ -446,7 +446,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			cout << "host_csrRowPtr: ";
 			for (int j = 0; j <= dev_m[i]; j++) {
-				cout << host_csrRowPtr[i][j] << ", "
+				cout << host_csrRowPtr[i][j] << ", ";
 			}
 			cout << endl;
 
@@ -456,7 +456,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			cout << "host_csrRowPtr: ";
 			for (int j = 0; j <= dev_m[i]; j++) {
-				cout << host_csrRowPtr[i][j] << ", "
+				cout << host_csrRowPtr[i][j] << ", ";
 			}
 			cout << endl;
 		}
