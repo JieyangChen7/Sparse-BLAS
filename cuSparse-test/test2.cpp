@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	cout << "csrRowPtr: ";
-	for (int i = 0; i < m; i++) {
+	for (int i = 0; i <= m; i++) {
 		cout << csrRowPtr[i] << ", ";
 	}
 	cout << endl;
