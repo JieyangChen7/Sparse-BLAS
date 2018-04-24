@@ -348,18 +348,18 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		int curr_row;
 
-		double ** dev_csrVal     = new double * [ngpu];
-		int    ** host_csrRowPtr = new int    * [ngpu];
-		int    ** dev_csrRowPtr  = new int    * [ngpu];
-		int    ** dev_csrColInd  = new int    * [ngpu];
-		int    *         dev_nnz = new int      [ngpu];
-		int    *           dev_m = new int      [ngpu];
-		int    *           dev_n = new int      [ngpu];
+		double ** dev_csrVal      = new double * [ngpu];
+		int    ** host_csrRowPtr  = new int    * [ngpu];
+		int    ** dev_csrRowPtr   = new int    * [ngpu];
+		int    ** dev_csrColIndex = new int    * [ngpu];
+		int    *         dev_nnz  = new int      [ngpu];
+		int    *           dev_m  = new int      [ngpu];
+		int    *           dev_n  = new int      [ngpu];
 
 		double ** dev_x = new double * [ngpu];
 		double ** dev_y = new double * [ngpu];
 
-		cudaStream_t       * stream = new cudaStream_t [deviceCount];
+		cudaStream_t       * stream = new cudaStream_t [ngpu];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
 		cusparseHandle_t   * handle = new cusparseHandle_t[ngpu];
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
@@ -479,11 +479,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
-		for (int i = 0; i < ngpu; i++) {
+		for (int d = 0; d < ngpu; d++) {
 			cudaSetDevice(d);
-			cudaMalloc((void**)dev_csrVal[i],    dev_nnz[i]     * sizeof(double));
-			cudaMalloc((void**)dev_csrRowPtr[i], (dev_m[i] + 1) * sizeof(int)   );
-			cudaMalloc((void**)dev_csrColIndex[i], dev_nnz[i]     * sizeof(int)   );
+			cudaMalloc((void**)dev_csrVal[d],    dev_nnz[d]     * sizeof(double));
+			cudaMalloc((void**)dev_csrRowPtr[d], (dev_m[d] + 1) * sizeof(int)   );
+			cudaMalloc((void**)dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
 			cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
 		    cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
 		}
@@ -491,9 +491,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int d = 0; d < ngpu; d++) {
 			cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                     (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 			cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
-			cudaMemcpy(dev_csrVal[d], csrVal[csrRowPtr[start_row]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_csrVal[d], &csrVal[csrRowPtr[start_row]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
 
-			cudaMemcpy(dev_y[d], y[start_row],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_y[d], &y[start_row],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 			cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
