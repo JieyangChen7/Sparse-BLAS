@@ -176,7 +176,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	double ** dev_x = new double * [ngpu];
 	double ** dev_y = new double * [ngpu];
 
-	for (int d; d < ngpu; d++){
+	for (int d = 0; d < ngpu; d++){
 
 		cudaSetDevice(d);
 
