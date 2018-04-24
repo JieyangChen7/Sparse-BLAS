@@ -286,21 +286,22 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cudaDeviceSynchronize();
 	}
 
-	cout << "Start computation ..." << endl;
-	int repeat_test = 10;
+	cout << "Start computation ... " << endl;
+	int repeat_test = 1;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
 	{
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
-	
+			cout << d << "->";
 			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
 										dev_m[d], dev_n[d], dev_nnz[d], 
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
 		}
+		cout << endl;
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
