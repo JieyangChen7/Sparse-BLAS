@@ -47,14 +47,12 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    cout << "test1" << endl;
 
     if (mm_read_banner(f, &matcode) != 0) {
         printf("Could not process Matrix Market banner.\n");
         exit(1);
     }
 
-    cout << "test2" << endl;
 
     if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
         exit(1);
@@ -148,11 +146,11 @@ int main(int argc, char *argv[]) {
 	// 			 y,
 	// 			 ngpu);
 
-	// spMV_mgpu_v2(m, n, nnz, &ONE,
-	// 			 cooVal, csrRowPtr, cooColIndex, 
-	// 			 x, &ZERO,
-	// 			 y,
-	// 			 ngpu);
+	spMV_mgpu_v2(m, n, nnz, &ONE,
+				 cooVal, csrRowPtr, cooColIndex, 
+				 x, &ZERO,
+				 y,
+				 ngpu);
 
 
 }
@@ -435,6 +433,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// 		   sizeof(double) * nnz_partial[i]);
 		// }
 
+
+
 		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
 			host_csrRowPtr[i][0] = 0;
@@ -443,9 +443,22 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			for (int j = 1; j < dev_m[i]; i++) {
 				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
 			}
+
+			cout << "host_csrRowPtr: ";
+			for (int j = 0; j <= dev_m[i]; j++) {
+				cout << host_csrRowPtr[i][j] << ", "
+			}
+			cout << endl;
+
 			for (int j = 1; j < dev_m[i]; i++) {
 				host_csrRowPtr[i][j] -= start_idx[i];
 			}
+
+			cout << "host_csrRowPtr: ";
+			for (int j = 0; j <= dev_m[i]; j++) {
+				cout << host_csrRowPtr[i][j] << ", "
+			}
+			cout << endl;
 		}
 
 		
