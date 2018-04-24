@@ -26,7 +26,8 @@ double get_time()
 }
 
 int main(int argc, char *argv[]) {
-
+	cout << "asd";
+/*
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
     }
 
     cout << "m: " << m << " n: " << n << "nnz: " << nnz << endl;
-/*
+
     cooRowIndex = (int *) malloc(nnz * sizeof(int));
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
