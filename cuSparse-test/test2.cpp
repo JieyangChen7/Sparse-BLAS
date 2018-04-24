@@ -397,7 +397,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			// Mark imcomplete rows
 			// True: imcomplete
-			if (end_idx[i] > csrRowPtr[end_row[i]]) {
+			if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
 				end_flag[i] = true;
 			}
 		}
