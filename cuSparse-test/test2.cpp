@@ -37,6 +37,7 @@ int main(int argc, char *argv[]) {
     double * cooVal;
     int * csrRowPtr;
 
+    cout << "loading input matrix from " << filename << endl;
 
     if ((f = fopen(filename, "r")) == NULL) {
         exit(1);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
 
     cout << "m: " << m << " n: " << n << "nnz: " << nnz << endl;
-
+/*
     cooRowIndex = (int *) malloc(nnz * sizeof(int));
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < nz; i++) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
-        cooRowIndex[i]--;  /* adjust from 1-based to 0-based */
+        cooRowIndex[i]--;  
         cooColIndex[i]--;
     }
 
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
 	    //printf("Device %d has compute capability %d.%d.\n",
 	    //       device, deviceProp.major, deviceProp.minor);
 	}
-
+*/
 
 }
 
