@@ -301,14 +301,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 	}
 	double end = get_time();
-
-	cout << start << "  " << end << endl;
-
 	double time = end - start;
 
 	printf("cusparseDcsrmv time = %f s\n", time);
 	
-
 	long long flop = nnz * 2;
 	flop *= repeat_test;
 	double gflop = (double)flop/1e9;
