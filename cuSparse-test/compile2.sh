@@ -1,2 +1,2 @@
 git pull github master
-nvcc -o a.out test2.cpp mmio.c -I./  -lcusparse
+nvcc test2.cpp -I./  -lcusparse

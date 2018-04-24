@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <ctime>
 #include <sys/time.h>
-//#include <cuda_runtime.h>
-//#include "cusparse.h"
+#include <cuda_runtime.h>
+#include "cusparse.h"
 #include <iostream>
 #include <cmath>
 #include "mmio.h"
