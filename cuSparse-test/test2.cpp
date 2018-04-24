@@ -443,6 +443,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
+		
+
 		// for (int i = 0; i < ngpu; i++) {
 		// 	csrColIndA_partial[i] = new double[nnz_partial[i]];
 		// 	memcpy((void *)csrColIndA_partial[i], 
