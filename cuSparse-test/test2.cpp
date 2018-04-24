@@ -51,6 +51,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    cout << "m: " << m << " n: " << n << "nnz: " << nnz << endl;
+
     cooRowIndex = (int *) malloc(nnz * sizeof(int));
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
