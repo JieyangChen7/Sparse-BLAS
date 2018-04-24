@@ -204,7 +204,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			(cudaStat4[d] != cudaSuccess) || 
 			(cudaStat5[d] != cudaSuccess)) 
 		{ 
-			CLEANUP("Device malloc failed");
+			printf("Device malloc failed");
 			return 1; 
 		} 
 
@@ -242,26 +242,26 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		   	(cudaStat4[d] != cudaSuccess) ||
 		    (cudaStat5[d] != cudaSuccess)) 
 		{ 
-			CLEANUP("Memcpy from Host to Device failed"); 
+			printf("Memcpy from Host to Device failed"); 
 			return 1; 
 		} 
 		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
-			CLEANUP("CUSPARSE Library initialization failed");
+			printf("CUSPARSE Library initialization failed");
 			return 1; 
 		} 
 		status[d] = cusparseSetStream(handle[d], stream[d]);
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
-			CLEANUP("Stream bindind failed");
+			printf("Stream bindind failed");
 			return 1;
 		} 
 		status[d] = cusparseCreateMatDescr(&descr[d]);
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 		{ 
-			CLEANUP("Matrix descriptor initialization failed");
+			printf("Matrix descriptor initialization failed");
 			return 1;
 		} 	
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
