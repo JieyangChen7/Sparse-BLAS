@@ -505,21 +505,21 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		for (int d = 0; d < ngpu; d++) {
 			cudaSetDevice(d);
-			cudaMalloc((void**)dev_csrVal[d],    dev_nnz[d]     * sizeof(double));
-			cudaMalloc((void**)dev_csrRowPtr[d], (dev_m[d] + 1) * sizeof(int)   );
+			cudaMalloc((void**)dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
+			cudaMalloc((void**)dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int)   );
 			cudaMalloc((void**)dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
-			cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
-		    cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
+			cudaMalloc((void**)&dev_x[d],          dev_n[d]       * sizeof(double)); 
+		    cudaMalloc((void**)&dev_y[d],          dev_m[d]       * sizeof(double)); 
 		}
 
-		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                     (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-			cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
-			cudaMemcpy(dev_csrVal[d], &csrVal[csrRowPtr[start_row[d]]],             (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaMemcpy(dev_csrRowPtr[d], host_csrRowPtr[d],                       (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+		// 	cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+		// 	cudaMemcpy(dev_csrVal[d], &csrVal[csrRowPtr[start_row[d]]],           (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
 
-			cudaMemcpy(dev_y[d], &y[start_row[d]],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
-			cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
-		}
+		// 	cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		// 	cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		// }
 
 		// for (int d = 0; d < ngpu; ++d) 
 		// {
