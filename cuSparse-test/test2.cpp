@@ -8,13 +8,6 @@
 #include <cmath>
 #include "mmio.h"
 using namespace std;
-#define CLEANUP(s) \
-	do { \
-		 printf ("%s\n", s); \
-		 cudaDeviceReset(); \
-		 fflush (stdout); \
-	} while (0)
-
 
 int test(int iban_gpus, double r1, double r2);
 double get_time()
@@ -101,7 +94,7 @@ int main(int argc, char *argv[]) {
 
 
 
-
+/*
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColInd, 
 				 double * x, double * beta,
@@ -431,4 +424,4 @@ void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 	}
-
+*/
