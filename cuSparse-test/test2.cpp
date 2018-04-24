@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
 	csrRowPtr[0] = 0;
 	for (int i = 1; i <= m; i++) {
-		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i];
+		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
 	}
 
 	cout << "csrRowPtr: ";
