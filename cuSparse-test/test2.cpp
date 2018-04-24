@@ -9,7 +9,6 @@
 #include "mmio.h"
 using namespace std;
 
-int test(int iban_gpus, double r1, double r2);
 double get_time()
 {
 	struct timeval tp;
