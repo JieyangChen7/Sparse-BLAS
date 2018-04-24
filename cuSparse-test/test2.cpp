@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    cout << "m: " << m << " n: " << n << "nnz: " << nnz << endl;
-/*
+    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+
     cooRowIndex = (int *) malloc(nnz * sizeof(int));
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
@@ -58,15 +58,49 @@ int main(int argc, char *argv[]) {
         cooColIndex[i]--;
     }
 
+
+    cout << "cooVal: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << ooVal[i] << ", "
+	}
+	cout << endl;
+
+	cout << "cooRowIndex: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooRowIndex[i] << ", "
+	}
+	cout << endl;
+
+	cout << "cooColIndex: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooColIndex[i] << ", "
+	}
+	cout << endl;
+
+
     csrRowPtr = (int *) malloc((n+1) * sizeof(int));
     int * counter = new int[m];
 	for (int i = 0; i < nnz; i++) {
 		counter[cooRowIndex[i]]++;
 	}
+
+	cout << "counter: ";
+	for (int i = 0; i < m; i++) {
+		cout << counter[i] << ", "
+	}
+	cout << endl;
+
+
 	csrRowPtr[0] = 0;
 	for (int i = 1; i <= m; i++) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i];
 	}
+
+	cout << "csrRowPtr: ";
+	for (int i = 0; i < m; i++) {
+		cout << csrRowPtr[i] << ", "
+	}
+	cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y = (double *)malloc(n * sizeof(double)); 
@@ -76,6 +110,8 @@ int main(int argc, char *argv[]) {
 		xHostPtr[i] = ((double) rand() / (RAND_MAX)); 
 		yHostPtr[i] = 0.0;
 	}
+
+
 
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
@@ -87,7 +123,7 @@ int main(int argc, char *argv[]) {
 	    //printf("Device %d has compute capability %d.%d.\n",
 	    //       device, deviceProp.major, deviceProp.minor);
 	}
-*/
+
 
 }
 
