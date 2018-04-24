@@ -73,23 +73,23 @@ int main(int argc, char *argv[]) {
     }
 
 
-    cout << "cooVal: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooVal[i] << ", ";
-	}
-	cout << endl;
+ //    cout << "cooVal: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooVal[i] << ", ";
+	// }
+	// cout << endl;
 
-	cout << "cooRowIndex: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooRowIndex[i] << ", ";
-	}
-	cout << endl;
+	// cout << "cooRowIndex: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooRowIndex[i] << ", ";
+	// }
+	// cout << endl;
 
-	cout << "cooColIndex: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooColIndex[i] << ", ";
-	}
-	cout << endl;
+	// cout << "cooColIndex: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooColIndex[i] << ", ";
+	// }
+	// cout << endl;
 
 
     csrRowPtr = (int *) malloc((n+1) * sizeof(int));
@@ -98,11 +98,11 @@ int main(int argc, char *argv[]) {
 		counter[cooRowIndex[i]]++;
 	}
 
-	cout << "counter: ";
-	for (int i = 0; i < m; i++) {
-		cout << counter[i] << ", ";
-	}
-	cout << endl;
+	// cout << "counter: ";
+	// for (int i = 0; i < m; i++) {
+	// 	cout << counter[i] << ", ";
+	// }
+	// cout << endl;
 
 
 	csrRowPtr[0] = 0;
@@ -110,11 +110,11 @@ int main(int argc, char *argv[]) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
 	}
 
-	cout << "csrRowPtr: ";
-	for (int i = 0; i <= m; i++) {
-		cout << csrRowPtr[i] << ", ";
-	}
-	cout << endl;
+	// cout << "csrRowPtr: ";
+	// for (int i = 0; i <= m; i++) {
+	// 	cout << csrRowPtr[i] << ", ";
+	// }
+	// cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y = (double *)malloc(n * sizeof(double)); 
@@ -140,11 +140,11 @@ int main(int argc, char *argv[]) {
 
 	double ONE = 1.0;
 	double ZERO = 0.0;
-	// spMV_mgpu_v1(m, n, nnz, &ONE,
-	// 			 cooVal, csrRowPtr, cooColIndex, 
-	// 			 x, &ZERO,
-	// 			 y,
-	// 			 ngpu);
+	spMV_mgpu_v1(m, n, nnz, &ONE,
+				 cooVal, csrRowPtr, cooColIndex, 
+				 x, &ZERO,
+				 y,
+				 ngpu);
 
 	spMV_mgpu_v2(m, n, nnz, &ONE,
 				 cooVal, csrRowPtr, cooColIndex, 
@@ -301,7 +301,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	}
 
 	cout << "Start computation ... " << endl;
-	int repeat_test = 1;
+	int repeat_test = 10;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
 	{
@@ -554,7 +554,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		printf("cusparseDcsrmv time = %f s\n", time);
 
-
+		long long flop = nnz * 2;
+		flop *= repeat_test;
+		double gflop = (double)flop/1e9;
+		printf("gflop = %f\n", gflop);
+		double gflops = gflop / time;
+		printf("GFLOPS = %f\n", gflops);
 		
 
 
