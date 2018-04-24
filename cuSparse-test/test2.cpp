@@ -444,9 +444,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			host_csrRowPtr[i][0] = 0;
 			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
 
-			// for (int j = 1; j < dev_m[i]; i++) {
-			// 	host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
-			// }
+			for (int j = 1; j < dev_m[i]; i++) {
+				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
+			}
 
 			cout << "host_csrRowPtr: ";
 			for (int j = 0; j <= dev_m[i]; j++) {
@@ -454,9 +454,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 			cout << endl;
 
-			// for (int j = 1; j < dev_m[i]; i++) {
-			// 	host_csrRowPtr[i][j] -= start_idx[i];
-			// }
+			for (int j = 1; j < dev_m[i]; i++) {
+				host_csrRowPtr[i][j] -= start_idx[i];
+			}
 
 			cout << "host_csrRowPtr: ";
 			for (int j = 0; j <= dev_m[i]; j++) {
