@@ -10,12 +10,12 @@
 using namespace std;
 
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
-				 double * csrVal, int * csrRowPtr, int * csrColInd, 
+				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
 				 int ngpu);
 int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
-				  double * csrVal, int * csrRowPtr, int * csrColInd, 
+				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
 				  int ngpu);
@@ -334,27 +334,30 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 }
 
 int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
-				  double * csrVal, int * csrRowPtr, int * csrColInd, 
+				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
 				  int ngpu){
 
-		int 	* start_idx  = new int[ngpu];
-		int 	* end_idx    = new int[ngpu];
-		int 	* start_row  = new int[ngpu];
-		int 	* end_row    = new int[ngpu];
-		boolean * start_flag = new boolean[ngpu];
-		boolean * end_flag   = new boolean[ngpu];
+		int  * start_idx  = new int[ngpu];
+		int  * end_idx    = new int[ngpu];
+		int  * start_row  = new int[ngpu];
+		int  * end_row    = new int[ngpu];
+		bool * start_flag = new bool[ngpu];
+		bool * end_flag   = new bool[ngpu];
 
 		int curr_row;
 
 		double ** dev_csrVal     = new double * [ngpu];
-		double ** host_csrRowPtr = new int    * [ngpu];
+		int    ** host_csrRowPtr = new int    * [ngpu];
 		int    ** dev_csrRowPtr  = new int    * [ngpu];
 		int    ** dev_csrColInd  = new int    * [ngpu];
 		int    *         dev_nnz = new int      [ngpu];
 		int    *           dev_m = new int      [ngpu];
 		int    *           dev_n = new int      [ngpu];
+
+		double ** dev_x = new double * [ngpu];
+		double ** dev_y = new double * [ngpu];
 
 		cudaStream_t       * stream = new cudaStream_t [deviceCount];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
@@ -405,8 +408,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			dev_n[i] = n;
 		}
 
-		for (int i = 0; i < ngpu; i++) {
-			cout << "GPU" << i << ":"
+		for (int d = 0; d < ngpu; d++) {
+			cout << "GPU" << d << ":";
 			cout << " start_idx: " << start_idx[d];
 			cout << " end_idx: " << end_idx[d];
 			cout << " start_row: " << start_row[d];
@@ -457,19 +460,19 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			status[d] = cusparseCreate(&(handle[d])); 
 			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 			{ 
-				CLEANUP("CUSPARSE Library initialization failed");
+				printf("CUSPARSE Library initialization failed");
 				return 1; 
 			} 
 			status[d] = cusparseSetStream(handle[d], stream[d]);
 			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 			{ 
-				CLEANUP("Stream bindind failed");
+				printf("Stream bindind failed");
 				return 1;
 			} 
 			status[d] = cusparseCreateMatDescr(&descr[d]);
 			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
 			{ 
-				CLEANUP("Matrix descriptor initialization failed");
+				printf("Matrix descriptor initialization failed");
 				return 1;
 			} 	
 			cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
@@ -480,7 +483,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaSetDevice(d);
 			cudaMalloc((void**)dev_csrVal[i],    dev_nnz[i]     * sizeof(double));
 			cudaMalloc((void**)dev_csrRowPtr[i], (dev_m[i] + 1) * sizeof(int)   );
-			cudaMalloc((void**)dev_csrColInd[i], dev_nnz[i]     * sizeof(int)   );
+			cudaMalloc((void**)dev_csrColIndex[i], dev_nnz[i]     * sizeof(int)   );
+			cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
+		    cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
 		}
 
 		for (int d = 0; d < ngpu; d++) {
@@ -505,7 +510,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 											dev_csrRowPtr[d], dev_csrColIndex[d], 
 											dev_x[d],  beta, dev_y[d]); 
 			}
-			for (int d = 0; d < deviceCount; ++d) 
+			for (int d = 0; d < ngpu; ++d) 
 			{
 				cudaSetDevice(d);
 				cudaDeviceSynchronize();
