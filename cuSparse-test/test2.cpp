@@ -274,7 +274,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
 	}
-/*
+
 	int repeat_test = 10;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
@@ -310,7 +310,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
-*/
+
 }
 /*
 void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
