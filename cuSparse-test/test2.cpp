@@ -256,21 +256,21 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << "host_csrRowPtr[d] = ";
 		for (int i = 0; i < dev_m[d] + 1; ++i)
 		{
-			cout << host_csrRowPtr[d] << ", "
+			cout << host_csrRowPtr[d] << ", ";
 		}
 		cout << endl;
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
 		cout << "csrColIndex[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
-			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", "
+			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
 		}
 		cout << endl;
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
 		cout << "csrVal[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
-			cout << csrVal[csrRowPtr[start_row[d]]+i] << ", "
+			cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
 		}
 		cout << endl;
 
@@ -282,7 +282,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << "x = ";
 		for (int i = 0; i < dev_n[d]; ++i)
 		{
-			cout << x[i] << ", "
+			cout << x[i] << ", ";
 		}
 		cout << endl;
 
