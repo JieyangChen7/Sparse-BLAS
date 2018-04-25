@@ -171,11 +171,11 @@ int main(int argc, char *argv[]) {
 				 y,
 				 ngpu);
 
-	// spMV_mgpu_v2(m, n, nnz, &ONE,
-	// 			 cooVal, csrRowPtr, cooColIndex, 
-	// 			 x, &ZERO,
-	// 			 y,
-	// 			 ngpu);
+	spMV_mgpu_v2(m, n, nnz, &ONE,
+				 cooVal, csrRowPtr, cooColIndex, 
+				 x, &ZERO,
+				 y,
+				 ngpu);
 
 
 }
@@ -366,8 +366,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	//cout << "Start computation ... " << endl;
 	 int repeat_test = 10;
 	 double start = get_time();
-	// for (int i = 0; i < repeat_test; i++) 
-	// {
+	 for (int i = 0; i < repeat_test; i++) 
+	 {
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
@@ -386,34 +386,34 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				printf("Memcpy from Host to Device failed"); 
 				return 1; 
 			} 
-		// }
-		// for (int d = 0; d < ngpu; ++d) 
-		// {
-		// 	cudaSetDevice(d);
-		// 	cudaDeviceSynchronize();
-		// }
+		}
+		for (int d = 0; d < ngpu; ++d) 
+		{
+			cudaSetDevice(d);
+			cudaDeviceSynchronize();
+		}
 
 
 	}
 
 
 
-	// double end = get_time();
-	// double time = end - start;
+	double end = get_time();
+	double time = end - start;
 
-	// printf("spMV_mgpu_v1 time = %f s\n", time);
+	printf("spMV_mgpu_v1 time = %f s\n", time);
 	
-	// long long flop = nnz * 2;
-	// flop *= repeat_test;
-	// double gflop = (double)flop/1e9;
-	// printf("gflop = %f\n", gflop);
-	// double gflops = gflop / time;
-	// printf("GFLOPS = %f\n", gflops);
-	// // cout << "y = [";
-	// // for(int i = 0; i < m; i++) {
-	// // 	cout << y[i] << ", ";
-	// // }
-	// // cout << "]" << endl;
+	long long flop = nnz * 2;
+	flop *= repeat_test;
+	double gflop = (double)flop/1e9;
+	printf("gflop = %f\n", gflop);
+	double gflops = gflop / time;
+	printf("GFLOPS = %f\n", gflops);
+	cout << "y = [";
+	for(int i = 0; i < m; i++) {
+		cout << y[i] << ", ";
+	}
+	cout << "]" << endl;
 
 }
 
@@ -449,215 +449,215 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cusparseHandle_t   * handle = new cusparseHandle_t[ngpu];
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
 
-		// // Calculate the start and end index
-		// for (int i = 0; i < ngpu; i++) {
-		// 	start_idx[i]   = floor((i)     * nnz / ngpu);
-		// 	end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
-		// 	dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
-		// }
+		// Calculate the start and end index
+		for (int i = 0; i < ngpu; i++) {
+			start_idx[i]   = floor((i)     * nnz / ngpu);
+			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
+			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
+		}
 
-		// // Calculate the start and end row
-		// curr_row = 0;
-		// for (int i = 0; i < ngpu; i++) {
-		// 	while (csrRowPtr[curr_row] <= start_idx[i]) {
-		// 		curr_row++;
-		// 	}
+		// Calculate the start and end row
+		curr_row = 0;
+		for (int i = 0; i < ngpu; i++) {
+			while (csrRowPtr[curr_row] <= start_idx[i]) {
+				curr_row++;
+			}
 
-		// 	start_row[i] = curr_row - 1; 
+			start_row[i] = curr_row - 1; 
 
-		// 	// Mark imcomplete rows
-		// 	// True: imcomplete
-		// 	if (start_idx[i] > csrRowPtr[start_row[i]]) {
-		// 		start_flag[i] = true;
-		// 	} else {
-		// 		start_flag[i] = false;
-		// 	}
-		// }
+			// Mark imcomplete rows
+			// True: imcomplete
+			if (start_idx[i] > csrRowPtr[start_row[i]]) {
+				start_flag[i] = true;
+			} else {
+				start_flag[i] = false;
+			}
+		}
 
-		// curr_row = 0;
-		// for (int i = 0; i < ngpu; i++) {
-		// 	while (csrRowPtr[curr_row] <= end_idx[i]) {
-		// 		curr_row++;
-		// 	}
+		curr_row = 0;
+		for (int i = 0; i < ngpu; i++) {
+			while (csrRowPtr[curr_row] <= end_idx[i]) {
+				curr_row++;
+			}
 
-		// 	end_row[i] = curr_row - 1;
+			end_row[i] = curr_row - 1;
 
-		// 	// Mark imcomplete rows
-		// 	// True: imcomplete
-		// 	if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
-		// 		end_flag[i] = true;
-		// 	} else {
-		// 		end_flag[i] = false;
-		// 	}
-		// }
+			// Mark imcomplete rows
+			// True: imcomplete
+			if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
+				end_flag[i] = true;
+			} else {
+				end_flag[i] = false;
+			}
+		}
 
-		// // Cacluclate dimensions
-		// for (int i = 0; i < ngpu; i++) {
-		// 	dev_m[i] = end_row[i] - start_row[i] + 1;
-		// 	dev_n[i] = n;
-		// }
+		// Cacluclate dimensions
+		for (int i = 0; i < ngpu; i++) {
+			dev_m[i] = end_row[i] - start_row[i] + 1;
+			dev_n[i] = n;
+		}
 
-		// for (int i = 0; i < ngpu; i++) {
-		// 	host_y[i] = new double[dev_m[i]];
-		// }
+		for (int i = 0; i < ngpu; i++) {
+			host_y[i] = new double[dev_m[i]];
+		}
 
-		// for (int d = 0; d < ngpu; d++) {
-		// 	cout << "GPU" << d << ":" << endl;
-		// 	cout << " start_idx: " << start_idx[d] << ", ";
-		// 	cout << " end_idx: " << end_idx[d] << ", ";
-		// 	cout << " start_row: " << start_row[d] << ", ";
-		// 	cout << " end_row: " << end_row[d] << ", ";
-		// 	cout << " start_flag: " << start_flag[d] << ", ";
-		// 	cout << " end_flag: " << end_flag[d] << ", ";
-		// 	cout << endl;
-		// 	cout << " dev_m: " << dev_m[d] << ", ";
-		// 	cout << " dev_n: " << dev_n[d] << ", ";
-		// 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
-		// 	cout << endl;
+		for (int d = 0; d < ngpu; d++) {
+			cout << "GPU" << d << ":" << endl;
+			cout << " start_idx: " << start_idx[d] << ", ";
+			cout << " end_idx: " << end_idx[d] << ", ";
+			cout << " start_row: " << start_row[d] << ", ";
+			cout << " end_row: " << end_row[d] << ", ";
+			cout << " start_flag: " << start_flag[d] << ", ";
+			cout << " end_flag: " << end_flag[d] << ", ";
+			cout << endl;
+			cout << " dev_m: " << dev_m[d] << ", ";
+			cout << " dev_n: " << dev_n[d] << ", ";
+			cout << " dev_nnz: " << dev_nnz[d] << ", ";
+			cout << endl;
 
-		// }
+		}
 
-		// for (int i = 0; i < ngpu; i++) {
-		// 	csrValA_partial[i] = new double[nnz_partial[i]];
-		// 	memcpy((void *)csrValA_partial[i], 
-		// 		   (void *)&csrValA[start_idx[i]], 
-		// 		   sizeof(double) * nnz_partial[i]);
-		// }
+		for (int i = 0; i < ngpu; i++) {
+			csrValA_partial[i] = new double[nnz_partial[i]];
+			memcpy((void *)csrValA_partial[i], 
+				   (void *)&csrValA[start_idx[i]], 
+				   sizeof(double) * nnz_partial[i]);
+		}
 
 
 
-		// for (int i = 0; i < ngpu; i++) {
-		// 	host_csrRowPtr[i] = new int [dev_m[i] + 1];
-		// 	host_csrRowPtr[i][0] = 0;
-		// 	host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
+		for (int i = 0; i < ngpu; i++) {
+			host_csrRowPtr[i] = new int [dev_m[i] + 1];
+			host_csrRowPtr[i][0] = 0;
+			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
 
-		// 	for (int j = 1; j < dev_m[i]; j++) {
-		// 		host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
-		// 	}
+			for (int j = 1; j < dev_m[i]; j++) {
+				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
+			}
 
-		// 	// cout << "host_csrRowPtr: ";
-		// 	// for (int j = 0; j <= dev_m[i]; j++) {
-		// 	// 	cout << host_csrRowPtr[i][j] << ", ";
-		// 	// }
-		// 	// cout << endl;
+			// cout << "host_csrRowPtr: ";
+			// for (int j = 0; j <= dev_m[i]; j++) {
+			// 	cout << host_csrRowPtr[i][j] << ", ";
+			// }
+			// cout << endl;
 
-		// 	for (int j = 1; j < dev_m[i]; j++) {
-		// 		host_csrRowPtr[i][j] -= start_idx[i];
-		// 	}
+			for (int j = 1; j < dev_m[i]; j++) {
+				host_csrRowPtr[i][j] -= start_idx[i];
+			}
 
-		// 	cout << "host_csrRowPtr: ";
-		// 	for (int j = 0; j <= dev_m[i]; j++) {
-		// 		cout << host_csrRowPtr[i][j] << ", ";
-		// 	}
-		// 	cout << endl;
-		// }
-
-		
-
-		// for (int i = 0; i < ngpu; i++) {
-		// 	csrColIndA_partial[i] = new double[nnz_partial[i]];
-		// 	memcpy((void *)csrColIndA_partial[i], 
-		// 		   (void *)&csrColIndA[start_idx[i]], 
-		// 		   sizeof(double) * nnz_partial[i]);
-		// }
-
+			cout << "host_csrRowPtr: ";
+			for (int j = 0; j <= dev_m[i]; j++) {
+				cout << host_csrRowPtr[i][j] << ", ";
+			}
+			cout << endl;
+		}
 
 		
-		// for (int d = 0; d < ngpu; d++) {
 
-		// 	cudaSetDevice(d);
- 	// 		cudaStreamCreate(&(stream[d]));
+		for (int i = 0; i < ngpu; i++) {
+			csrColIndA_partial[i] = new double[nnz_partial[i]];
+			memcpy((void *)csrColIndA_partial[i], 
+				   (void *)&csrColIndA[start_idx[i]], 
+				   sizeof(double) * nnz_partial[i]);
+		}
 
-		// 	status[d] = cusparseCreate(&(handle[d])); 
-		// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// 	{ 
-		// 		printf("CUSPARSE Library initialization failed");
-		// 		return 1; 
-		// 	} 
-		// 	status[d] = cusparseSetStream(handle[d], stream[d]);
-		// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// 	{ 
-		// 		printf("Stream bindind failed");
-		// 		return 1;
-		// 	} 
-		// 	status[d] = cusparseCreateMatDescr(&descr[d]);
-		// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		// 	{ 
-		// 		printf("Matrix descriptor initialization failed");
-		// 		return 1;
-		// 	} 	
-		// 	cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-		// 	cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
-		// }
 
-		// for (int d = 0; d < ngpu; d++) {
-		// 	cudaSetDevice(d);
-		// 	cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
-		// 	cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int)   );
-		// 	cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
-		// 	cudaMalloc((void**)&dev_x[d],           dev_n[d]       * sizeof(double)); 
-		//     cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
-		// }
+		
+		for (int d = 0; d < ngpu; d++) {
 
-		// for (int d = 0; d < ngpu; d++) {
-		// 	cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],          (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-		// 	cudaMemcpy(dev_csrColIndex[d], &csrColIndex[start_idx[d]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
-		// 	cudaMemcpy(dev_csrVal[d],      &csrVal[start_idx[d]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+			cudaSetDevice(d);
+ 			cudaStreamCreate(&(stream[d]));
 
-		// 	cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
-		// 	cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
-		// }
+			status[d] = cusparseCreate(&(handle[d])); 
+			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("CUSPARSE Library initialization failed");
+				return 1; 
+			} 
+			status[d] = cusparseSetStream(handle[d], stream[d]);
+			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("Stream bindind failed");
+				return 1;
+			} 
+			status[d] = cusparseCreateMatDescr(&descr[d]);
+			if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("Matrix descriptor initialization failed");
+				return 1;
+			} 	
+			cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
+		}
 
-		// for (int d = 0; d < ngpu; ++d) 
-		// {
-		// 	cudaSetDevice(d);
-		// 	cudaDeviceSynchronize();
-		// }
+		for (int d = 0; d < ngpu; d++) {
+			cudaSetDevice(d);
+			cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
+			cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int)   );
+			cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
+			cudaMalloc((void**)&dev_x[d],           dev_n[d]       * sizeof(double)); 
+		    cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
+		}
 
-		// int repeat_test = 10;
-		// double start = get_time();
-		// for (int i = 0; i < repeat_test; i++) 
-		// {
-		// 	for (int d = 0; d < ngpu; ++d) 
-		// 	{
-		// 		cudaSetDevice(d);				
-		// 		status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-		// 									dev_m[d], dev_n[d], dev_nnz[d], 
-		// 									alpha, descr[d], dev_csrVal[d], 
-		// 									dev_csrRowPtr[d], dev_csrColIndex[d], 
-		// 									dev_x[d],  beta, dev_y[d]); 
+		for (int d = 0; d < ngpu; d++) {
+			cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],          (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+			cudaMemcpy(dev_csrColIndex[d], &csrColIndex[start_idx[d]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_csrVal[d],      &csrVal[start_idx[d]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
 
-		// 		//print_error(status[d]);
-		// 		cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
-		// 	}
-		// 	for (int d = 0; d < ngpu; ++d) 
-		// 	{
-		// 		cudaSetDevice(d);
-		// 		cudaDeviceSynchronize();
-		// 	}
-		// }
-		// double end = get_time();
+			cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+			cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		}
 
-		// cout << start << "  " << end << endl;
+		for (int d = 0; d < ngpu; ++d) 
+		{
+			cudaSetDevice(d);
+			cudaDeviceSynchronize();
+		}
 
-		// double time = end - start;
+		int repeat_test = 10;
+		double start = get_time();
+		for (int i = 0; i < repeat_test; i++) 
+		{
+			for (int d = 0; d < ngpu; ++d) 
+			{
+				cudaSetDevice(d);				
+				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+											dev_m[d], dev_n[d], dev_nnz[d], 
+											alpha, descr[d], dev_csrVal[d], 
+											dev_csrRowPtr[d], dev_csrColIndex[d], 
+											dev_x[d],  beta, dev_y[d]); 
 
-		// printf("spMV_mgpu_v2 time = %f s\n", time);
+				//print_error(status[d]);
+				cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+			}
+			for (int d = 0; d < ngpu; ++d) 
+			{
+				cudaSetDevice(d);
+				cudaDeviceSynchronize();
+			}
+		}
+		double end = get_time();
 
-		// long long flop = nnz * 2;
-		// flop *= repeat_test;
-		// double gflop = (double)flop/1e9;
-		// printf("gflop = %f\n", gflop);
-		// double gflops = gflop / time;
-		// printf("GFLOPS = %f\n", gflops);
+		cout << start << "  " << end << endl;
 
-		// for (int i = 0; i < ngpu; i++) {
-		// 	cout << "host_y[i] = [";
-		// 	for (int j = 0; j < dev_m[i]; j++) {
-		// 		cout << host_y[i][j] << ", ";
-		// 	}
-		// 	cout << "]" << endl;
-		// }
+		double time = end - start;
+
+		printf("spMV_mgpu_v2 time = %f s\n", time);
+
+		long long flop = nnz * 2;
+		flop *= repeat_test;
+		double gflop = (double)flop/1e9;
+		printf("gflop = %f\n", gflop);
+		double gflops = gflop / time;
+		printf("GFLOPS = %f\n", gflops);
+
+		for (int i = 0; i < ngpu; i++) {
+			cout << "host_y[i] = [";
+			for (int j = 0; j < dev_m[i]; j++) {
+				cout << host_y[i][j] << ", ";
+			}
+			cout << "]" << endl;
+		}
 		
 
 
