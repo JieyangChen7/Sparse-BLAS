@@ -256,7 +256,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << "host_csrRowPtr[d] = ";
 		for (int i = 0; i < dev_m[d] + 1; ++i)
 		{
-			cout << host_csrRowPtr[d] << ", ";
+			cout << host_csrRowPtr[d][i] << ", ";
 		}
 		cout << endl;
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
