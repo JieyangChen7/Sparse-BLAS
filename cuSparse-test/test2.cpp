@@ -73,11 +73,11 @@ int main(int argc, char *argv[]) {
     }
 
 
- //    cout << "cooVal: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooVal[i] << ", ";
-	// }
-	// cout << endl;
+    cout << "cooVal: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooVal[i] << ", ";
+	}
+	cout << endl;
 
 	// cout << "cooRowIndex: ";
 	// for (int i = 0; i < nnz; i++) {
@@ -110,11 +110,11 @@ int main(int argc, char *argv[]) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
 	}
 
-	// cout << "csrRowPtr: ";
-	// for (int i = 0; i <= m; i++) {
-	// 	cout << csrRowPtr[i] << ", ";
-	// }
-	// cout << endl;
+	cout << "csrRowPtr: ";
+	for (int i = 0; i <= m; i++) {
+		cout << csrRowPtr[i] << ", ";
+	}
+	cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y = (double *)malloc(n * sizeof(double)); 
