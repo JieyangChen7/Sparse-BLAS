@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < n; i++)
 	{
-		x[i] = ((double) rand() / (RAND_MAX)); 
+		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
 		y[i] = 0.0;
 	}
 
@@ -313,13 +313,20 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
+
+			cudaMemcpy( &y[start_row], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
 		}
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
 			cudaDeviceSynchronize();
 		}
+
+
 	}
+
+
+
 	double end = get_time();
 	double time = end - start;
 
@@ -331,6 +338,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
+	cout << "y = [";
+	for(int i = 0; i < m; i++) {
+		cout << y[i] << ", ";
+	}
+	cout << "]" << endl;
 
 }
 
@@ -357,8 +369,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		int    *           dev_m  = new int      [ngpu];
 		int    *           dev_n  = new int      [ngpu];
 
-		double ** dev_x = new double * [ngpu];
-		double ** dev_y = new double * [ngpu];
+		double ** dev_x  = new double * [ngpu];
+		double ** dev_y  = new double * [ngpu];
+		double ** host_y = new double * [ngpu];
 
 		cudaStream_t       * stream = new cudaStream_t [ngpu];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
@@ -411,6 +424,10 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int i = 0; i < ngpu; i++) {
 			dev_m[i] = end_row[i] - start_row[i] + 1;
 			dev_n[i] = n;
+		}
+
+		for (int i = 0; i < ngpu; i++) {
+			host_y[i] = new double[dev_m[i]];
 		}
 
 		for (int d = 0; d < ngpu; d++) {
@@ -538,6 +555,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 											alpha, descr[d], dev_csrVal[d], 
 											dev_csrRowPtr[d], dev_csrColIndex[d], 
 											dev_x[d],  beta, dev_y[d]); 
+				cudaMemcpy(&host_y[d], &dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 			}
 			for (int d = 0; d < ngpu; ++d) 
 			{
@@ -559,6 +577,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		printf("gflop = %f\n", gflop);
 		double gflops = gflop / time;
 		printf("GFLOPS = %f\n", gflops);
+
+		for (int i = 0; i < ngpu; i++) {
+			cout << "host_y[i] = [";
+			for (int j = 0; j < m; j++) {
+				cout << host_y[i][j] << ", ";
+			}
+			cout << "]" << endl;
+		}
 		
 
 
