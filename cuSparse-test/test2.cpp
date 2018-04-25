@@ -419,7 +419,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cout << endl;
 
 
-
+			cudaDeviceSynchronize();
 
 			cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
