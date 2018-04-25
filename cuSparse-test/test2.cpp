@@ -356,7 +356,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	// 	cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 	// 	//cout << "Done" << endl;
 
-	// }
+	}
 	// for (int d = 0; d < ngpu; ++d) 
 	// {
 	// 	cudaSetDevice(d);
