@@ -342,7 +342,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
-			if (status[d]) cout << "error" << endl;
+			if (status[d]  != CUSPARSE_STATUS_SUCCESS) cout << "error" << endl;
 
 			if (d == 0) {
 			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
@@ -587,7 +587,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 											alpha, descr[d], dev_csrVal[d], 
 											dev_csrRowPtr[d], dev_csrColIndex[d], 
 											dev_x[d],  beta, dev_y[d]); 
-				if (status[d]) cout << "error" << endl;
+				if (status[d]  != CUSPARSE_STATUS_SUCCESS) cout << "error" << endl;
 				cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 			}
 			for (int d = 0; d < ngpu; ++d) 
