@@ -364,8 +364,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	// }
 
 	//cout << "Start computation ... " << endl;
-	// int repeat_test = 10;
-	// double start = get_time();
+	 int repeat_test = 10;
+	 double start = get_time();
 	// for (int i = 0; i < repeat_test; i++) 
 	// {
 		for (int d = 0; d < ngpu; ++d) 
