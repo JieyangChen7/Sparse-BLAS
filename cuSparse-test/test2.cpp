@@ -377,7 +377,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
-			print_error(status[d]);
+			//print_error(status[d]);
 
 			
 			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
@@ -405,11 +405,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
-	cout << "y = [";
-	for(int i = 0; i < m; i++) {
-		cout << y[i] << ", ";
-	}
-	cout << "]" << endl;
+	// cout << "y = [";
+	// for(int i = 0; i < m; i++) {
+	// 	cout << y[i] << ", ";
+	// }
+	// cout << "]" << endl;
 
 }
 
