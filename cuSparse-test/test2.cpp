@@ -165,11 +165,11 @@ int main(int argc, char *argv[]) {
 
 	double ONE = 1.0;
 	double ZERO = 0.0;
-	// spMV_mgpu_v1(m, n, nnz, &ONE,
-	// 			 cooVal, csrRowPtr, cooColIndex, 
-	// 			 x, &ZERO,
-	// 			 y,
-	// 			 ngpu);
+	spMV_mgpu_v1(m, n, nnz, &ONE,
+				 cooVal, csrRowPtr, cooColIndex, 
+				 x, &ZERO,
+				 y,
+				 ngpu);
 
 	// spMV_mgpu_v2(m, n, nnz, &ONE,
 	// 			 cooVal, csrRowPtr, cooColIndex, 
@@ -255,161 +255,161 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-		memcpy((void *)host_csrRowPtr[d], 
-			   (void *)&csrRowPtr[start_row[d]], 
-			   (dev_m[d] + 1) * sizeof(int));
+	// 	memcpy((void *)host_csrRowPtr[d], 
+	// 		   (void *)&csrRowPtr[start_row[d]], 
+	// 		   (dev_m[d] + 1) * sizeof(int));
 
-		// cout << "csrRowPtr (before): ";
-		// for (int i = 0; i <= dev_m[d]; i++) {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
+	// 	// cout << "csrRowPtr (before): ";
+	// 	// for (int i = 0; i <= dev_m[d]; i++) {
+	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
+	// 	// }
+	// 	// cout << endl;
 
-		for (int i = 0; i < dev_m[d] + 1; i++) {
-			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
-		}
+	// 	for (int i = 0; i < dev_m[d] + 1; i++) {
+	// 		host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
+	// 	}
 
-		// cout << "csrRowPtr (after): ";
-		// for (int i = 0; i <= dev_m[d]; i++) {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
-
-
-		//cout << "Start copy to GPUs...";
-		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-		// cout << "host_csrRowPtr[d] = ";
-		// for (int i = 0; i < dev_m[d] + 1; ++i)
-		// {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
-		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
-		// cout << "csrColIndex[d] = ";
-		// for (int i = 0; i < dev_nnz[d]; ++i)
-		// {
-		// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
-		// }
-		// cout << endl;
-		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
-		// cout << "csrVal[d] = ";
-		// for (int i = 0; i < dev_nnz[d]; ++i)
-		// {
-		// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
-		// }
-		// cout << endl;
+	// 	// cout << "csrRowPtr (after): ";
+	// 	// for (int i = 0; i <= dev_m[d]; i++) {
+	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
+	// 	// }
+	// 	// cout << endl;
 
 
-		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
+	// 	//cout << "Start copy to GPUs...";
+	// 	cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+	// 	// cout << "host_csrRowPtr[d] = ";
+	// 	// for (int i = 0; i < dev_m[d] + 1; ++i)
+	// 	// {
+	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
+	// 	// }
+	// 	// cout << endl;
+	// 	cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
+	// 	// cout << "csrColIndex[d] = ";
+	// 	// for (int i = 0; i < dev_nnz[d]; ++i)
+	// 	// {
+	// 	// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
+	// 	// }
+	// 	// cout << endl;
+	// 	cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
+	// 	// cout << "csrVal[d] = ";
+	// 	// for (int i = 0; i < dev_nnz[d]; ++i)
+	// 	// {
+	// 	// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
+	// 	// }
+	// 	// cout << endl;
 
-		cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-		// cout << "x = ";
-		// for (int i = 0; i < dev_n[d]; ++i)
-		// {
-		// 	cout << x[i] << ", ";
-		// }
-		// cout << endl;
+	// 	cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-		// cout << "y = ";
-		// for (int i = 0; i < dev_m[d]; ++i)
-		// {
-		// 	cout << y[i] << ", ";
-		// }
-		// cout << endl;
+	// 	cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-		if ((cudaStat1[d] != cudaSuccess) ||
-		 	(cudaStat2[d] != cudaSuccess) ||
-		  	(cudaStat3[d] != cudaSuccess) ||
-		   	(cudaStat4[d] != cudaSuccess) ||
-		    (cudaStat5[d] != cudaSuccess)) 
-		{ 
-			printf("Memcpy from Host to Device failed"); 
-			return 1; 
-		} 
+	// 	// cout << "x = ";
+	// 	// for (int i = 0; i < dev_n[d]; ++i)
+	// 	// {
+	// 	// 	cout << x[i] << ", ";
+	// 	// }
+	// 	// cout << endl;
 
-		//cout << "Done" << endl;
+	// 	// cout << "y = ";
+	// 	// for (int i = 0; i < dev_m[d]; ++i)
+	// 	// {
+	// 	// 	cout << y[i] << ", ";
+	// 	// }
+	// 	// cout << endl;
 
-		//cout << "initialize cuSparse ...";
+	// 	if ((cudaStat1[d] != cudaSuccess) ||
+	// 	 	(cudaStat2[d] != cudaSuccess) ||
+	// 	  	(cudaStat3[d] != cudaSuccess) ||
+	// 	   	(cudaStat4[d] != cudaSuccess) ||
+	// 	    (cudaStat5[d] != cudaSuccess)) 
+	// 	{ 
+	// 		printf("Memcpy from Host to Device failed"); 
+	// 		return 1; 
+	// 	} 
 
-		cudaStreamCreate(&(stream[d]));
+	// 	//cout << "Done" << endl;
+
+	// 	//cout << "initialize cuSparse ...";
+
+	// 	cudaStreamCreate(&(stream[d]));
 		
-		status[d] = cusparseCreate(&(handle[d])); 
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("CUSPARSE Library initialization failed");
-			return 1; 
-		} 
-		status[d] = cusparseSetStream(handle[d], stream[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Stream bindind failed");
-			return 1;
-		} 
-		status[d] = cusparseCreateMatDescr(&descr[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Matrix descriptor initialization failed");
-			return 1;
-		} 	
-		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
-		//cout << "Done" << endl;
+	// 	status[d] = cusparseCreate(&(handle[d])); 
+	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+	// 	{ 
+	// 		printf("CUSPARSE Library initialization failed");
+	// 		return 1; 
+	// 	} 
+	// 	status[d] = cusparseSetStream(handle[d], stream[d]);
+	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+	// 	{ 
+	// 		printf("Stream bindind failed");
+	// 		return 1;
+	// 	} 
+	// 	status[d] = cusparseCreateMatDescr(&descr[d]);
+	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+	// 	{ 
+	// 		printf("Matrix descriptor initialization failed");
+	// 		return 1;
+	// 	} 	
+	// 	cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+	// 	cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+	// 	//cout << "Done" << endl;
 
-	}
-	for (int d = 0; d < ngpu; ++d) 
-	{
-		cudaSetDevice(d);
-		cudaDeviceSynchronize();
-	}
-
-	//cout << "Start computation ... " << endl;
-	int repeat_test = 10;
-	double start = get_time();
-	//for (int i = 0; i < repeat_test; i++) 
-	{
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
-			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-										dev_m[d], dev_n[d], dev_nnz[d], 
-										alpha, descr[d], dev_csrVal[d], 
-										dev_csrRowPtr[d], dev_csrColIndex[d], 
-										dev_x[d], beta, dev_y[d]); 	 
-			//print_error(status[d]);
-
-			
-			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
-			
-		}
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cudaDeviceSynchronize();
-		}
-
-
-	}
-
-
-
-	double end = get_time();
-	double time = end - start;
-
-	printf("spMV_mgpu_v1 time = %f s\n", time);
-	
-	long long flop = nnz * 2;
-	flop *= repeat_test;
-	double gflop = (double)flop/1e9;
-	printf("gflop = %f\n", gflop);
-	double gflops = gflop / time;
-	printf("GFLOPS = %f\n", gflops);
-	// cout << "y = [";
-	// for(int i = 0; i < m; i++) {
-	// 	cout << y[i] << ", ";
 	// }
-	// cout << "]" << endl;
+	// for (int d = 0; d < ngpu; ++d) 
+	// {
+	// 	cudaSetDevice(d);
+	// 	cudaDeviceSynchronize();
+	// }
+
+	// //cout << "Start computation ... " << endl;
+	// int repeat_test = 10;
+	// double start = get_time();
+	// //for (int i = 0; i < repeat_test; i++) 
+	// {
+	// 	for (int d = 0; d < ngpu; ++d) 
+	// 	{
+	// 		cudaSetDevice(d);
+	// 		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+	// 		status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+	// 									dev_m[d], dev_n[d], dev_nnz[d], 
+	// 									alpha, descr[d], dev_csrVal[d], 
+	// 									dev_csrRowPtr[d], dev_csrColIndex[d], 
+	// 									dev_x[d], beta, dev_y[d]); 	 
+	// 		//print_error(status[d]);
+
+			
+	// 		cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+			
+	// 	}
+	// 	for (int d = 0; d < ngpu; ++d) 
+	// 	{
+	// 		cudaSetDevice(d);
+	// 		cudaDeviceSynchronize();
+	// 	}
+
+
+	// }
+
+
+
+	// double end = get_time();
+	// double time = end - start;
+
+	// printf("spMV_mgpu_v1 time = %f s\n", time);
+	
+	// long long flop = nnz * 2;
+	// flop *= repeat_test;
+	// double gflop = (double)flop/1e9;
+	// printf("gflop = %f\n", gflop);
+	// double gflops = gflop / time;
+	// printf("GFLOPS = %f\n", gflops);
+	// // cout << "y = [";
+	// // for(int i = 0; i < m; i++) {
+	// // 	cout << y[i] << ", ";
+	// // }
+	// // cout << "]" << endl;
 
 }
 
