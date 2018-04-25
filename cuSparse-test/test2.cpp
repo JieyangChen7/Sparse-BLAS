@@ -586,14 +586,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
-		for (int d = 0; d < ngpu; d++) {
-			cudaSetDevice(d);
-			cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
-			cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int)   );
-			cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
-			cudaMalloc((void**)&dev_x[d],           dev_n[d]       * sizeof(double)); 
-		    cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
-		}
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaSetDevice(d);
+		// 	cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
+		// 	cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int)   );
+		// 	cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d]     * sizeof(int)   );
+		// 	cudaMalloc((void**)&dev_x[d],           dev_n[d]       * sizeof(double)); 
+		//     cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
+		// }
 
 		// for (int d = 0; d < ngpu; d++) {
 		// 	cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],          (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
