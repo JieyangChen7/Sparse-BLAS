@@ -24,6 +24,7 @@ void print_error(cusparseStatus_t status) {
 	cout << CUSPARSE_STATUS_SUCCESS << endl;
 	cout << CUSPARSE_STATUS_NOT_INITIALIZED << endl;
 	cout << CUSPARSE_STATUS_ALLOC_FAILED << endl;
+	cout << CUSPARSE_STATUS_INVALID_VALUE << endl;
 	cout << CUSPARSE_STATUS_ARCH_MISMATCH << endl;
 	cout << CUSPARSE_STATUS_INTERNAL_ERROR << endl;
 	cout << CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED << endl;
