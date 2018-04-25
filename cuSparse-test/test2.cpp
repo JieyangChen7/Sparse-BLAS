@@ -276,28 +276,28 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// cout << endl;
 
 
-	// 	//cout << "Start copy to GPUs...";
-	// 	cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-	// 	// cout << "host_csrRowPtr[d] = ";
-	// 	// for (int i = 0; i < dev_m[d] + 1; ++i)
-	// 	// {
-	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
-	// 	// }
-	// 	// cout << endl;
-	// 	cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
-	// 	// cout << "csrColIndex[d] = ";
-	// 	// for (int i = 0; i < dev_nnz[d]; ++i)
-	// 	// {
-	// 	// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
-	// 	// }
-	// 	// cout << endl;
-	// 	cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
-	// 	// cout << "csrVal[d] = ";
-	// 	// for (int i = 0; i < dev_nnz[d]; ++i)
-	// 	// {
-	// 	// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
-	// 	// }
-	// 	// cout << endl;
+		//cout << "Start copy to GPUs...";
+		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+		// cout << "host_csrRowPtr[d] = ";
+		// for (int i = 0; i < dev_m[d] + 1; ++i)
+		// {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
+		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
+		// cout << "csrColIndex[d] = ";
+		// for (int i = 0; i < dev_nnz[d]; ++i)
+		// {
+		// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
+		// }
+		// cout << endl;
+		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
+		// cout << "csrVal[d] = ";
+		// for (int i = 0; i < dev_nnz[d]; ++i)
+		// {
+		// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
+		// }
+		// cout << endl;
 
 
 	// 	cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
