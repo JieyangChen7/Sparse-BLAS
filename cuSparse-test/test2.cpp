@@ -342,7 +342,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
-			if (status[d]  != CUSPARSE_STATUS_SUCCESS){}
+			if (status[d]  != CUSPARSE_STATUS_SUCCESS){
 				cout << "error" << endl;
 			// check for error
 			  cudaError_t error = cudaGetLastError();
