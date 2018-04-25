@@ -374,7 +374,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		{
 			cudaSetDevice(d);
 
-			cout << "BEFORE"
+			cout << "BEFORE" << endl;
 
 			//cout << "Start copy to GPUs...";
 			cudaStat1[d] = cudaMemcpy( host_csrRowPtr[d], dev_csrRowPtr[d],                (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost);
@@ -431,7 +431,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 
 
-			cout << "AFTER"
+			cout << "AFTER" << endl;
 
 			//cout << "Start copy to GPUs...";
 			cudaStat1[d] = cudaMemcpy( host_csrRowPtr[d], dev_csrRowPtr[d],                (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost);
