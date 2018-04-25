@@ -380,8 +380,12 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		 	print_error(status[d]);
 
 			
-		 	//cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
-			
+		 	cudaStat1[d] = cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+			if ((cudaStat1[d] != cudaSuccess)) 
+			{ 
+				printf("Memcpy from Host to Device failed"); 
+				return 1; 
+			} 
 		// }
 		// for (int d = 0; d < ngpu; ++d) 
 		// {
