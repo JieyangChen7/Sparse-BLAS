@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 	// cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
-	double * y = (double *)malloc(n * sizeof(double)); 
+	double * y = (double *)malloc(m * sizeof(double)); 
 
 	for (int i = 0; i < n; i++)
 	{
@@ -381,8 +381,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 			
 			cudaDeviceSynchronize();
-		 	//cudaStat1[d] = cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
-		 	cudaStat1[d] = cudaMemcpy( &y[0], dev_y[0], 1,  cudaMemcpyDeviceToHost);
+		 	cudaStat1[d] = cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+		 	//cudaStat1[d] = cudaMemcpy( &y[0], dev_y[0], 1*sizeof(double),  cudaMemcpyDeviceToHost);
 			if ((cudaStat1[d] != cudaSuccess)) 
 			{ 
 				printf("Memcpy from Host to Device failed"); 
