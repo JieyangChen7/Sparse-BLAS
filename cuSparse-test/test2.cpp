@@ -335,6 +335,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		//cout << "Done" << endl;
 
 		//cout << "initialize cuSparse ...";
+
+		cudaStreamCreate(&(stream[d]));
 		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
