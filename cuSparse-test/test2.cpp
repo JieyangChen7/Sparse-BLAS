@@ -159,8 +159,8 @@ int main(int argc, char *argv[]) {
 	{
 	    cudaDeviceProp deviceProp;
 	    cudaGetDeviceProperties(&deviceProp, device);
-	    //printf("Device %d has compute capability %d.%d.\n",
-	    //       device, deviceProp.major, deviceProp.minor);
+	    printf("Device %d has compute capability %d.%d.\n",
+	           device, deviceProp.major, deviceProp.minor);
 	}
 
 	double ONE = 1.0;
@@ -364,30 +364,30 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	// }
 
 	//cout << "Start computation ... " << endl;
-	int repeat_test = 10;
-	double start = get_time();
-	for (int i = 0; i < repeat_test; i++) 
-	{
+	// int repeat_test = 10;
+	// double start = get_time();
+	// for (int i = 0; i < repeat_test; i++) 
+	// {
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
 			//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-										dev_m[d], dev_n[d], dev_nnz[d], 
-										alpha, descr[d], dev_csrVal[d], 
-										dev_csrRowPtr[d], dev_csrColIndex[d], 
-										dev_x[d], beta, dev_y[d]); 	 
-			print_error(status[d]);
+									   dev_m[d], dev_n[d], dev_nnz[d], 
+									   alpha, descr[d], dev_csrVal[d], 
+									   dev_csrRowPtr[d], dev_csrColIndex[d], 
+									   dev_x[d], beta, dev_y[d]); 	 
+		// 	print_error(status[d]);
 
 			
-			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+		// 	cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
 			
-		}
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cudaDeviceSynchronize();
-		}
+		// }
+		// for (int d = 0; d < ngpu; ++d) 
+		// {
+		// 	cudaSetDevice(d);
+		// 	cudaDeviceSynchronize();
+		// }
 
 
 	}
