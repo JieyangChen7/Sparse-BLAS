@@ -314,7 +314,6 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
 		}
-		cout << endl;
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
