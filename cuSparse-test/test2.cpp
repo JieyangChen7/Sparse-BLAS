@@ -582,7 +582,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		for (int i = 0; i < ngpu; i++) {
 			cout << "host_y[i] = [";
-			for (int j = 0; j < m; j++) {
+			for (int j = 0; j < dev_m[i]; j++) {
 				cout << host_y[i][j] << ", ";
 			}
 			cout << "]" << endl;
