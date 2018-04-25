@@ -244,11 +244,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
 		}
 
-		// cout << "csrRowPtr (after): ";
-		// for (int i = 0; i <= dev_m[d]; i++) {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
+		cout << "csrRowPtr (after): ";
+		for (int i = 0; i <= dev_m[d]; i++) {
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
 
 
 		//cout << "Start copy to GPUs...";
