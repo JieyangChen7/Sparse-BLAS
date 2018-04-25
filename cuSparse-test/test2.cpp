@@ -20,6 +20,23 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * y,
 				  int ngpu);
 
+void print_error(cusparseStatus_t status) {
+	if (status == CUSPARSE_STATUS_SUCCESS)
+		cout << "CUSPARSE_STATUS_SUCCESS" << endl;
+	else if (status == CUSPARSE_STATUS_NOT_INITIALIZED)
+		cout << "CUSPARSE_STATUS_NOT_INITIALIZED" << endl;
+	else if (status == CUSPARSE_STATUS_ALLOC_FAILED)
+		cout << "CUSPARSE_STATUS_ALLOC_FAILED" << endl;
+	else if (status == CUSPARSE_STATUS_INVALID_VALUE)
+		cout << "CUSPARSE_STATUS_INVALID_VALUE" << endl;
+	else if (status == CUSPARSE_STATUS_ARCH_MISMATCH)
+		cout << "CUSPARSE_STATUS_ARCH_MISMATCH" << endl;
+	else if (status == CUSPARSE_STATUS_INTERNAL_ERROR)
+		cout << "CUSPARSE_STATUS_INTERNAL_ERROR" << endl;
+	else if (status == CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED)
+		cout << "CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED" << endl;
+}
+
 double get_time()
 {
 	struct timeval tp;
@@ -342,17 +359,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
-			if (status[d]  != CUSPARSE_STATUS_SUCCESS){
-				cout << "error" << endl;
-			// check for error
-			  cudaError_t error = cudaGetLastError();
-			  if(error != cudaSuccess)
-			  {
-			    // print the CUDA error message and exit
-			    printf("CUDA error: %s\n", cudaGetErrorString(error));
-			    exit(-1);
-			  }
-			}
+			print_error(status[d]);
 
 			if (d == 0) {
 			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
