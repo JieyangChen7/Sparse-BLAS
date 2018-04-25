@@ -610,42 +610,42 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaDeviceSynchronize();
 		}
 
-		int repeat_test = 10;
-		double start = get_time();
-		for (int i = 0; i < repeat_test; i++) 
-		{
-			for (int d = 0; d < ngpu; ++d) 
-			{
-				cudaSetDevice(d);				
-				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-											dev_m[d], dev_n[d], dev_nnz[d], 
-											alpha, descr[d], dev_csrVal[d], 
-											dev_csrRowPtr[d], dev_csrColIndex[d], 
-											dev_x[d],  beta, dev_y[d]); 
+		// int repeat_test = 10;
+		// double start = get_time();
+		// for (int i = 0; i < repeat_test; i++) 
+		// {
+		// 	for (int d = 0; d < ngpu; ++d) 
+		// 	{
+		// 		cudaSetDevice(d);				
+		// 		status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+		// 									dev_m[d], dev_n[d], dev_nnz[d], 
+		// 									alpha, descr[d], dev_csrVal[d], 
+		// 									dev_csrRowPtr[d], dev_csrColIndex[d], 
+		// 									dev_x[d],  beta, dev_y[d]); 
 
-				//print_error(status[d]);
-				cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
-			}
-			for (int d = 0; d < ngpu; ++d) 
-			{
-				cudaSetDevice(d);
-				cudaDeviceSynchronize();
-			}
-		}
-		double end = get_time();
+		// 		//print_error(status[d]);
+		// 		cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+		// 	}
+		// 	for (int d = 0; d < ngpu; ++d) 
+		// 	{
+		// 		cudaSetDevice(d);
+		// 		cudaDeviceSynchronize();
+		// 	}
+		// }
+		// double end = get_time();
 
-		cout << start << "  " << end << endl;
+		// cout << start << "  " << end << endl;
 
-		double time = end - start;
+		// double time = end - start;
 
-		printf("spMV_mgpu_v2 time = %f s\n", time);
+		// printf("spMV_mgpu_v2 time = %f s\n", time);
 
-		long long flop = nnz * 2;
-		flop *= repeat_test;
-		double gflop = (double)flop/1e9;
-		printf("gflop = %f\n", gflop);
-		double gflops = gflop / time;
-		printf("GFLOPS = %f\n", gflops);
+		// long long flop = nnz * 2;
+		// flop *= repeat_test;
+		// double gflop = (double)flop/1e9;
+		// printf("gflop = %f\n", gflop);
+		// double gflops = gflop / time;
+		// printf("GFLOPS = %f\n", gflops);
 
 		// for (int i = 0; i < ngpu; i++) {
 		// 	cout << "host_y[i] = [";
