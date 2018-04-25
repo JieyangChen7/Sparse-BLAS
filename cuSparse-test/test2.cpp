@@ -610,7 +610,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 											dev_x[d],  beta, dev_y[d]); 
 
 				//print_error(status[d]);
-				cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+				//cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 			}
 			for (int d = 0; d < ngpu; ++d) 
 			{
