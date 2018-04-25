@@ -328,33 +328,33 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-	// 	//cout << "Done" << endl;
+		//cout << "Done" << endl;
 
-	// 	//cout << "initialize cuSparse ...";
+		//cout << "initialize cuSparse ...";
 
-	// 	cudaStreamCreate(&(stream[d]));
+		cudaStreamCreate(&(stream[d]));
 		
-	// 	status[d] = cusparseCreate(&(handle[d])); 
-	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-	// 	{ 
-	// 		printf("CUSPARSE Library initialization failed");
-	// 		return 1; 
-	// 	} 
-	// 	status[d] = cusparseSetStream(handle[d], stream[d]);
-	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-	// 	{ 
-	// 		printf("Stream bindind failed");
-	// 		return 1;
-	// 	} 
-	// 	status[d] = cusparseCreateMatDescr(&descr[d]);
-	// 	if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-	// 	{ 
-	// 		printf("Matrix descriptor initialization failed");
-	// 		return 1;
-	// 	} 	
-	// 	cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-	// 	cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
-	// 	//cout << "Done" << endl;
+		status[d] = cusparseCreate(&(handle[d])); 
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("CUSPARSE Library initialization failed");
+			return 1; 
+		} 
+		status[d] = cusparseSetStream(handle[d], stream[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("Stream bindind failed");
+			return 1;
+		} 
+		status[d] = cusparseCreateMatDescr(&descr[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("Matrix descriptor initialization failed");
+			return 1;
+		} 	
+		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+		//cout << "Done" << endl;
 
 	}
 	// for (int d = 0; d < ngpu; ++d) 
