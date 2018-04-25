@@ -177,7 +177,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	cusparseHandle_t * handle = new cusparseHandle_t[ngpu];
 	cusparseMatDescr_t * descr = new cusparseMatDescr_t[ngpu];
 
-	
+	int  * start_row  = new int[ngpu];
+	int  * end_row    = new int[ngpu];
+		
 	int * dev_m            = new int      [ngpu];
 	int * dev_n            = new int      [ngpu];
 	int * dev_nnz          = new int      [ngpu];
@@ -196,14 +198,14 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		cout << "GPU " << d << ":" << endl;
 
-		int start_row = floor((d)     * m / ngpu);
-		int end_row   = floor((d + 1) * m / ngpu) - 1;
+		start_row[d] = floor((d)     * m / ngpu);
+		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
-		cout << "start_row: " << start_row << ", " << "end_row: "<< end_row << endl;
+		cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
 
-		dev_m[d]   = end_row - start_row + 1;
+		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
-		dev_nnz[d] = csrRowPtr[end_row + 1] - csrRowPtr[start_row];
+		dev_nnz[d] = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
 
 		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
@@ -229,7 +231,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		} 
 
 		memcpy((void *)host_csrRowPtr[d], 
-			   (void *)&csrRowPtr[start_row], 
+			   (void *)&csrRowPtr[start_row[d]], 
 			   (dev_m[d] + 1) * sizeof(int));
 
 		// cout << "csrRowPtr (before): ";
@@ -239,7 +241,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// cout << endl;
 
 		for (int i = 0; i < dev_m[d] + 1; i++) {
-			host_csrRowPtr[d][i] -= csrRowPtr[start_row];
+			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
 		}
 
 		// cout << "csrRowPtr (after): ";
@@ -251,10 +253,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		//cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
-		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
 
-		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		cudaStat5[d] = cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 
 		if ((cudaStat1[d] != cudaSuccess) ||
@@ -314,7 +316,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
 
-			cudaMemcpy( &y[start_row], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
 		}
 		for (int d = 0; d < ngpu; ++d) 
 		{
