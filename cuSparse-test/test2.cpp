@@ -21,12 +21,22 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int ngpu);
 
 void print_error(cusparseStatus_t status) {
+	cout << CUSPARSE_STATUS_SUCCESS << endl;
+	cout << CUSPARSE_STATUS_NOT_INITIALIZED << endl;
+	cout << CUSPARSE_STATUS_ALLOC_FAILED << endl;
+	cout << CUSPARSE_STATUS_ARCH_MISMATCH << endl;
+	cout << CUSPARSE_STATUS_INTERNAL_ERROR << endl;
+	cout << CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED << endl;
+
 	if (status == CUSPARSE_STATUS_SUCCESS)
 		cout << "CUSPARSE_STATUS_SUCCESS" << endl;
+		
 	else if (status == CUSPARSE_STATUS_NOT_INITIALIZED)
 		cout << "CUSPARSE_STATUS_NOT_INITIALIZED" << endl;
+		
 	else if (status == CUSPARSE_STATUS_ALLOC_FAILED)
 		cout << "CUSPARSE_STATUS_ALLOC_FAILED" << endl;
+		
 	else if (status == CUSPARSE_STATUS_INVALID_VALUE)
 		cout << "CUSPARSE_STATUS_INVALID_VALUE" << endl;
 	else if (status == CUSPARSE_STATUS_ARCH_MISMATCH)
