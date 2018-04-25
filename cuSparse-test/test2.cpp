@@ -445,73 +445,73 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cusparseHandle_t   * handle = new cusparseHandle_t[ngpu];
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
 
-		// Calculate the start and end index
-		for (int i = 0; i < ngpu; i++) {
-			start_idx[i]   = floor((i)     * nnz / ngpu);
-			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
-			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
-		}
+		// // Calculate the start and end index
+		// for (int i = 0; i < ngpu; i++) {
+		// 	start_idx[i]   = floor((i)     * nnz / ngpu);
+		// 	end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
+		// 	dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
+		// }
 
-		// Calculate the start and end row
-		curr_row = 0;
-		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] <= start_idx[i]) {
-				curr_row++;
-			}
+		// // Calculate the start and end row
+		// curr_row = 0;
+		// for (int i = 0; i < ngpu; i++) {
+		// 	while (csrRowPtr[curr_row] <= start_idx[i]) {
+		// 		curr_row++;
+		// 	}
 
-			start_row[i] = curr_row - 1; 
+		// 	start_row[i] = curr_row - 1; 
 
-			// Mark imcomplete rows
-			// True: imcomplete
-			if (start_idx[i] > csrRowPtr[start_row[i]]) {
-				start_flag[i] = true;
-			} else {
-				start_flag[i] = false;
-			}
-		}
+		// 	// Mark imcomplete rows
+		// 	// True: imcomplete
+		// 	if (start_idx[i] > csrRowPtr[start_row[i]]) {
+		// 		start_flag[i] = true;
+		// 	} else {
+		// 		start_flag[i] = false;
+		// 	}
+		// }
 
-		curr_row = 0;
-		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] <= end_idx[i]) {
-				curr_row++;
-			}
+		// curr_row = 0;
+		// for (int i = 0; i < ngpu; i++) {
+		// 	while (csrRowPtr[curr_row] <= end_idx[i]) {
+		// 		curr_row++;
+		// 	}
 
-			end_row[i] = curr_row - 1;
+		// 	end_row[i] = curr_row - 1;
 
-			// Mark imcomplete rows
-			// True: imcomplete
-			if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
-				end_flag[i] = true;
-			} else {
-				end_flag[i] = false;
-			}
-		}
+		// 	// Mark imcomplete rows
+		// 	// True: imcomplete
+		// 	if (end_idx[i] < csrRowPtr[end_row[i] + 1] - 1)  {
+		// 		end_flag[i] = true;
+		// 	} else {
+		// 		end_flag[i] = false;
+		// 	}
+		// }
 
-		// Cacluclate dimensions
-		for (int i = 0; i < ngpu; i++) {
-			dev_m[i] = end_row[i] - start_row[i] + 1;
-			dev_n[i] = n;
-		}
+		// // Cacluclate dimensions
+		// for (int i = 0; i < ngpu; i++) {
+		// 	dev_m[i] = end_row[i] - start_row[i] + 1;
+		// 	dev_n[i] = n;
+		// }
 
-		for (int i = 0; i < ngpu; i++) {
-			host_y[i] = new double[dev_m[i]];
-		}
+		// for (int i = 0; i < ngpu; i++) {
+		// 	host_y[i] = new double[dev_m[i]];
+		// }
 
-		for (int d = 0; d < ngpu; d++) {
-			cout << "GPU" << d << ":" << endl;
-			cout << " start_idx: " << start_idx[d] << ", ";
-			cout << " end_idx: " << end_idx[d] << ", ";
-			cout << " start_row: " << start_row[d] << ", ";
-			cout << " end_row: " << end_row[d] << ", ";
-			cout << " start_flag: " << start_flag[d] << ", ";
-			cout << " end_flag: " << end_flag[d] << ", ";
-			cout << endl;
-			cout << " dev_m: " << dev_m[d] << ", ";
-			cout << " dev_n: " << dev_n[d] << ", ";
-			cout << " dev_nnz: " << dev_nnz[d] << ", ";
-			cout << endl;
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cout << "GPU" << d << ":" << endl;
+		// 	cout << " start_idx: " << start_idx[d] << ", ";
+		// 	cout << " end_idx: " << end_idx[d] << ", ";
+		// 	cout << " start_row: " << start_row[d] << ", ";
+		// 	cout << " end_row: " << end_row[d] << ", ";
+		// 	cout << " start_flag: " << start_flag[d] << ", ";
+		// 	cout << " end_flag: " << end_flag[d] << ", ";
+		// 	cout << endl;
+		// 	cout << " dev_m: " << dev_m[d] << ", ";
+		// 	cout << " dev_n: " << dev_n[d] << ", ";
+		// 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
+		// 	cout << endl;
 
-		}
+		// }
 
 		// for (int i = 0; i < ngpu; i++) {
 		// 	csrValA_partial[i] = new double[nnz_partial[i]];
