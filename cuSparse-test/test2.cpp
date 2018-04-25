@@ -232,24 +232,24 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			   (void *)&csrRowPtr[start_row], 
 			   (dev_m[d] + 1) * sizeof(int));
 
-		cout << "csrRowPtr (before): ";
-		for (int i = 0; i <= dev_m[d]; i++) {
-			cout << host_csrRowPtr[d][i] << ", ";
-		}
-		cout << endl;
+		// cout << "csrRowPtr (before): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
 		for (int i = 0; i < dev_m[d] + 1; i++) {
 			host_csrRowPtr[d][i] -= csrRowPtr[start_row];
 		}
 
-		cout << "csrRowPtr (after): ";
-		for (int i = 0; i <= dev_m[d]; i++) {
-			cout << host_csrRowPtr[d][i] << ", ";
-		}
-		cout << endl;
+		// cout << "csrRowPtr (after): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
 
-		cout << "Start copy to GPUs...";
+		//cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
@@ -267,9 +267,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-		cout << "Done" << endl;
+		//cout << "Done" << endl;
 
-		cout << "initialize cuSparse ...";
+		//cout << "initialize cuSparse ...";
 		
 		status[d] = cusparseCreate(&(handle[d])); 
 		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
@@ -291,7 +291,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		} 	
 		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
-		cout << "Done" << endl;
+		//cout << "Done" << endl;
 
 	}
 	for (int d = 0; d < ngpu; ++d) 
@@ -300,7 +300,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cudaDeviceSynchronize();
 	}
 
-	cout << "Start computation ... " << endl;
+	//cout << "Start computation ... " << endl;
 	int repeat_test = 10;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
@@ -308,7 +308,6 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
-			cout << d << "->";
 			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
 										dev_m[d], dev_n[d], dev_nnz[d], 
 										alpha, descr[d], dev_csrVal[d], 
@@ -325,7 +324,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	double end = get_time();
 	double time = end - start;
 
-	printf("cusparseDcsrmv time = %f s\n", time);
+	printf("spMV_mgpu_v1 time = %f s\n", time);
 	
 	long long flop = nnz * 2;
 	flop *= repeat_test;
@@ -416,16 +415,17 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 
 		for (int d = 0; d < ngpu; d++) {
-			cout << "GPU" << d << ":";
-			cout << " start_idx: " << start_idx[d];
-			cout << " end_idx: " << end_idx[d];
-			cout << " start_row: " << start_row[d];
-			cout << " end_row: " << end_row[d];
-			cout << " start_flag: " << start_flag[d];
-			cout << " end_flag: " << end_flag[d];
-			cout << " dev_m: " << dev_m[d];
-			cout << " dev_n: " << dev_n[d];
-			cout << " dev_nnz: " << dev_nnz[d];
+			cout << "GPU" << d << ":" << endl;
+			cout << " start_idx: " << start_idx[d] << ", ";
+			cout << " end_idx: " << end_idx[d] << ", ";
+			cout << " start_row: " << start_row[d] << ", ";
+			cout << " end_row: " << end_row[d] << ", ";
+			cout << " start_flag: " << start_flag[d] << ", ";
+			cout << " end_flag: " << end_flag[d] << ", ";
+			cout << endl;
+			cout << " dev_m: " << dev_m[d] << ", ";
+			cout << " dev_n: " << dev_n[d] << ", ";
+			cout << " dev_nnz: " << dev_nnz[d] << ", ";
 			cout << endl;
 
 		}
@@ -448,21 +448,21 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
 			}
 
-			cout << "host_csrRowPtr: ";
-			for (int j = 0; j <= dev_m[i]; j++) {
-				cout << host_csrRowPtr[i][j] << ", ";
-			}
-			cout << endl;
+			// cout << "host_csrRowPtr: ";
+			// for (int j = 0; j <= dev_m[i]; j++) {
+			// 	cout << host_csrRowPtr[i][j] << ", ";
+			// }
+			// cout << endl;
 
 			for (int j = 1; j < dev_m[i]; j++) {
 				host_csrRowPtr[i][j] -= start_idx[i];
 			}
 
-			cout << "host_csrRowPtr: ";
-			for (int j = 0; j <= dev_m[i]; j++) {
-				cout << host_csrRowPtr[i][j] << ", ";
-			}
-			cout << endl;
+			// cout << "host_csrRowPtr: ";
+			// for (int j = 0; j <= dev_m[i]; j++) {
+			// 	cout << host_csrRowPtr[i][j] << ", ";
+			// }
+			// cout << endl;
 		}
 
 		
@@ -552,7 +552,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		double time = end - start;
 
-		printf("cusparseDcsrmv time = %f s\n", time);
+		printf("spMV_mgpu_v2 time = %f s\n", time);
 
 		long long flop = nnz * 2;
 		flop *= repeat_test;
