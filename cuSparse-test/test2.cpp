@@ -300,33 +300,33 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// cout << endl;
 
 
-	// 	cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
+		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-	// 	cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
+		cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-	// 	// cout << "x = ";
-	// 	// for (int i = 0; i < dev_n[d]; ++i)
-	// 	// {
-	// 	// 	cout << x[i] << ", ";
-	// 	// }
-	// 	// cout << endl;
+		// cout << "x = ";
+		// for (int i = 0; i < dev_n[d]; ++i)
+		// {
+		// 	cout << x[i] << ", ";
+		// }
+		// cout << endl;
 
-	// 	// cout << "y = ";
-	// 	// for (int i = 0; i < dev_m[d]; ++i)
-	// 	// {
-	// 	// 	cout << y[i] << ", ";
-	// 	// }
-	// 	// cout << endl;
+		// cout << "y = ";
+		// for (int i = 0; i < dev_m[d]; ++i)
+		// {
+		// 	cout << y[i] << ", ";
+		// }
+		// cout << endl;
 
-	// 	if ((cudaStat1[d] != cudaSuccess) ||
-	// 	 	(cudaStat2[d] != cudaSuccess) ||
-	// 	  	(cudaStat3[d] != cudaSuccess) ||
-	// 	   	(cudaStat4[d] != cudaSuccess) ||
-	// 	    (cudaStat5[d] != cudaSuccess)) 
-	// 	{ 
-	// 		printf("Memcpy from Host to Device failed"); 
-	// 		return 1; 
-	// 	} 
+		if ((cudaStat1[d] != cudaSuccess) ||
+		 	(cudaStat2[d] != cudaSuccess) ||
+		  	(cudaStat3[d] != cudaSuccess) ||
+		   	(cudaStat4[d] != cudaSuccess) ||
+		    (cudaStat5[d] != cudaSuccess)) 
+		{ 
+			printf("Memcpy from Host to Device failed"); 
+			return 1; 
+		} 
 
 	// 	//cout << "Done" << endl;
 
