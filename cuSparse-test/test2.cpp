@@ -165,11 +165,11 @@ int main(int argc, char *argv[]) {
 
 	double ONE = 1.0;
 	double ZERO = 0.0;
-	spMV_mgpu_v1(m, n, nnz, &ONE,
-				 cooVal, csrRowPtr, cooColIndex, 
-				 x, &ZERO,
-				 y,
-				 ngpu);
+	// spMV_mgpu_v1(m, n, nnz, &ONE,
+	// 			 cooVal, csrRowPtr, cooColIndex, 
+	// 			 x, &ZERO,
+	// 			 y,
+	// 			 ngpu);
 
 	// spMV_mgpu_v2(m, n, nnz, &ONE,
 	// 			 cooVal, csrRowPtr, cooColIndex, 
