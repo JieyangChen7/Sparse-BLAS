@@ -255,25 +255,25 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-	// 	memcpy((void *)host_csrRowPtr[d], 
-	// 		   (void *)&csrRowPtr[start_row[d]], 
-	// 		   (dev_m[d] + 1) * sizeof(int));
+		memcpy((void *)host_csrRowPtr[d], 
+			   (void *)&csrRowPtr[start_row[d]], 
+			   (dev_m[d] + 1) * sizeof(int));
 
-	// 	// cout << "csrRowPtr (before): ";
-	// 	// for (int i = 0; i <= dev_m[d]; i++) {
-	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
-	// 	// }
-	// 	// cout << endl;
+		// cout << "csrRowPtr (before): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
-	// 	for (int i = 0; i < dev_m[d] + 1; i++) {
-	// 		host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
-	// 	}
+		for (int i = 0; i < dev_m[d] + 1; i++) {
+			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
+		}
 
-	// 	// cout << "csrRowPtr (after): ";
-	// 	// for (int i = 0; i <= dev_m[d]; i++) {
-	// 	// 	cout << host_csrRowPtr[d][i] << ", ";
-	// 	// }
-	// 	// cout << endl;
+		// cout << "csrRowPtr (after): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
 
 	// 	//cout << "Start copy to GPUs...";
