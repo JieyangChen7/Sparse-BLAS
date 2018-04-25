@@ -259,14 +259,14 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cout << host_csrRowPtr[d][i] << ", ";
 		}
 		cout << endl;
-		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
+		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
 		cout << "csrColIndex[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
 			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
 		}
 		cout << endl;
-		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
 		cout << "csrVal[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
@@ -275,9 +275,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << endl;
 
 
-		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
-		cudaStat5[d] = cudaMemcpy(dev_x[d], x,             (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
+		cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
 
 		cout << "x = ";
 		for (int i = 0; i < dev_n[d]; ++i)
@@ -330,7 +330,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	}
 
 	//cout << "Start computation ... " << endl;
-	int repeat_test = 10;
+	int repeat_test = 1;
 	double start = get_time();
 	for (int i = 0; i < repeat_test; i++) 
 	{
@@ -342,6 +342,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 										alpha, descr[d], dev_csrVal[d], 
 										dev_csrRowPtr[d], dev_csrColIndex[d], 
 										dev_x[d], beta, dev_y[d]); 	 
+			if (status[d]) cout << "error" << endl;
 
 			if (d == 0) {
 			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
