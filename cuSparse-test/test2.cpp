@@ -371,13 +371,13 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
-			cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
-			// status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-			// 							dev_m[d], dev_n[d], dev_nnz[d], 
-			// 							alpha, descr[d], dev_csrVal[d], 
-			// 							dev_csrRowPtr[d], dev_csrColIndex[d], 
-			// 							dev_x[d], beta, dev_y[d]); 	 
-			//print_error(status[d]);
+			//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+										dev_m[d], dev_n[d], dev_nnz[d], 
+										alpha, descr[d], dev_csrVal[d], 
+										dev_csrRowPtr[d], dev_csrColIndex[d], 
+										dev_x[d], beta, dev_y[d]); 	 
+			print_error(status[d]);
 
 			
 			cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
