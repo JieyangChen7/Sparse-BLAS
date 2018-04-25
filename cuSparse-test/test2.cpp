@@ -518,15 +518,6 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 
 		for (int i = 0; i < ngpu; i++) {
-			csrValA_partial[i] = new double[nnz_partial[i]];
-			memcpy((void *)csrValA_partial[i], 
-				   (void *)&csrValA[start_idx[i]], 
-				   sizeof(double) * nnz_partial[i]);
-		}
-
-
-
-		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
 			host_csrRowPtr[i][0] = 0;
 			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
@@ -545,24 +536,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				host_csrRowPtr[i][j] -= start_idx[i];
 			}
 
-			cout << "host_csrRowPtr: ";
-			for (int j = 0; j <= dev_m[i]; j++) {
-				cout << host_csrRowPtr[i][j] << ", ";
-			}
-			cout << endl;
+			// cout << "host_csrRowPtr: ";
+			// for (int j = 0; j <= dev_m[i]; j++) {
+			// 	cout << host_csrRowPtr[i][j] << ", ";
+			// }
+			// cout << endl;
 		}
 
-		
-
-		for (int i = 0; i < ngpu; i++) {
-			csrColIndA_partial[i] = new double[nnz_partial[i]];
-			memcpy((void *)csrColIndA_partial[i], 
-				   (void *)&csrColIndA[start_idx[i]], 
-				   sizeof(double) * nnz_partial[i]);
-		}
-
-
-		
+			
 		for (int d = 0; d < ngpu; d++) {
 
 			cudaSetDevice(d);
