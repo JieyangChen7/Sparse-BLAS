@@ -171,11 +171,11 @@ int main(int argc, char *argv[]) {
 				 y,
 				 ngpu);
 
-	spMV_mgpu_v2(m, n, nnz, &ONE,
-				 cooVal, csrRowPtr, cooColIndex, 
-				 x, &ZERO,
-				 y,
-				 ngpu);
+	// spMV_mgpu_v2(m, n, nnz, &ONE,
+	// 			 cooVal, csrRowPtr, cooColIndex, 
+	// 			 x, &ZERO,
+	// 			 y,
+	// 			 ngpu);
 
 
 }
