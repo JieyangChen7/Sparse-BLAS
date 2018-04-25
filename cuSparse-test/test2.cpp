@@ -35,6 +35,7 @@ void print_error(cusparseStatus_t status) {
 		cout << "CUSPARSE_STATUS_INTERNAL_ERROR" << endl;
 	else if (status == CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED)
 		cout << "CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED" << endl;
+	else cout << status << endl;
 }
 
 double get_time()
