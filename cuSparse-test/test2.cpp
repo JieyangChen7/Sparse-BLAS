@@ -65,7 +65,6 @@ double get_time()
 
 int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[2]);
-	int version = atoi(argv[3]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -737,7 +736,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		memcpy(y2, y, m * sizeof(double));
 		for (int d = 0; d < ngpu; d++) {
 			cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
-			
+
 			if (start_flag[d]) {
 				host_y[d][0] += y[start_row[d]];
 				host_y[d][0] -= y2[start_row[d]] * (*beta);
