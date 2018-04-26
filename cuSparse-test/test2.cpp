@@ -117,8 +117,11 @@ int main(int argc, char *argv[]) {
 	// cout << endl;
 
 
-    csrRowPtr = (int *) malloc((n+1) * sizeof(int));
+    csrRowPtr = (int *) malloc((m+1) * sizeof(int));
     int * counter = new int[m];
+    for (int i = 0; i < m; i++) {
+    	counter[i] = 0;
+    }
 	for (int i = 0; i < nnz; i++) {
 		counter[cooRowIndex[i]]++;
 	}
@@ -147,6 +150,11 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < n; i++)
 	{
 		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
+	}
+
+
+	for (int i = 0; i < m; i++)
+	{
 		y[i] = 0.0;
 	}
 
