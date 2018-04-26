@@ -429,13 +429,13 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 	double end = get_time();
 	double time = end - start;
-	//printf("spMV_mgpu_v1 time = %f s\n", time);	
+	printf("spMV_mgpu_v1 time = %f s\n", time);	
 	long long flop = nnz * 2;
 	flop *= repeat_test;
 	double gflop = (double)flop/1e9;
-	//printf("gflop = %f\n", gflop);
+	printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
-	//printf("GFLOPS = %f\n", gflops);
+	printf("GFLOPS = %f\n", gflops);
 	return gflops;
 	// cout << "y = [";
 	// for(int i = 0; i < m; i++) {
@@ -642,13 +642,13 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 		double end = get_time();
 		double time = end - start;
-		//printf("spMV_mgpu_v2 time = %f s\n", time);
+		printf("spMV_mgpu_v2 time = %f s\n", time);
 		long long flop = nnz * 2;
 		flop *= repeat_test;
 		double gflop = (double)flop/1e9;
-		//printf("gflop = %f\n", gflop);
+		printf("gflop = %f\n", gflop);
 		double gflops = gflop / time;
-		//printf("GFLOPS = %f\n", gflops);
+		printf("GFLOPS = %f\n", gflops);
 		return gflops;
 		// for (int i = 0; i < ngpu; i++) {
 		// 	cout << "host_y[i] = [";
