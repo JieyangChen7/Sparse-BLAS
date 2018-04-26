@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     	std::cout << "] " << int(progress * 100.0) << " %\r";
     	std::cout.flush();
 
-    	progress = i / nnz; 
+    	progress = (float)i / nnz; 
 	}
 	std::cout << std::endl;
        // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
