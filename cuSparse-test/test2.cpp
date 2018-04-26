@@ -252,7 +252,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		cudaSetDevice(d);
 
-		//cout << "GPU " << d << ":" << endl;
+		cout << "GPU " << d << ":" << endl;
 
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
@@ -263,7 +263,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
 
-		//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -530,8 +530,8 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		// for (int d = 0; d < ngpu; d++) {
-		// 	cout << "GPU" << d << ":" << endl;
+		 for (int d = 0; d < ngpu; d++) {
+		 	cout << "GPU " << d << ":" << endl;
 		// 	cout << " start_idx: " << start_idx[d] << ", ";
 		// 	cout << " end_idx: " << end_idx[d] << ", ";
 		// 	cout << " start_row: " << start_row[d] << ", ";
@@ -539,12 +539,12 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// 	cout << " start_flag: " << start_flag[d] << ", ";
 		// 	cout << " end_flag: " << end_flag[d] << ", ";
 		// 	cout << endl;
-		// 	cout << " dev_m: " << dev_m[d] << ", ";
-		// 	cout << " dev_n: " << dev_n[d] << ", ";
-		// 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
-		// 	cout << endl;
+		 	cout << " dev_m: " << dev_m[d] << ", ";
+		 	cout << " dev_n: " << dev_n[d] << ", ";
+		 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
+		 	cout << endl;
 
-		// }
+		 }
 
 		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
