@@ -107,12 +107,11 @@ int main(int argc, char *argv[]) {
         cooRowIndex[i]--;  
         cooColIndex[i]--;
        
-
     	std::cout << "[";
     	int pos = barWidth * progress;
     	for (int b = 0; b < barWidth; ++b) {
         	if (b < pos) std::cout << "=";
-        	else if (i == pos) std::cout << ">";
+        	else if (b == pos) std::cout << ">";
         	else std::cout << " ";
     	}
     	std::cout << "] " << int(progress * 100.0) << " %\r";
