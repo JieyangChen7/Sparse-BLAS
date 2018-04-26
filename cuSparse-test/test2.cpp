@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
 	bool correct = true;
 	for(int i = 0; i < m; i++) {
 		//cout << y[i] << ", ";
-		cout << y1[i] << " - " << y2[i] << endl;
+		//cout << y1[i] << " - " << y2[i] << endl;
 		if (abs(y1[i] - y2[i]) > 1e-5 ) {
 			correct = false;
 		}
@@ -255,6 +255,8 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_comm1 = " << min_time_comm1 << endl;
 	cout << "min_time_comp1 = " << min_time_comp1 << endl;
 	cout << "min_time_post1 = " << min_time_post1 << endl;
+
+	cout << endl;
 
 	cout << "min_time_parse2 = " << min_time_parse2 << endl;
 	cout << "min_time_comm2 = " << min_time_comm2 << endl;
