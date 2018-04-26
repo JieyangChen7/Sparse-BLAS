@@ -95,6 +95,7 @@ int main(int argc, char *argv[]) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         cooRowIndex[i]--;  
         cooColIndex[i]--;
+        cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
     }
 
 
@@ -504,7 +505,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int i = 0; i < ngpu; i++) {
 			while (csrRowPtr[curr_row] <= end_idx[i]) {
 				curr_row++;
-				cout << "->" << csrRowPtr[curr_row] << endl;
+				//cout << "->" << csrRowPtr[curr_row] << endl;
 			}
 
 			end_row[i] = curr_row - 1;
