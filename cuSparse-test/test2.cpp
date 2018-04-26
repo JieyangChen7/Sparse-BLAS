@@ -285,7 +285,8 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_comp2 = " << min_time_comp2 << endl;
 	cout << "min_time_post2 = " << min_time_post2 << endl;
 
-
+	cout << endl;
+	
     cout << "avg_time_parse1 = " << avg_time_parse1/repeat_test << endl;
 	cout << "avg_time_comm1 = "  << avg_time_comm1/repeat_test << endl;
 	cout << "avg_time_comp1 = "  << avg_time_comp1/repeat_test << endl;
