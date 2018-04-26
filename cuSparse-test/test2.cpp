@@ -278,6 +278,7 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_comm1 = " << min_time_comm1 << endl;
 	cout << "min_time_comp1 = " << min_time_comp1 << endl;
 	cout << "min_time_post1 = " << min_time_post1 << endl;
+	cout << "total_time = " << min_time_parse1+min_time_comm1+min_time_comp1+min_time_post1 << endl;
 
 	cout << endl;
 
@@ -285,20 +286,35 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_comm2 = " << min_time_comm2 << endl;
 	cout << "min_time_comp2 = " << min_time_comp2 << endl;
 	cout << "min_time_post2 = " << min_time_post2 << endl;
+	cout << "total_time = " << min_time_parse2+min_time_comm2+min_time_comp2+min_time_post2 << endl;
 
 	cout << endl;
 
-    cout << "avg_time_parse1 = " << avg_time_parse1/repeat_test << endl;
-	cout << "avg_time_comm1 = "  << avg_time_comm1/repeat_test << endl;
-	cout << "avg_time_comp1 = "  << avg_time_comp1/repeat_test << endl;
-	cout << "avg_time_post1 = "  << avg_time_post1/repeat_test << endl;
+
+	avg_time_parse1/=repeat_test;
+	avg_time_comm1/=repeat_test;
+	avg_time_comp1/=repeat_test;
+	avg_time_post1/=repeat_test;
+
+	avg_time_parse2/=repeat_test;
+	avg_time_comm2/=repeat_test;
+	avg_time_comp2/=repeat_test;
+	avg_time_post2/=repeat_test;
+
+    cout << "avg_time_parse1 = " << avg_time_parse1 << endl;
+	cout << "avg_time_comm1 = "  << avg_time_comm1 << endl;
+	cout << "avg_time_comp1 = "  << avg_time_comp1 << endl;
+	cout << "avg_time_post1 = "  << avg_time_post1 << endl;
+	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
+
 
 	cout << endl;
 
-	cout << "avg_time_parse2 = " << avg_time_parse2/repeat_test << endl;
-	cout << "avg_time_comm2 = "  << avg_time_comm2/repeat_test << endl;
-	cout << "avg_time_comp2 = "  << avg_time_comp2/repeat_test << endl;
-	cout << "avg_time_post2 = "  << avg_time_post2/repeat_test << endl;
+	cout << "avg_time_parse2 = " << avg_time_parse2 << endl;
+	cout << "avg_time_comm2 = "  << avg_time_comm2 << endl;
+	cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
+	cout << "avg_time_post2 = "  << avg_time_post2 << endl;
+	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
 
 	// double end = get_time();
 	// double time = end - start;
