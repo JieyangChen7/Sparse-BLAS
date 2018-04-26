@@ -200,6 +200,12 @@ int main(int argc, char *argv[]) {
 		max_perf = tmp;
 	}
 
+	cout << "y = [";
+	for(int i = 0; i < m; i++) {
+		cout << y[i] << ", ";
+	}
+	cout << "]" << endl;
+
 
 
 	cout << "Max Perf. = " << max_perf << endl;
@@ -437,11 +443,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	double gflops = gflop / time;
 	printf("GFLOPS = %f\n", gflops);
 	return gflops;
-	// cout << "y = [";
-	// for(int i = 0; i < m; i++) {
-	// 	cout << y[i] << ", ";
-	// }
-	// cout << "]" << endl;
+	
 
 }
 
@@ -471,6 +473,7 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		double ** dev_x  = new double * [ngpu];
 		double ** dev_y  = new double * [ngpu];
 		double ** host_y = new double * [ngpu];
+		double *  y2     = new double   [m];
 
 		cudaStream_t       * stream = new cudaStream_t [ngpu];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
@@ -640,6 +643,17 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				cudaDeviceSynchronize();
 			}
 		}
+
+		memcpy(y2, y, m * sizeof(double));
+		for (int i = 0; i < ngpu; i++) {
+			if (start_flag[i]) {
+				host_y[d] += y[start_row[d]];
+				host_y[d] -= y2[start_row[d]] * (*beta);
+			}
+			memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
+		}
+
+
 		double end = get_time();
 		double time = end - start;
 		printf("spMV_mgpu_v2 time = %f s\n", time);
@@ -649,15 +663,22 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		printf("gflop = %f\n", gflop);
 		double gflops = gflop / time;
 		printf("GFLOPS = %f\n", gflops);
+
+
+
+
+
+
 		return gflops;
-		// for (int i = 0; i < ngpu; i++) {
-		// 	cout << "host_y[i] = [";
-		// 	for (int j = 0; j < dev_m[i]; j++) {
-		// 		cout << host_y[i][j] << ", ";
-		// 	}
-		// 	cout << "]" << endl;
-		// }
+		for (int i = 0; i < ngpu; i++) {
+			cout << "host_y[i] = [";
+			for (int j = 0; j < dev_m[i]; j++) {
+				cout << host_y[i][j] << ", ";
+			}
+			cout << "]" << endl;
+		}
 		
+
 
 
 	}
