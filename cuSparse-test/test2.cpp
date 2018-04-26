@@ -496,6 +496,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int i = 0; i < ngpu; i++) {
 			while (csrRowPtr[curr_row] <= end_idx[i]) {
 				curr_row++;
+				cout << "->" << csrRowPtr[curr_row] << endl;
 			}
 
 			end_row[i] = curr_row - 1;
