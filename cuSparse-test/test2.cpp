@@ -388,18 +388,10 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		//cout << "Done" << endl;
 
 	}
-	for (int d = 0; d < ngpu; ++d) 
-	{
-		cudaSetDevice(d);
-		cudaDeviceSynchronize();
-	}
-
-
-
 
 
 	//cout << "Start computation ... " << endl;
-	 int repeat_test = 1;
+	 int repeat_test = 100;
 	 double start = get_time();
 	 for (int i = 0; i < repeat_test; i++) 
 	 {
@@ -626,13 +618,7 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cudaDeviceSynchronize();
-		}
-
-		int repeat_test = 1;
+		int repeat_test = 100;
 		double start = get_time();
 		for (int i = 0; i < repeat_test; i++) 
 		{
