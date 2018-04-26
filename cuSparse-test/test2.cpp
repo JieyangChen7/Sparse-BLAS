@@ -353,7 +353,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	curr_time = get_time();
 
 	for (int d = 0; d < ngpu; d++){
-
+		cudaSetDevice(d);
 
 		cudaStreamCreate(&(stream[d]));
 		
