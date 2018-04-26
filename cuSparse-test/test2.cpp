@@ -448,13 +448,6 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-		//cout << "Done" << endl;
-
-		//cout << "initialize cuSparse ...";
-
-		
-		//cout << "Done" << endl;
-
 	}
 
 	*time_comm = get_time() - curr_time;
@@ -475,6 +468,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 									   alpha, descr[d], dev_csrVal[d], 
 									   dev_csrRowPtr[d], dev_csrColIndex[d], 
 									   dev_x[d], beta, dev_y[d]);		 	
+			cout << "result status = " << status[d] <<endl;
 		 	
 		}
 		for (int d = 0; d < ngpu; ++d) 
