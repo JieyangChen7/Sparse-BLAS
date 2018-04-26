@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         cooRowIndex[i]--;  
         cooColIndex[i]--;
-        cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
+       // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
     }
 
 
