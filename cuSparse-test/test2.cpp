@@ -240,6 +240,10 @@ int main(int argc, char *argv[]) {
 
 
 
+	
+	}
+
+
 	//cout << "y = [";
 	bool correct = true;
 	for(int i = 0; i < m; i++) {
@@ -263,11 +267,9 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_comp2 = " << min_time_comp2 << endl;
 	cout << "min_time_post2 = " << min_time_post2 << endl;
 
-}
-
-// double end = get_time();
-// double time = end - start;
-// printf("spMV_mgpu time = %f s\n", time);
+	// double end = get_time();
+	// double time = end - start;
+	// printf("spMV_mgpu time = %f s\n", time);
 
 }
 
