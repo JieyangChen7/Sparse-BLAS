@@ -251,8 +251,15 @@ int main(int argc, char *argv[]) {
 	}
 
 	printf("Check result: %s\n", correct ? "True" : "False");
-	//cout << "]" << endl;
+	cout << "min_time_parse1 = " << min_time_parse1 << endl;
+	cout << "min_time_comm1 = " << min_time_comm1 << endl;
+	cout << "min_time_comp1 = " << min_time_comp1 << endl;
+	cout << "min_time_post1 = " << min_time_post1 << endl;
 
+	cout << "min_time_parse2 = " << min_time_parse2 << endl;
+	cout << "min_time_comm2 = " << min_time_comm2 << endl;
+	cout << "min_time_comp2 = " << min_time_comp2 << endl;
+	cout << "min_time_post2 = " << min_time_post2 << endl;
 
 }
 
