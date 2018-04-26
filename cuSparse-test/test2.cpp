@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
 
 	// double start = get_time();
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 100; i++) {
 		
 		spMV_mgpu_v1(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
