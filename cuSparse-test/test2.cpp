@@ -7,9 +7,10 @@
 #include <iostream>
 #include <cmath>
 #include "mmio.h"
+#include <float.h>
 using namespace std;
 
-double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
@@ -18,7 +19,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * time_comm,
 				 double * time_comp,
 				 double * time_post);
-double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
@@ -264,7 +265,7 @@ int main(int argc, char *argv[]) {
 
 
 
-double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
@@ -510,7 +511,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 }
 
-void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
