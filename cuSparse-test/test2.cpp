@@ -65,6 +65,7 @@ double get_time()
 
 int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[2]);
+	int repeat_test atoi(argv[3]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -214,7 +215,7 @@ int main(int argc, char *argv[]) {
 
 
 	// double start = get_time();
-	int repeat_test = 100;
+	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test; i++) {
 		
 		spMV_mgpu_v1(m, n, nnz, &ONE,
@@ -286,7 +287,7 @@ int main(int argc, char *argv[]) {
 	cout << "min_time_post2 = " << min_time_post2 << endl;
 
 	cout << endl;
-	
+
     cout << "avg_time_parse1 = " << avg_time_parse1/repeat_test << endl;
 	cout << "avg_time_comm1 = "  << avg_time_comm1/repeat_test << endl;
 	cout << "avg_time_comp1 = "  << avg_time_comp1/repeat_test << endl;
@@ -544,6 +545,25 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	// double gflops = gflop / time;
 	// printf("GFLOPS = %f\n", gflops);
 	// return gflops;
+
+	// for (int d = 0; d < ngpu; d++) {
+	// 		cudaSetDevice(d);
+	// 		cudafree(dev_csrVal[d]);
+	// 		cudafree(dev_csrRowPtr[d]);
+	// 		cudafree(dev_csrColIndex[d]);
+	// 		cudafree(dev_x[d]);
+	// 		cudafree(dev_y[d]);
+	// 		delete [] host_csrRowPtr[d]
+	// 	}
+	// 	delete[] dev_csrVal;
+	// 	delete[] dev_csrRowPtr;
+	// 	delete[] dev_csrColIndex;
+	// 	delete[] dev_x;
+	// 	delete[] dev_y;
+	// 	delete[] host_csrRowPtr;
+	// 	delete[] start_row;
+	// 	delete[] end_row;
+		
 	
 
 }
@@ -783,6 +803,25 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 
 		*time_post = get_time() - curr_time;
+
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaSetDevice(d);
+		// 	cudafree(dev_csrVal[d]);
+		// 	cudafree(dev_csrRowPtr[d]);
+		// 	cudafree(dev_csrColIndex[d]);
+		// 	cudafree(dev_x[d]);
+		// 	cudafree(dev_y[d]);
+		// 	delete [] host_csrRowPtr[d]
+		// }
+		// delete[] dev_csrVal;
+		// delete[] dev_csrRowPtr;
+		// delete[] dev_csrColIndex;
+		// delete[] dev_x;
+		// delete[] dev_y;
+		// delete[] host_csrRowPtr;
+		// delete[] start_row;
+		// delete[] end_row;
+
 
 
 		// printf("spMV_mgpu_v2 time = %f s\n", time);
