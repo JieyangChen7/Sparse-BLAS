@@ -56,6 +56,7 @@ double get_time()
 
 int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[2]);
+	int version = atoi(argv[3]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -175,29 +176,20 @@ int main(int argc, char *argv[]) {
 	double ONE = 1.0;
 	double ZERO = 0.0;
 
+	if (version == 1){
 	spMV_mgpu_v1(m, n, nnz, &ONE,
 				 cooVal, csrRowPtr, cooColIndex, 
 				 x, &ZERO,
 				 y,
 				 ngpu);
-
-	spMV_mgpu_v1(m, n, nnz, &ONE,
-				 cooVal, csrRowPtr, cooColIndex, 
-				 x, &ZERO,
-				 y,
-				 ngpu);
-
+	}
+	if (version == 2) {
 	spMV_mgpu_v2(m, n, nnz, &ONE,
 				 cooVal, csrRowPtr, cooColIndex, 
 				 x, &ZERO,
 				 y,
 				 ngpu);
-	spMV_mgpu_v2(m, n, nnz, &ONE,
-				 cooVal, csrRowPtr, cooColIndex, 
-				 x, &ZERO,
-				 y,
-				 ngpu);
-
+	}
 
 }
 
