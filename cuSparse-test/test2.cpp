@@ -178,6 +178,8 @@ int main(int argc, char *argv[]) {
 
 	double max_perf = 0.0;
 
+	double start = get_time();
+
 	for (int i = 0; i < 100; i++) {
 		double tmp = 0.0;
 	if (version == 1){
@@ -198,8 +200,14 @@ int main(int argc, char *argv[]) {
 		max_perf = tmp;
 	}
 
+
+
 	cout << "Max Perf. = " << max_perf << endl;
 }
+
+double end = get_time();
+double time = end - start;
+printf("spMV_mgpu time = %f s\n", time);
 
 }
 
@@ -244,18 +252,18 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		cudaSetDevice(d);
 
-		cout << "GPU " << d << ":" << endl;
+		//cout << "GPU " << d << ":" << endl;
 
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
-		cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
+		//cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
 
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
 
-		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -391,7 +399,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 
 	//cout << "Start computation ... " << endl;
-	 int repeat_test = 100;
+	 int repeat_test = 1;
 	 double start = get_time();
 	 for (int i = 0; i < repeat_test; i++) 
 	 {
@@ -429,15 +437,13 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 	double end = get_time();
 	double time = end - start;
-
-	printf("spMV_mgpu_v1 time = %f s\n", time);
-	
+	//printf("spMV_mgpu_v1 time = %f s\n", time);	
 	long long flop = nnz * 2;
 	flop *= repeat_test;
 	double gflop = (double)flop/1e9;
-	printf("gflop = %f\n", gflop);
+	//printf("gflop = %f\n", gflop);
 	double gflops = gflop / time;
-	printf("GFLOPS = %f\n", gflops);
+	//printf("GFLOPS = %f\n", gflops);
 	return gflops;
 	// cout << "y = [";
 	// for(int i = 0; i < m; i++) {
@@ -532,21 +538,21 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		for (int d = 0; d < ngpu; d++) {
-			cout << "GPU" << d << ":" << endl;
-			cout << " start_idx: " << start_idx[d] << ", ";
-			cout << " end_idx: " << end_idx[d] << ", ";
-			cout << " start_row: " << start_row[d] << ", ";
-			cout << " end_row: " << end_row[d] << ", ";
-			cout << " start_flag: " << start_flag[d] << ", ";
-			cout << " end_flag: " << end_flag[d] << ", ";
-			cout << endl;
-			cout << " dev_m: " << dev_m[d] << ", ";
-			cout << " dev_n: " << dev_n[d] << ", ";
-			cout << " dev_nnz: " << dev_nnz[d] << ", ";
-			cout << endl;
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cout << "GPU" << d << ":" << endl;
+		// 	cout << " start_idx: " << start_idx[d] << ", ";
+		// 	cout << " end_idx: " << end_idx[d] << ", ";
+		// 	cout << " start_row: " << start_row[d] << ", ";
+		// 	cout << " end_row: " << end_row[d] << ", ";
+		// 	cout << " start_flag: " << start_flag[d] << ", ";
+		// 	cout << " end_flag: " << end_flag[d] << ", ";
+		// 	cout << endl;
+		// 	cout << " dev_m: " << dev_m[d] << ", ";
+		// 	cout << " dev_n: " << dev_n[d] << ", ";
+		// 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
+		// 	cout << endl;
 
-		}
+		// }
 
 		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
@@ -626,7 +632,7 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaDeviceSynchronize();
 		}
 
-		int repeat_test = 100;
+		int repeat_test = 1;
 		double start = get_time();
 		for (int i = 0; i < repeat_test; i++) 
 		{
@@ -649,19 +655,14 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 		double end = get_time();
-
-		//cout << start << "  " << end << endl;
-
 		double time = end - start;
-
-		printf("spMV_mgpu_v2 time = %f s\n", time);
-
+		//printf("spMV_mgpu_v2 time = %f s\n", time);
 		long long flop = nnz * 2;
 		flop *= repeat_test;
 		double gflop = (double)flop/1e9;
-		printf("gflop = %f\n", gflop);
+		//printf("gflop = %f\n", gflop);
 		double gflops = gflop / time;
-		printf("GFLOPS = %f\n", gflops);
+		//printf("GFLOPS = %f\n", gflops);
 		return gflops;
 		// for (int i = 0; i < ngpu; i++) {
 		// 	cout << "host_y[i] = [";
