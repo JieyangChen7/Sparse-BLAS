@@ -646,7 +646,7 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		memcpy(y2, y, m * sizeof(double));
 		for (int d = 0; d < ngpu; d++) {
-			if (start_flag[i]) {
+			if (start_flag[d]) {
 				host_y[d][0] += y[start_row[d]];
 				host_y[d][0] -= y2[start_row[d]] * (*beta);
 			}
