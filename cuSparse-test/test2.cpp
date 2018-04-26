@@ -195,12 +195,12 @@ int main(int argc, char *argv[]) {
 	double min_time_parse1 = DBL_MAX;
 	double min_time_comm1 = DBL_MAX;
 	double min_time_comp1 = DBL_MAX;
-	double min_time_posy1 = DBL_MAX;
+	double min_time_post1 = DBL_MAX;
 
 	double min_time_parse2 = DBL_MAX;
 	double min_time_comm2 = DBL_MAX;
 	double min_time_comp2 = DBL_MAX;
-	double min_time_posy2 = DBL_MAX;
+	double min_time_post2 = DBL_MAX;
 
 
 	// double start = get_time();
@@ -489,7 +489,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 	*time_comp = get_time() - curr_time;
 	curr_time = get_time();
 
-	for (int d = 0; i < ngpu; d++)
+	for (int d = 0; d < ngpu; d++)
 	{
 		cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
 	}
@@ -721,7 +721,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 											dev_x[d],  beta, dev_y[d]); 
 
 				//print_error(status[d]);
-				cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+				
 			}
 			for (int d = 0; d < ngpu; ++d) 
 			{
@@ -736,6 +736,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		memcpy(y2, y, m * sizeof(double));
 		for (int d = 0; d < ngpu; d++) {
+			cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+			
 			if (start_flag[d]) {
 				host_y[d][0] += y[start_row[d]];
 				host_y[d][0] -= y2[start_row[d]] * (*beta);
