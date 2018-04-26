@@ -639,7 +639,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 		double end = get_time();
 
-		cout << start << "  " << end << endl;
+		//cout << start << "  " << end << endl;
 
 		double time = end - start;
 
