@@ -100,13 +100,13 @@ int main(int argc, char *argv[]) {
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
 
-
+    float progress = 0.0;
+    int barWidth = 70;
     for (int i = 0; i < nnz; i++) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         cooRowIndex[i]--;  
         cooColIndex[i]--;
-        float progress = 0.0;
-    	int barWidth = 70;
+       
 
     	std::cout << "[";
     	int pos = barWidth * progress;
