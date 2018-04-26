@@ -13,12 +13,20 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
-				 int ngpu);
+				 int ngpu,
+				 double * time_parse,
+				 double * time_comm,
+				 double * time_comp,
+				 double * time_post);
 double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
-				  int ngpu);
+				  int ngpu,
+				  double * time_parse,
+				  double * time_comm,
+				  double * time_comp,
+				  double * time_post);
 
 void print_error(cusparseStatus_t status) {
 	// cout << CUSPARSE_STATUS_SUCCESS << endl;
@@ -147,7 +155,8 @@ int main(int argc, char *argv[]) {
 	// cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
-	double * y = (double *)malloc(m * sizeof(double)); 
+	double * y1 = (double *)malloc(m * sizeof(double)); 
+	double * y2 = (double *)malloc(m * sizeof(double)); 
 
 	for (int i = 0; i < n; i++)
 	{
@@ -157,7 +166,8 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < m; i++)
 	{
-		y[i] = 0.0;
+		y1[i] = 0.0;
+		y2[i] = 0.0;
 	}
 
 
@@ -176,44 +186,78 @@ int main(int argc, char *argv[]) {
 	double ONE = 1.0;
 	double ZERO = 0.0;
 
-	double max_perf = 0.0;
+	double time_parse = 0.0;
+	double time_comm = 0.0;
+	double time_comp = 0.0;
+	double time_post = 0.0;
 
-	double start = get_time();
+	double min_time_parse1 = DBL_MAX;
+	double min_time_comm1 = DBL_MAX;
+	double min_time_comp1 = DBL_MAX;
+	double min_time_posy1 = DBL_MAX;
+
+	double min_time_parse2 = DBL_MAX;
+	double min_time_comm2 = DBL_MAX;
+	double min_time_comp2 = DBL_MAX;
+	double min_time_posy2 = DBL_MAX;
+
+
+	// double start = get_time();
 
 	for (int i = 0; i < 1; i++) {
-		double tmp = 0.0;
-	if (version == 1){
-		tmp = spMV_mgpu_v1(m, n, nnz, &ONE,
+		
+		spMV_mgpu_v1(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &ZERO,
-					 y,
-					 ngpu);
-	}
-	if (version == 2) {
-		tmp = spMV_mgpu_v2(m, n, nnz, &ONE,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &ZERO,
-					 y,
-					 ngpu);
-	}
-	if (tmp > max_perf) {
-		max_perf = tmp;
-	}
+					 y1,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post);
 
-	cout << "y = [";
+		if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
+		if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
+		if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
+		if (time_post < min_time_post1) min_time_post1 = time_post;
+
+	
+		spMV_mgpu_v2(m, n, nnz, &ONE,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &ZERO,
+					 y2,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post);
+	
+		if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
+		if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
+		if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
+		if (time_post < min_time_post2) min_time_post2 = time_post;
+
+
+
+
+	//cout << "y = [";
+	bool correct = true;
 	for(int i = 0; i < m; i++) {
-		cout << y[i] << ", ";
+		//cout << y[i] << ", ";
+		if (abs(y1[i] - y2[i]) > 1e-5 ) {
+			correct = false;
+		}
 	}
-	cout << "]" << endl;
+
+	printf("Check result: %s\n", correct ? "True" : "False");
+	//cout << "]" << endl;
 
 
-
-	cout << "Max Perf. = " << max_perf << endl;
 }
 
-double end = get_time();
-double time = end - start;
-printf("spMV_mgpu time = %f s\n", time);
+// double end = get_time();
+// double time = end - start;
+// printf("spMV_mgpu time = %f s\n", time);
 
 }
 
@@ -224,7 +268,16 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
-				 int ngpu){
+				 int ngpu,
+				 double * time_parse,
+				 double * time_comm,
+				 double * time_comp,
+				 double * time_post){
+
+	double curr_time = 0.0;
+
+	curr_time = get_time();
+
 
 	cudaStream_t * stream = new cudaStream_t [ngpu];
 
@@ -259,7 +312,6 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cudaSetDevice(d);
 
 		cout << "GPU " << d << ":" << endl;
-
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
@@ -272,25 +324,6 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
-
-
-		cudaStat1[d] = cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int));
-		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d] * sizeof(int)); 
-		cudaStat3[d] = cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d] * sizeof(double)); 
-
-		cudaStat4[d] = cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
-		cudaStat5[d] = cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
-		
-
-		if ((cudaStat1[d] != cudaSuccess) || 
-			(cudaStat2[d] != cudaSuccess) || 
-			(cudaStat3[d] != cudaSuccess) || 
-			(cudaStat4[d] != cudaSuccess) || 
-			(cudaStat5[d] != cudaSuccess)) 
-		{ 
-			printf("Device malloc failed");
-			return 1; 
-		} 
 
 		memcpy((void *)host_csrRowPtr[d], 
 			   (void *)&csrRowPtr[start_row[d]], 
@@ -312,6 +345,55 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// }
 		// cout << endl;
 
+	}
+
+
+	*time_parse = get_time() - curr_time;
+	curr_time = get_time();
+
+	for (int d = 0; d < ngpu; d++){
+
+
+		cudaStreamCreate(&(stream[d]));
+		
+		status[d] = cusparseCreate(&(handle[d])); 
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("CUSPARSE Library initialization failed");
+			return 1; 
+		} 
+		status[d] = cusparseSetStream(handle[d], stream[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("Stream bindind failed");
+			return 1;
+		} 
+		status[d] = cusparseCreateMatDescr(&descr[d]);
+		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("Matrix descriptor initialization failed");
+			return 1;
+		} 	
+		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
+		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
+
+		cudaStat1[d] = cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int));
+		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d] * sizeof(int)); 
+		cudaStat3[d] = cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d] * sizeof(double)); 
+
+		cudaStat4[d] = cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
+		cudaStat5[d] = cudaMalloc((void**)&dev_y[d],           dev_m[d] * sizeof(double)); 
+		
+
+		if ((cudaStat1[d] != cudaSuccess) || 
+			(cudaStat2[d] != cudaSuccess) || 
+			(cudaStat3[d] != cudaSuccess) || 
+			(cudaStat4[d] != cudaSuccess) || 
+			(cudaStat5[d] != cudaSuccess)) 
+		{ 
+			printf("Device malloc failed");
+			return 1; 
+		} 
 
 		//cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
@@ -369,31 +451,13 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		//cout << "initialize cuSparse ...";
 
-		cudaStreamCreate(&(stream[d]));
 		
-		status[d] = cusparseCreate(&(handle[d])); 
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("CUSPARSE Library initialization failed");
-			return 1; 
-		} 
-		status[d] = cusparseSetStream(handle[d], stream[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Stream bindind failed");
-			return 1;
-		} 
-		status[d] = cusparseCreateMatDescr(&descr[d]);
-		if (status[d] != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Matrix descriptor initialization failed");
-			return 1;
-		} 	
-		cusparseSetMatType(descr[d],CUSPARSE_MATRIX_TYPE_GENERAL); 
-		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 		//cout << "Done" << endl;
 
 	}
+
+	*time_comm = get_time() - curr_time;
+	curr_time = get_time();
 
 
 	//cout << "Start computation ... " << endl;
@@ -409,18 +473,8 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 									   dev_m[d], dev_n[d], dev_nnz[d], 
 									   alpha, descr[d], dev_csrVal[d], 
 									   dev_csrRowPtr[d], dev_csrColIndex[d], 
-									   dev_x[d], beta, dev_y[d]); 	 
-		 	print_error(status[d]);
-
-			
-			cudaDeviceSynchronize();
-		 	cudaStat1[d] = cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
-		 	//cudaStat1[d] = cudaMemcpy( &y[0], dev_y[0], 1*sizeof(double),  cudaMemcpyDeviceToHost);
-			if ((cudaStat1[d] != cudaSuccess)) 
-			{ 
-				printf("Memcpy from Host to Device failed"); 
-				return 1; 
-			} 
+									   dev_x[d], beta, dev_y[d]);		 	
+		 	
 		}
 		for (int d = 0; d < ngpu; ++d) 
 		{
@@ -431,27 +485,45 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 	}
 
+	*time_comp = get_time() - curr_time;
+	curr_time = get_time();
+
+	for (int d = 0; i < ngpu; d++)
+	{
+		cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
+	}
+
+	*time_post = get_time() - curr_time;
 
 
-	double end = get_time();
-	double time = end - start;
-	printf("spMV_mgpu_v1 time = %f s\n", time);	
-	long long flop = nnz * 2;
-	flop *= repeat_test;
-	double gflop = (double)flop/1e9;
-	printf("gflop = %f\n", gflop);
-	double gflops = gflop / time;
-	printf("GFLOPS = %f\n", gflops);
-	return gflops;
+	// double end = get_time();
+	// double time = end - start;
+	// printf("spMV_mgpu_v1 time = %f s\n", time);	
+	// long long flop = nnz * 2;
+	// flop *= repeat_test;
+	// double gflop = (double)flop/1e9;
+	// printf("gflop = %f\n", gflop);
+	// double gflops = gflop / time;
+	// printf("GFLOPS = %f\n", gflops);
+	// return gflops;
 	
 
 }
 
-double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+void spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
-				  int ngpu){
+				  int ngpu, 
+				  double * time_parse,
+				  double * time_comm,
+				  double * time_comp,
+				  double * time_post){
+
+		double curr_time = 0.0;
+
+		curr_time = get_time();
+
 
 		int  * start_idx  = new int[ngpu];
 		int  * end_idx    = new int[ngpu];
@@ -575,6 +647,10 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// cout << endl;
 		}
 
+		*time_parse = get_time() - curr_time;
+
+		curr_time = get_time();
+
 			
 		for (int d = 0; d < ngpu; d++) {
 
@@ -612,6 +688,10 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		    cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
 		}
 
+
+	
+
+
 		for (int d = 0; d < ngpu; d++) {
 			cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],          (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 			cudaMemcpy(dev_csrColIndex[d], &csrColIndex[start_idx[d]], (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyHostToDevice); 
@@ -621,8 +701,13 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
+		*time_comm = get_time() - curr_time;
+
+
+		curr_time = get_time();
+
+
 		int repeat_test = 1;
-		double start = get_time();
 		for (int i = 0; i < repeat_test; i++) 
 		{
 			for (int d = 0; d < ngpu; ++d) 
@@ -644,6 +729,10 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
+		*time_comp = get_time() - curr_time;
+
+		curr_time = get_time();
+
 		memcpy(y2, y, m * sizeof(double));
 		for (int d = 0; d < ngpu; d++) {
 			if (start_flag[d]) {
@@ -653,33 +742,17 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
 		}
 
-
-		double end = get_time();
-		double time = end - start;
-		printf("spMV_mgpu_v2 time = %f s\n", time);
-		long long flop = nnz * 2;
-		flop *= repeat_test;
-		double gflop = (double)flop/1e9;
-		printf("gflop = %f\n", gflop);
-		double gflops = gflop / time;
-		printf("GFLOPS = %f\n", gflops);
+		*time_post = get_time() - curr_time;
 
 
-
-
-
-
-		return gflops;
-		for (int i = 0; i < ngpu; i++) {
-			cout << "host_y[i] = [";
-			for (int j = 0; j < dev_m[i]; j++) {
-				cout << host_y[i][j] << ", ";
-			}
-			cout << "]" << endl;
-		}
-		
-
-
+		// printf("spMV_mgpu_v2 time = %f s\n", time);
+		// long long flop = nnz * 2;
+		// flop *= repeat_test;
+		// double gflop = (double)flop/1e9;
+		// printf("gflop = %f\n", gflop);
+		// double gflops = gflop / time;
+		// printf("GFLOPS = %f\n", gflops);
+		//return gflops;
 
 	}
 
