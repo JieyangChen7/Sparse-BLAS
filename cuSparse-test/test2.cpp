@@ -677,7 +677,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
 		 	cout << endl;
 
-		// }
+		 }
 
 		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
