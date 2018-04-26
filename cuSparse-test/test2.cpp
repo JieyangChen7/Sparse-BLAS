@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
 
 	double start = get_time();
 
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 1; i++) {
 		double tmp = 0.0;
 	if (version == 1){
 		tmp = spMV_mgpu_v1(m, n, nnz, &ONE,
@@ -397,7 +397,7 @@ double spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 
 	//cout << "Start computation ... " << endl;
-	 int repeat_test = 100;
+	 int repeat_test = 1;
 	 double start = get_time();
 	 for (int i = 0; i < repeat_test; i++) 
 	 {
@@ -621,7 +621,7 @@ double spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyHostToDevice); 
 		}
 
-		int repeat_test = 100;
+		int repeat_test = 1;
 		double start = get_time();
 		for (int i = 0; i < repeat_test; i++) 
 		{
