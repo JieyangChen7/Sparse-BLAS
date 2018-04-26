@@ -512,7 +512,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 									   alpha, descr[d], dev_csrVal[d], 
 									   dev_csrRowPtr[d], dev_csrColIndex[d], 
 									   dev_x[d], beta, dev_y[d]);		 	
-			cout << "result status = " << status[d] <<endl;
+			
 		 	
 		}
 		for (int d = 0; d < ngpu; ++d) 
