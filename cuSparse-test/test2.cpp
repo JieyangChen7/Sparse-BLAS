@@ -244,6 +244,7 @@ int main(int argc, char *argv[]) {
 	bool correct = true;
 	for(int i = 0; i < m; i++) {
 		//cout << y[i] << ", ";
+		cout << y1[i] << " - " << y2[i] << endl;
 		if (abs(y1[i] - y2[i]) > 1e-5 ) {
 			correct = false;
 		}
