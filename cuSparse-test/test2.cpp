@@ -65,7 +65,7 @@ double get_time()
 
 int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[2]);
-	int repeat_test atoi(argv[3]);
+	int repeat_test = atoi(argv[3]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
