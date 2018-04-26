@@ -105,9 +105,23 @@ int main(int argc, char *argv[]) {
         fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         cooRowIndex[i]--;  
         cooColIndex[i]--;
-       // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
-    }
+        float progress = 0.0;
+    	int barWidth = 70;
 
+    	std::cout << "[";
+    	int pos = barWidth * progress;
+    	for (int b = 0; b < barWidth; ++b) {
+        	if (b < pos) std::cout << "=";
+        	else if (i == pos) std::cout << ">";
+        	else std::cout << " ";
+    	}
+    	std::cout << "] " << int(progress * 100.0) << " %\r";
+    	std::cout.flush();
+
+    	progress = i / nnz; 
+	}
+	std::cout << std::endl;
+       // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
 
  //    cout << "cooVal: ";
 	// for (int i = 0; i < nnz; i++) {
