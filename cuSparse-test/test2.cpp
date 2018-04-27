@@ -245,7 +245,8 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post);
-
+		cout << "time_comm = " << time_comm << endl;
+ 
 		if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
 		if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
 		if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
