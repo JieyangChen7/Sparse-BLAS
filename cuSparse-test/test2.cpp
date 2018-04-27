@@ -55,6 +55,25 @@ void print_error(cusparseStatus_t status) {
 
 }
 
+int get_row_from_index(int n, int * a, int idx) {
+	int l = 0;
+	int r = n - 1;
+	while (l < r - 1 ) {
+		int m = (l + r) / 2;
+		if (idx < a[m]) {
+			r = m;
+		} else if (idx > a[m]) {
+			l = m;
+		} else {
+			return m;
+		}
+	}
+	if (idx == a[l]) return l;
+	if (idx == a[r]) return r;
+	return l;
+
+}
+
 double get_time()
 {
 	struct timeval tp;
@@ -677,11 +696,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// Calculate the start and end row
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] <= start_idx[i]) {
-				curr_row++;
-			}
+			// while (csrRowPtr[curr_row] <= start_idx[i]) {
+			// 	curr_row++;
+			// }
 
-			start_row[i] = curr_row - 1; 
+			// start_row[i] = curr_row - 1; 
+			start_row[i] = get_row_from_index(m, csrRowPtr, start_idx[i]);
 
 			// Mark imcomplete rows
 			// True: imcomplete
@@ -699,12 +719,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			while (csrRowPtr[curr_row] <= end_idx[i]) {
-				curr_row++;
-				//cout << "->" << csrRowPtr[curr_row] << endl;
-			}
+			// while (csrRowPtr[curr_row] <= end_idx[i]) {
+			// 	curr_row++;
+			// 	//cout << "->" << csrRowPtr[curr_row] << endl;
+			// }
 
-			end_row[i] = curr_row - 1;
+			// end_row[i] = curr_row - 1;
+			end_row[i] = get_row_from_index(m, csrRowPtr, end_idx[i]);
 
 			// Mark imcomplete rows
 			// True: imcomplete
