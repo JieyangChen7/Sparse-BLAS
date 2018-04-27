@@ -657,7 +657,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
 
 
-		tmp = tmp - get_time();
+		tmp =  get_time() - tmp;
 		cout << "t1 = " << tmp << endl;
 
 		tmp = get_time();
@@ -669,7 +669,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
 		}
 
-		tmp = tmp - get_time();
+		tmp = get_time() - tmp;
 		cout << "t2 = " << tmp << endl;
 
 		tmp = get_time();
@@ -692,7 +692,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		tmp = tmp - get_time();
+		tmp = get_time() - tmp;
 		cout << "t3 = " << tmp << endl;
 
 		tmp = get_time();
@@ -715,7 +715,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		tmp = tmp - get_time();
+		tmp = get_time() - tmp;
 		cout << "t4 = " << tmp << endl;
 
 		tmp = get_time();
@@ -730,7 +730,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		tmp = tmp - get_time();
+		tmp = get_time() - tmp;
 		cout << "t5 = " << tmp << endl;
 
 		tmp = get_time();
@@ -751,7 +751,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		 }
 
-		 tmp = tmp - get_time();
+		 tmp = get_time() - tmp;
 		cout << "t6 = " << tmp << endl;
 
 		tmp = get_time();
@@ -782,7 +782,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// cout << endl;
 		}
 
-		tmp = tmp - get_time();
+		tmp = get_time() - tmp;
 		cout << "t7 = " << tmp << endl;
 
 		tmp = get_time();
