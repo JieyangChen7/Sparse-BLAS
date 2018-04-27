@@ -620,7 +620,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		double curr_time = 0.0;
 
+		double tmp = 0.0;
+		tmp = get_time();
+
 		curr_time = get_time();
+
+
+		tmp = get_time();
 
 
 		int  * start_idx  = new int[ngpu];
@@ -650,12 +656,23 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cusparseHandle_t   * handle = new cusparseHandle_t[ngpu];
 		cusparseMatDescr_t * descr  = new cusparseMatDescr_t[ngpu];
 
+
+		tmp = tmp - get_time();
+		cout << "t1 = " << tmp << endl;
+
+		tmp = get_time();
+
 		// Calculate the start and end index
 		for (int i = 0; i < ngpu; i++) {
 			start_idx[i]   = floor((i)     * nnz / ngpu);
 			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
 			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
 		}
+
+		tmp = tmp - get_time();
+		cout << "t2 = " << tmp << endl;
+
+		tmp = get_time();
 
 		// Calculate the start and end row
 		curr_row = 0;
@@ -675,6 +692,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
+		tmp = tmp - get_time();
+		cout << "t3 = " << tmp << endl;
+
+		tmp = get_time();
+
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
 			while (csrRowPtr[curr_row] <= end_idx[i]) {
@@ -693,6 +715,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			}
 		}
 
+		tmp = tmp - get_time();
+		cout << "t4 = " << tmp << endl;
+
+		tmp = get_time();
+
 		// Cacluclate dimensions
 		for (int i = 0; i < ngpu; i++) {
 			dev_m[i] = end_row[i] - start_row[i] + 1;
@@ -702,6 +729,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		for (int i = 0; i < ngpu; i++) {
 			host_y[i] = new double[dev_m[i]];
 		}
+
+		tmp = tmp - get_time();
+		cout << "t5 = " << tmp << endl;
+
+		tmp = get_time();
 
 		 for (int d = 0; d < ngpu; d++) {
 		 	cout << "GPU " << d << ":" << endl;
@@ -718,6 +750,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		 	cout << endl;
 
 		 }
+
+		 tmp = tmp - get_time();
+		cout << "t6 = " << tmp << endl;
+
+		tmp = get_time();
 
 		for (int i = 0; i < ngpu; i++) {
 			host_csrRowPtr[i] = new int [dev_m[i] + 1];
@@ -744,6 +781,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// }
 			// cout << endl;
 		}
+
+		tmp = tmp - get_time();
+		cout << "t7 = " << tmp << endl;
+
+		tmp = get_time();
 
 		*time_parse = get_time() - curr_time;
 
