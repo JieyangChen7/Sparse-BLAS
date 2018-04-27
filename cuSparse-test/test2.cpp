@@ -761,9 +761,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			host_csrRowPtr[i][0] = 0;
 			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
 
-			for (int j = 1; j < dev_m[i]; j++) {
-				host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
-			}
+			// for (int j = 1; j < dev_m[i]; j++) {
+			// 	host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
+			// }
+
+			memcpy(&host_csrRowPtr[i][1], csrRowPtr[start_row[i] + 1], (dev_m[i] - 1)* sizeof(int) );
 
 			// cout << "host_csrRowPtr: ";
 			// for (int j = 0; j <= dev_m[i]; j++) {
