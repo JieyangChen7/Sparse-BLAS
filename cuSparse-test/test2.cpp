@@ -231,10 +231,10 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
-
+	int warm_up_iter = 10;
 	// double start = get_time();
 	//int repeat_test = 100;
-	for (int i = 0; i < repeat_test; i++) {
+	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		
 		spMV_mgpu_v1(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -245,17 +245,20 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post);
-		cout << "time_comm = " << time_comm << endl;
- 
-		if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
-		if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
-		if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
-		if (time_post < min_time_post1) min_time_post1 = time_post;
+		//cout << "time_comm = " << time_comm << endl;
 
-		avg_time_parse1 += time_parse;
-		avg_time_comm1  += time_comm;
-		avg_time_comp1  += time_comp;
-		avg_time_post1  += time_post;
+		if (i >= warm_up_iter) {
+ 
+			if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
+			if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
+			if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
+			if (time_post < min_time_post1) min_time_post1 = time_post;
+
+			avg_time_parse1 += time_parse;
+			avg_time_comm1  += time_comm;
+			avg_time_comp1  += time_comp;
+			avg_time_post1  += time_post;
+		}
 	
 		spMV_mgpu_v2(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -267,15 +270,17 @@ int main(int argc, char *argv[]) {
 					 &time_comp,
 					 &time_post);
 	
-		if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
-		if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
-		if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
-		if (time_post < min_time_post2) min_time_post2 = time_post;
+		if (i >= warm_up_iter) {
+			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
+			if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
+			if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
+			if (time_post < min_time_post2) min_time_post2 = time_post;
 
-		avg_time_parse2 += time_parse;
-		avg_time_comm2  += time_comm;
-		avg_time_comp2  += time_comp;
-		avg_time_post2  += time_post;
+			avg_time_parse2 += time_parse;
+			avg_time_comm2  += time_comm;
+			avg_time_comp2  += time_comp;
+			avg_time_post2  += time_post;
+		}
 
 
 	
