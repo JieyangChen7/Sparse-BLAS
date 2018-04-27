@@ -103,7 +103,12 @@ int main(int argc, char *argv[]) {
     float progress = 0.0;
     int barWidth = 70;
     for (int i = 0; i < nnz; i++) {
-        fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
+    	if (argc == 5) {
+    		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
+    		cooVal[i] = 1;
+    	} else {
+        	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
+        }
         cooRowIndex[i]--;  
         cooColIndex[i]--;
        
