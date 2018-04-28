@@ -422,7 +422,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
-		//cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
+		cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
 
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
