@@ -125,12 +125,15 @@ int main(int argc, char *argv[]) {
     	if (argc == 5) {
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
     		cooVal[i] = 1;
+
     	} else {
         	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         }
         cooRowIndex[i]--;  
         cooColIndex[i]--;
        
+       	cout << "[" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
+
     	// std::cout << "[";
     	// int pos = barWidth * progress;
     	// for (int b = 0; b < barWidth; ++b) {
