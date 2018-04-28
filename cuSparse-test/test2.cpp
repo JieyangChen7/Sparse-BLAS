@@ -178,9 +178,9 @@ int main(int argc, char *argv[]) {
     }
 	for (int i = 0; i < nnz; i++) {
 		counter[cooRowIndex[i]]++;
-		if (counter[cooRowIndex[i]] > 6000) {
-			cout << "counter[" << cooRowIndex[i]  << "] = " << counter[cooRowIndex[i]] <<endl;
-		}
+		// if (counter[cooRowIndex[i]] > 6000) {
+		// 	cout << "counter[" << cooRowIndex[i]  << "] = " << counter[cooRowIndex[i]] <<endl;
+		// }
 	}
 	cout << "nnz: " << nnz << endl;
 	cout << "counter: ";
