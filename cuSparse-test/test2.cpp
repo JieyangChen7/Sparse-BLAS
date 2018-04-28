@@ -926,25 +926,17 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// }
 
 
-		double * tmp = new double[ngpu];
-
 		for (int d = 0; d < ngpu; d++) {
-			tmp = y[start_row[d]];
-		}
-		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpyAsyc(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-
-		}
-
-		for (int d = 0; d < ngpu; ++d) 
-		{
-				cudaSetDevice(d);
-				cudaDeviceSynchronize();
-		}
-
-		for (int d = 0; d < ngpu; d++) {
+			double tmp = 0.0;
+			
 			if (start_flag[d]) {
-				y[start_row[d]] += tmp[d];
+				tmp = y[start_row[d]];
+			}
+	
+			cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+
+			if (start_flag[d]) {
+				y[start_row[d]] += tmp;
 				y[start_row[d]] -= y2[d] * (*beta);
 			}
 		}
