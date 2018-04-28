@@ -668,7 +668,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		double ** dev_x  = new double * [ngpu];
 		double ** dev_y  = new double * [ngpu];
 		double ** host_y = new double * [ngpu];
-		double *  y2     = new double   [m];
+		double *  y2     = new double   [ngpu];
 
 		cudaStream_t       * stream = new cudaStream_t [ngpu];
 		cusparseStatus_t   * status = new cusparseStatus_t[ngpu];
@@ -707,6 +707,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// True: imcomplete
 			if (start_idx[i] > csrRowPtr[start_row[i]]) {
 				start_flag[i] = true;
+				y2[i] = y[start_idx[i]];
 			} else {
 				start_flag[i] = false;
 			}
@@ -913,13 +914,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_time = get_time();
 
-		memcpy(y2, y, m * sizeof(double));
+		//memcpy(y2, y, m * sizeof(double));
 		for (int d = 0; d < ngpu; d++) {
 			cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 
 			if (start_flag[d]) {
 				host_y[d][0] += y[start_row[d]];
-				host_y[d][0] -= y2[start_row[d]] * (*beta);
+				host_y[d][0] -= y2[d] * (*beta);
 			}
 			memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
 		}
