@@ -930,14 +930,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			double tmp = 0.0;
 			
 			if (start_flag[d]) {
-				tmp = y[d][start_row[d]];
+				tmp = y[start_row[d]];
 			}
 	
 			cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 
 			if (start_flag[d]) {
-				y[d][start_row[d]] += tmp;
-				y[d][start_row[d]] -= y2[d] * (*beta);
+				y[start_row[d]] += tmp;
+				y[start_row[d]] -= y2[d] * (*beta);
 			}
 		}
 
