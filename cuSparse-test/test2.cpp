@@ -935,7 +935,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		double * partial_result = new double[ngpu];
 		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpyAsync(&partial_result[d], &dev_y[d][dev_m - 1], (size_t)(1*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+			cudaMemcpyAsync(&partial_result[d], &dev_y[d][dev_m[d] - 1], (size_t)(1*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
 		}
 
 		for (int d = 0; d < ngpu; d++) {
