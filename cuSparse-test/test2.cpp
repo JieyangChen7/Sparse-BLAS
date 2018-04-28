@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < nnz; i++) {
     	if (argc == 5) {
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
-    		cooVal[i] = 1;
+    		cooVal[i] = 0.00001;
 
     	} else {
         	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
         cooRowIndex[i]--;  
         cooColIndex[i]--;
        
-       	cout << "[" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
+       	//cout << "[" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
 
     	// std::cout << "[";
     	// int pos = barWidth * progress;
@@ -314,7 +314,7 @@ int main(int argc, char *argv[]) {
 	for(int i = 0; i < m; i++) {
 		//cout << y[i] << ", ";
 		//cout << y1[i] << " - " << y2[i] << endl;
-		if (abs(y1[i] - y2[i]) > 1e-5 ) {
+		if (abs(y1[i] - y2[i]) > 1e-3 ) {
 			correct = false;
 		}
 	}
