@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < nnz; i++) {
 		counter[cooRowIndex[i]]++;
 	}
-
+	cout << "nnz: " << nnz << endl;
 	cout << "counter: ";
 	int t = 0;
 	for (int i = 0; i < m; i++) {
