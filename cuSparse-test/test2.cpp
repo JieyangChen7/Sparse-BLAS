@@ -131,8 +131,11 @@ int main(int argc, char *argv[]) {
         }
         cooRowIndex[i]--;  
         cooColIndex[i]--;
+
+        if (cooRowIndex[i] < 0 || cooColIndex[i] < 0) {
        
-       	//cout << "[" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
+       		cout << "i = " << i << " [" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
+       	}
 
     	// std::cout << "[";
     	// int pos = barWidth * progress;
