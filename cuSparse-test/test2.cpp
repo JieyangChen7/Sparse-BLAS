@@ -918,42 +918,42 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 
-		// for (int d = 0; d < ngpu; d++) {
-		// 	double tmp = 0.0;
+		for (int d = 0; d < ngpu; d++) {
+			double tmp = 0.0;
 			
-		// 	if (start_flag[d]) {
-		// 		tmp = y[start_row[d]];
-		// 	}
-	
-		// 	cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
-
-		// 	if (start_flag[d]) {
-		// 		y[start_row[d]] += tmp;
-		// 		y[start_row[d]] -= y2[d] * (*beta);
-		// 	}
-		// }
-
-		double * partial_result = new double[ngpu];
-		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpyAsync(&partial_result[d], &dev_y[d][dev_m[d] - 1], (size_t)(1*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-		}
-
-		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpyAsync(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]);
-		} 
-
-		for (int d = 0; d < ngpu; ++d) 
-		{
-			cudaSetDevice(d);
-			cudaDeviceSynchronize();
-		}
-
-		for (int d = 0; d < ngpu; d++) {
 			if (start_flag[d]) {
-				y[start_row[d]] += partial_result[d - 1];
+				tmp = y[start_row[d]];
+			}
+	
+			cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+
+			if (start_flag[d]) {
+				y[start_row[d]] += tmp;
 				y[start_row[d]] -= y2[d] * (*beta);
 			}
 		}
+
+		// double * partial_result = new double[ngpu];
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaMemcpyAsync(&partial_result[d], &dev_y[d][dev_m[d] - 1], (size_t)(1*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+		// }
+
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaMemcpyAsync(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]);
+		// } 
+
+		// for (int d = 0; d < ngpu; ++d) 
+		// {
+		// 	cudaSetDevice(d);
+		// 	cudaDeviceSynchronize();
+		// }
+
+		// for (int d = 0; d < ngpu; d++) {
+		// 	if (start_flag[d]) {
+		// 		y[start_row[d]] += partial_result[d - 1];
+		// 		y[start_row[d]] -= y2[d] * (*beta);
+		// 	}
+		// }
 
 
 		*time_post = get_time() - curr_time;
