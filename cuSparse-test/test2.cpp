@@ -915,28 +915,42 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		curr_time = get_time();
 
 		
+
+
+
 		// for (int d = 0; d < ngpu; d++) {
-		// 	cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+		// 	double tmp = 0.0;
+			
+		// 	if (start_flag[d]) {
+		// 		tmp = y[start_row[d]];
+		// 	}
+	
+		// 	cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 
 		// 	if (start_flag[d]) {
-		// 		host_y[d][0] += y[start_row[d]];
-		// 		host_y[d][0] -= y2[d] * (*beta);
+		// 		y[start_row[d]] += tmp;
+		// 		y[start_row[d]] -= y2[d] * (*beta);
 		// 	}
-		// 	memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
 		// }
 
+		double * partial_result = new double[ngpu];
+		for (int d = 0; d < ngpu; d++) {
+			cudaMemcpyAsync(&partial_result[d], dev_y[d], (size_t)(1*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+		}
 
 		for (int d = 0; d < ngpu; d++) {
-			double tmp = 0.0;
-			
-			if (start_flag[d]) {
-				tmp = y[start_row[d]];
-			}
-	
-			cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+			cudaMemcpyAsync(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]);
+		} 
 
+		for (int d = 0; d < ngpu; ++d) 
+		{
+			cudaSetDevice(d);
+			cudaDeviceSynchronize();
+		}
+
+		for (int d = 0; d < ngpu; d++) {
 			if (start_flag[d]) {
-				y[start_row[d]] += tmp;
+				y[start_row[d]] += partial_result[d];
 				y[start_row[d]] -= y2[d] * (*beta);
 			}
 		}
