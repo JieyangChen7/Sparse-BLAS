@@ -914,16 +914,33 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_time = get_time();
 
-		//memcpy(y2, y, m * sizeof(double));
+		
+		// for (int d = 0; d < ngpu; d++) {
+		// 	cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+
+		// 	if (start_flag[d]) {
+		// 		host_y[d][0] += y[start_row[d]];
+		// 		host_y[d][0] -= y2[d] * (*beta);
+		// 	}
+		// 	memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
+		// }
+
+
 		for (int d = 0; d < ngpu; d++) {
-			cudaMemcpy(host_y[d], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
+			double tmp = 0.0;
+			
+			if (start_flag[d]) {
+				tmp = y[d][start_row[d]];
+			}
+	
+			cudaMemcpy(&y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost); 
 
 			if (start_flag[d]) {
-				host_y[d][0] += y[start_row[d]];
-				host_y[d][0] -= y2[d] * (*beta);
+				y[d][start_row[d]] += tmp;
+				y[d][start_row[d]] -= y2[d] * (*beta);
 			}
-			memcpy(&y[start_row[d]], host_y[d], dev_m[d]*sizeof(double));
 		}
+
 
 		*time_post = get_time() - curr_time;
 
