@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
-	int warm_up_iter = 10;
+	int warm_up_iter = 2;
 	// double start = get_time();
 	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
