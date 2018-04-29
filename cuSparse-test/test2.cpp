@@ -775,11 +775,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		 	cout << "GPU " << d << ":" << endl;
 		// 	cout << " start_idx: " << start_idx[d] << ", ";
 		// 	cout << " end_idx: " << end_idx[d] << ", ";
-		// 	cout << " start_row: " << start_row[d] << ", ";
-		// 	cout << " end_row: " << end_row[d] << ", ";
+		 	cout << " start_row: " << start_row[d] << ", ";
+		 	cout << " end_row: " << end_row[d] << ", ";
 		// 	cout << " start_flag: " << start_flag[d] << ", ";
 		// 	cout << " end_flag: " << end_flag[d] << ", ";
-		// 	cout << endl;
+		 	cout << endl;
 		 	cout << " dev_m: " << dev_m[d] << ", ";
 		 	cout << " dev_n: " << dev_n[d] << ", ";
 		 	cout << " dev_nnz: " << dev_nnz[d] << ", ";
