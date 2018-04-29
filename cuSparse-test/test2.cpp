@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
 	// double start = get_time();
 	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
-		
+		cout << "=============Baseline============" <<endl;
 		spMV_mgpu_v1(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &ZERO,
@@ -290,7 +290,7 @@ int main(int argc, char *argv[]) {
 			avg_time_comp1  += time_comp;
 			avg_time_post1  += time_post;
 		}
-	
+		cout << "=============Version 1============" <<endl;
 		spMV_mgpu_v2(m, n, nnz, &ONE,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &ZERO,
