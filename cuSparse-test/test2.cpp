@@ -202,11 +202,11 @@ int main(int argc, char *argv[]) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
 	}
 
-	// cout << "csrRowPtr: ";
-	// for (int i = 0; i <= m; i++) {
-	// 	cout << csrRowPtr[i] << ", ";
-	// }
-	// cout << endl;
+	cout << "csrRowPtr: ";
+	for (int i = 0; i <= m; i++) {
+		cout << csrRowPtr[i] << ", ";
+	}
+	cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y1 = (double *)malloc(m * sizeof(double)); 
