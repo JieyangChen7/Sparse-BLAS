@@ -710,12 +710,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// Calculate the start and end row
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			// while (csrRowPtr[curr_row] <= start_idx[i]) {
-			// 	curr_row++;
-			// }
+			while (csrRowPtr[curr_row] <= start_idx[i]) {
+				curr_row++;
+			}
 
-			// start_row[i] = curr_row - 1; 
-			start_row[i] = get_row_from_index(m, csrRowPtr, start_idx[i]);
+			 start_row[i] = curr_row - 1; 
+			//start_row[i] = get_row_from_index(m, csrRowPtr, start_idx[i]);
 
 			// Mark imcomplete rows
 			// True: imcomplete
@@ -734,13 +734,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
-			// while (csrRowPtr[curr_row] <= end_idx[i]) {
-			// 	curr_row++;
-			// 	//cout << "->" << csrRowPtr[curr_row] << endl;
-			// }
+			while (csrRowPtr[curr_row] <= end_idx[i]) {
+				curr_row++;
+				//cout << "->" << csrRowPtr[curr_row] << endl;
+			}
 
-			// end_row[i] = curr_row - 1;
-			end_row[i] = get_row_from_index(m, csrRowPtr, end_idx[i]);
+			end_row[i] = curr_row - 1;
+			//end_row[i] = get_row_from_index(m, csrRowPtr, end_idx[i]);
 
 			// Mark imcomplete rows
 			// True: imcomplete
