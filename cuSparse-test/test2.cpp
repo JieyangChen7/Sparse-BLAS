@@ -442,7 +442,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		//cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
-		//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -774,8 +774,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
-		// for (int d = 0; d < ngpu; d++) {
-		//  	cout << "GPU " << d << ":" << endl;
+		 for (int d = 0; d < ngpu; d++) {
+		  	cout << "GPU " << d << ":" << endl;
 		// // 	cout << " start_idx: " << start_idx[d] << ", ";
 		// // 	cout << " end_idx: " << end_idx[d] << ", ";
 		//  	cout << " start_row: " << start_row[d] << ", ";
@@ -783,12 +783,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// // 	cout << " start_flag: " << start_flag[d] << ", ";
 		// // 	cout << " end_flag: " << end_flag[d] << ", ";
 		//  	cout << endl;
-		//  	cout << " dev_m: " << dev_m[d] << ", ";
-		//  	cout << " dev_n: " << dev_n[d] << ", ";
-		//  	cout << " dev_nnz: " << dev_nnz[d] << ", ";
-		//  	cout << endl;
+		  	cout << " dev_m: " << dev_m[d] << ", ";
+		  	cout << " dev_n: " << dev_n[d] << ", ";
+		  	cout << " dev_nnz: " << dev_nnz[d] << ", ";
+		  	cout << endl;
 //
-		// }
+		 }
 
 		//  tmp = get_time() - tmp;
 		// cout << "t6 = " << tmp << endl;
