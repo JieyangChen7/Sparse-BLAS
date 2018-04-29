@@ -156,23 +156,23 @@ int main(int argc, char *argv[]) {
 	std::cout << std::endl;
        // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
 
- //    cout << "cooVal: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooVal[i] << ", ";
-	// }
-	// cout << endl;
+    cout << "cooVal: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooVal[i] << ", ";
+	}
+	cout << endl;
 
-	// cout << "cooRowIndex: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooRowIndex[i] << ", ";
-	// }
-	// cout << endl;
+	cout << "cooRowIndex: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooRowIndex[i] << ", ";
+	}
+	cout << endl;
 
-	// cout << "cooColIndex: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooColIndex[i] << ", ";
-	// }
-	// cout << endl;
+	cout << "cooColIndex: ";
+	for (int i = 0; i < nnz; i++) {
+		cout << cooColIndex[i] << ", ";
+	}
+	cout << endl;
 
 
     csrRowPtr = (int *) malloc((m+1) * sizeof(int));
