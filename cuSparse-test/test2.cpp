@@ -394,6 +394,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * time_post){
 
 	double curr_time = 0.0;
+	double tmp = 0.0;
 
 	curr_time = get_time();
 
@@ -659,7 +660,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		double curr_time = 0.0;
 
-		// double tmp = 0.0;
+		double tmp = 0.0;
 		// tmp = get_time();
 
 		curr_time = get_time();
