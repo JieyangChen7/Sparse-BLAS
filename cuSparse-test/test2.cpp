@@ -156,23 +156,23 @@ int main(int argc, char *argv[]) {
 	std::cout << std::endl;
        // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
 
-    cout << "cooVal: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooVal[i] << ", ";
-	}
-	cout << endl;
+ //    cout << "cooVal: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooVal[i] << ", ";
+	// }
+	// cout << endl;
 
-	cout << "cooRowIndex: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooRowIndex[i] << ", ";
-	}
-	cout << endl;
+	// cout << "cooRowIndex: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooRowIndex[i] << ", ";
+	// }
+	// cout << endl;
 
-	cout << "cooColIndex: ";
-	for (int i = 0; i < nnz; i++) {
-		cout << cooColIndex[i] << ", ";
-	}
-	cout << endl;
+	// cout << "cooColIndex: ";
+	// for (int i = 0; i < nnz; i++) {
+	// 	cout << cooColIndex[i] << ", ";
+	// }
+	// cout << endl;
 
 
     csrRowPtr = (int *) malloc((m+1) * sizeof(int));
@@ -202,11 +202,11 @@ int main(int argc, char *argv[]) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
 	}
 
-	cout << "csrRowPtr: ";
-	for (int i = 0; i <= m; i++) {
-		cout << csrRowPtr[i] << ", ";
-	}
-	cout << endl;
+	// cout << "csrRowPtr: ";
+	// for (int i = 0; i <= m; i++) {
+	// 	cout << csrRowPtr[i] << ", ";
+	// }
+	// cout << endl;
 
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y1 = (double *)malloc(m * sizeof(double)); 
@@ -444,7 +444,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		//cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
-		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -586,7 +586,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			tmp = get_time();
 			cudaSetDevice(d);
 			//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
-			status[d] = cusparseDcsrmv_mp(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+			status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
 									   dev_m[d], dev_n[d], dev_nnz[d], 
 									   alpha, descr[d], dev_csrVal[d], 
 									   dev_csrRowPtr[d], dev_csrColIndex[d], 
@@ -780,8 +780,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
-		 for (int d = 0; d < ngpu; d++) {
-		  	cout << "GPU " << d << ":" << endl;
+		// for (int d = 0; d < ngpu; d++) {
+		//  	cout << "GPU " << d << ":" << endl;
 		// // 	cout << " start_idx: " << start_idx[d] << ", ";
 		// // 	cout << " end_idx: " << end_idx[d] << ", ";
 		//  	cout << " start_row: " << start_row[d] << ", ";
@@ -789,12 +789,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// // 	cout << " start_flag: " << start_flag[d] << ", ";
 		// // 	cout << " end_flag: " << end_flag[d] << ", ";
 		//  	cout << endl;
-		  	cout << " dev_m: " << dev_m[d] << ", ";
-		  	cout << " dev_n: " << dev_n[d] << ", ";
-		  	cout << " dev_nnz: " << dev_nnz[d] << ", ";
-		  	cout << endl;
+		//  	cout << " dev_m: " << dev_m[d] << ", ";
+		 // 	cout << " dev_n: " << dev_n[d] << ", ";
+		////  	cout << " dev_nnz: " << dev_nnz[d] << ", ";
+		//  	cout << endl;
 //
-		 }
+		// }
 
 		//  tmp = get_time() - tmp;
 		// cout << "t6 = " << tmp << endl;
