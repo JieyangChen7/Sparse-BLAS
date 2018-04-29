@@ -27,7 +27,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * time_parse,
 				  double * time_comm,
 				  double * time_comp,
-				  double * time_post);
+				  double * time_post,
+				  int kernel);
 
 void print_error(cusparseStatus_t status) {
 	// cout << CUSPARSE_STATUS_SUCCESS << endl;
@@ -302,7 +303,8 @@ int main(int argc, char *argv[]) {
 					 &time_parse,
 					 &time_comm,
 					 &time_comp,
-					 &time_post);
+					 &time_post,
+					 2);
 	
 		if (i >= warm_up_iter) {
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
@@ -656,7 +658,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * time_parse,
 				  double * time_comm,
 				  double * time_comp,
-				  double * time_post){
+				  double * time_post,
+				  int kernel){
 
 		double curr_time = 0.0;
 
@@ -915,12 +918,20 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			for (int d = 0; d < ngpu; ++d) 
 			{
 				tmp = get_time();
-				cudaSetDevice(d);				
-				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-											dev_m[d], dev_n[d], dev_nnz[d], 
-											alpha, descr[d], dev_csrVal[d], 
-											dev_csrRowPtr[d], dev_csrColIndex[d], 
-											dev_x[d],  beta, dev_y[d]); 
+				cudaSetDevice(d);
+				if (kernel == 1) {
+					status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+												dev_m[d], dev_n[d], dev_nnz[d], 
+												alpha, descr[d], dev_csrVal[d], 
+												dev_csrRowPtr[d], dev_csrColIndex[d], 
+												dev_x[d],  beta, dev_y[d]); 
+				} else if (kernel == 2) {
+					status[d] = cusparseDcsrmv_mp(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+												dev_m[d], dev_n[d], dev_nnz[d], 
+												alpha, descr[d], dev_csrVal[d], 
+												dev_csrRowPtr[d], dev_csrColIndex[d], 
+												dev_x[d],  beta, dev_y[d]); 
+				}
 				cudaDeviceSynchronize();
 				cout << "computation " << d << " : " << get_time()-tmp << endl;
 
