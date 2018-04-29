@@ -57,7 +57,7 @@ void print_error(cusparseStatus_t status) {
 
 int get_row_from_index(int n, int * a, int idx) {
 	int l = 0;
-	int r = n - 1;
+	int r = n;
 	while (l < r - 1 ) {
 		int m = (l + r) / 2;
 		if (idx < a[m]) {
