@@ -68,8 +68,8 @@ int get_row_from_index(int n, int * a, int idx) {
 			return m;
 		}
 	}
-	cout << "a[l] = " <<  a[l];
-	cout << " a[r] = " << a[r];
+	cout << "a[" << l << "] = " <<  a[l];
+	cout << " a[" << r << "] = " << a[r];
 	cout << " idx = " << idx << endl;
 	if (idx == a[l]) return l;
 	if (idx == a[r]) return r;
