@@ -932,16 +932,21 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 												dev_csrRowPtr[d], dev_csrColIndex[d], 
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
+					int err = 0;
 					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
-					A.inputCSR(
+					err = A.inputCSR(
 						dev_nnz[d], 
 						dev_csrRowPtr[d], 
 						dev_csrColIndex[d], 
 						dev_csrVal[d]);
-					A.setX(dev_x[d]);
-					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-					A.asCSR5();
-					A.spmv(*alpha, dev_y[d]);
+					cout << "inputCSR err = " << err << endl;
+					err = A.setX(dev_x[d]);
+					cout << "setX err = " << err << endl;
+					err = A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+					err = A.asCSR5();
+					cout << "asCSR5 err = " << err << endl;
+					err = A.spmv(*alpha, dev_y[d]);
+					cout << "spmv err = " << err << endl;
 
 				}
 				// cudaDeviceSynchronize();
