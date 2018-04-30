@@ -238,8 +238,8 @@ int main(int argc, char *argv[]) {
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
-	double ONE = 1.0;
-	double ZERO = 1.0;
+	double ONE = 0.0;
+	double ZERO = 0.0;
 
 	double time_parse = 0.0;
 	double time_comm = 0.0;
