@@ -942,6 +942,42 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
 					int err = 0;
+					cout << "before CSR5" << endl;
+					cout << "dev_m[d] = " << dev_m[d] << endl;
+					cout << "dev_n[d] = " << dev_n[d] << endl;
+					cudaMemcpyAsync(host_csrRowPtr[d], dev_csrRowPtr[d], (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream[d]);
+					cudaMemcpyAsync(&csrColIndex[start_idx[d]], dev_csrColIndex[d],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyDeviceToHost, stream[d]); 
+					cudaMemcpyAsync(&csrVal[start_idx[d]], dev_csrVal[d],            (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+
+					cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+					cudaMemcpyAsync(x, dev_x[d],                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+
+					cout << "dev_csrRowPtr = [";
+					for (int i = 0; i < dev_m[d] + 1; i++) {
+						cout << host_csrRowPtr[d][i] << ", ";
+					}
+					cout << "]" << endl;
+					cout << "csrColIndex = [";
+					for (int i = 0; i < dev_nnz[d]; i++) {
+						cout << csrColIndex[start_idx[d]+i] << ", ";
+					}
+					cout << "]" << endl;
+					cout << "csrVal[start_idx[d]] = [";
+					for (int i = 0; i < dev_nnz[d]; i++) {
+						cout << csrVal[start_idx[d]+i] << ", ";
+					}
+					cout << "]" << endl;
+					cout << "y[start_row[d]] = [";
+					for (int i = 0; i < dev_m[d]; i++) {
+						cout << y[start_row[d]+i] << ", ";
+					}
+					cout << "]" << endl;
+					cout << "dev_x[d] = [";
+					for (int i = 0; i < dev_n[d]; i++) {
+						cout << x[i] << ", ";
+					}
+					cout << "]" << endl;
+
 					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
 					err = A.inputCSR(
 						dev_nnz[d], 
