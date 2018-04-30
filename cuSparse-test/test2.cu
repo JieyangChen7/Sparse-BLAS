@@ -937,7 +937,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 					A.setX(dev_x[d]);
 					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
 					A.asCSR5();
-					A.spmv(*alpha, dev_y[d])
+					A.spmv(*alpha, dev_y[d]);
 
 				}
 				// cudaDeviceSynchronize();
