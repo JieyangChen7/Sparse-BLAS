@@ -8,6 +8,7 @@
 #include <cmath>
 #include "mmio.h"
 #include <float.h>
+#include "anonymouslib_cuda.h"
 using namespace std;
 
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
@@ -304,7 +305,7 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post,
-					 2);
+					 3);
 	
 		if (i >= warm_up_iter) {
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
@@ -930,6 +931,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 												alpha, descr[d], dev_csrVal[d], 
 												dev_csrRowPtr[d], dev_csrColIndex[d], 
 												dev_x[d],  beta, dev_y[d]); 
+				} else if (kernel == 3) {
+					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
+					A.inputCSR(nnz[d], dev_csrRowPtr[d], dev_csrColIndex[d], dev_csrVal[d]);
+					A.setX(dev_x[d]);
+					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+					A.asCSR5();
+					A.spmv(*alpha, dev_y[d])
+
 				}
 				// cudaDeviceSynchronize();
 				// cout << "computation " << d << " : " << get_time()-tmp << endl;
