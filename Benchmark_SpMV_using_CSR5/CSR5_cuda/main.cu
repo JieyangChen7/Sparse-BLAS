@@ -53,7 +53,7 @@ int call_anonymouslib(int m, int n, int nnzA,
     checkCudaErrors(cudaMemcpy(d_x, x, n * sizeof(VALUE_TYPE), cudaMemcpyHostToDevice));
 
     // Vector y
-    checkCudaErrors(cudaMalloc((void **)&d_y, m  * sizeof(VALUE_TYPE)));
+    checkCudaErrors(cudaMalloc((void **)&d_y, m * sizeof(VALUE_TYPE)));
     checkCudaErrors(cudaMemset(d_y, 0, m * sizeof(VALUE_TYPE)));
 
     anonymouslibHandle<int, unsigned int, VALUE_TYPE> A(m, n);
