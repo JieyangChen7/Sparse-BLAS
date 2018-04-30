@@ -934,14 +934,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				} else if (kernel == 3) {
 					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
 					A.inputCSR(
-						nnz[d], 
+						dev_nnz[d], 
 						dev_csrRowPtr[d], 
 						dev_csrColIndex[d], 
 						dev_csrVal[d]);
-					//A.setX(dev_x[d]);
-					//A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-					//A.asCSR5();
-					//A.spmv(*alpha, dev_y[d]);
+					A.setX(dev_x[d]);
+					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+					A.asCSR5();
+					A.spmv(*alpha, dev_y[d]);
 
 				}
 				// cudaDeviceSynchronize();
