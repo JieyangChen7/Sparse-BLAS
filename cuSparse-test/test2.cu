@@ -952,6 +952,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 					err = A.setX(dev_x[d]);
 					cout << "setX err = " << err << endl;
 					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+					A.warmup();
 					err = A.asCSR5();
 					cout << "asCSR5 err = " << err << endl;
 					err = A.spmv(*alpha, dev_y[d]);
