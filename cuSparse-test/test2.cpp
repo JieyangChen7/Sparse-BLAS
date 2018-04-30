@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post,
-					 1);
+					 2);
 	
 		if (i >= warm_up_iter) {
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
