@@ -952,6 +952,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 					cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
 					cudaMemcpyAsync(x, dev_x[d],                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
 
+					cudaDeviceSynchronize();
+
 					cout << "dev_csrRowPtr = [";
 					for (int i = 0; i < dev_m[d] + 1; i++) {
 						cout << host_csrRowPtr[d][i] << ", ";
@@ -1012,8 +1014,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		curr_time = get_time();
 
-		
-
+		cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+		cudaDeviceSynchronize();
+		cout << "after:" <<endl;
+		cout << "y[start_row[d]] = [";
+					for (int i = 0; i < dev_m[d]; i++) {
+						cout << y[start_row[d]+i] << ", ";
+					}
+					cout << "]" << endl;			
 
 
 		for (int d = 0; d < ngpu; d++) {
