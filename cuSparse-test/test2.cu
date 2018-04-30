@@ -221,8 +221,8 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < m; i++)
 	{
-		y1[i] = 0.0;
-		y2[i] = 0.0;
+		y1[i] = 1.0;
+		y2[i] = 1.0;
 	}
 
 
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	double ONE = 1.0;
-	double ZERO = 0.0;
+	double ZERO = 1.0;
 
 	double time_parse = 0.0;
 	double time_comm = 0.0;
@@ -272,15 +272,15 @@ int main(int argc, char *argv[]) {
 	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		cout << "=============Baseline============" <<endl;
-		spMV_mgpu_v1(m, n, nnz, &ONE,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &ZERO,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
+		// spMV_mgpu_v1(m, n, nnz, &ONE,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &ZERO,
+		// 			 y1,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post);
 		//cout << "time_comm = " << time_comm << endl;
 
 		if (i >= warm_up_iter) {
