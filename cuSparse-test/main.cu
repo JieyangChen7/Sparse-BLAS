@@ -81,6 +81,13 @@ int call_anonymouslib(int m, int n, int nnzA,
     //cout << "spmv err = " << err << endl;
     checkCudaErrors(cudaMemcpy(y, d_y, m * sizeof(VALUE_TYPE), cudaMemcpyDeviceToHost));
 
+    cout << "after:" <<endl;
+    cout << "y = [";
+    for (int i = 0; i < dev_m[d]; i++) {
+        cout << y[i] << ", ";
+    }
+    cout << "]" << endl;
+
     // warm up by running 50 times
     if (NUM_RUN)
     {
