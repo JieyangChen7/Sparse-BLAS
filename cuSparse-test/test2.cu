@@ -277,15 +277,15 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		// spMV_mgpu_v1(m, n, nnz, &ONE,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &ZERO,
-		// 			 y1,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post);
+		spMV_mgpu_v1(m, n, nnz, &ONE,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &ZERO,
+					 y1,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post);
 		//cout << "time_comm = " << time_comm << endl;
 
 		if (i >= warm_up_iter) {
@@ -336,7 +336,7 @@ int main(int argc, char *argv[]) {
 	//cout << "y = [";
 	bool correct = true;
 	for(int i = 0; i < m; i++) {
-		cout << y1[i] << " - " << y2[i] << endl;
+		//cout << y1[i] << " - " << y2[i] << endl;
 		if (abs(y1[i] - y2[i]) > 1e-3 ) {
 			correct = false;
 		}
@@ -942,43 +942,43 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
 					int err = 0;
-					cout << "before CSR5" << endl;
-					cout << "dev_m[d] = " << dev_m[d] << endl;
-					cout << "dev_n[d] = " << dev_n[d] << endl;
-					cudaMemcpyAsync(host_csrRowPtr[d], dev_csrRowPtr[d], (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream[d]);
-					cudaMemcpyAsync(&csrColIndex[start_idx[d]], dev_csrColIndex[d],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyDeviceToHost, stream[d]); 
-					cudaMemcpyAsync(&csrVal[start_idx[d]], dev_csrVal[d],            (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+					// cout << "before CSR5" << endl;
+					// cout << "dev_m[d] = " << dev_m[d] << endl;
+					// cout << "dev_n[d] = " << dev_n[d] << endl;
+					// cudaMemcpyAsync(host_csrRowPtr[d], dev_csrRowPtr[d], (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream[d]);
+					// cudaMemcpyAsync(&csrColIndex[start_idx[d]], dev_csrColIndex[d],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyDeviceToHost, stream[d]); 
+					// cudaMemcpyAsync(&csrVal[start_idx[d]], dev_csrVal[d],            (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
 
-					cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-					cudaMemcpyAsync(x, dev_x[d],                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+					// cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+					// cudaMemcpyAsync(x, dev_x[d],                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
 
-					cudaDeviceSynchronize();
+					// cudaDeviceSynchronize();
 
-					cout << "dev_csrRowPtr = [";
-					for (int i = 0; i < dev_m[d] + 1; i++) {
-						cout << host_csrRowPtr[d][i] << ", ";
-					}
-					cout << "]" << endl;
-					cout << "csrColIndex = [";
-					for (int i = 0; i < dev_nnz[d]; i++) {
-						cout << csrColIndex[start_idx[d]+i] << ", ";
-					}
-					cout << "]" << endl;
-					cout << "csrVal[start_idx[d]] = [";
-					for (int i = 0; i < dev_nnz[d]; i++) {
-						cout << csrVal[start_idx[d]+i] << ", ";
-					}
-					cout << "]" << endl;
-					cout << "y[start_row[d]] = [";
-					for (int i = 0; i < dev_m[d]; i++) {
-						cout << y[start_row[d]+i] << ", ";
-					}
-					cout << "]" << endl;
-					cout << "dev_x[d] = [";
-					for (int i = 0; i < dev_n[d]; i++) {
-						cout << x[i] << ", ";
-					}
-					cout << "]" << endl;
+					// cout << "dev_csrRowPtr = [";
+					// for (int i = 0; i < dev_m[d] + 1; i++) {
+					// 	cout << host_csrRowPtr[d][i] << ", ";
+					// }
+					// cout << "]" << endl;
+					// cout << "csrColIndex = [";
+					// for (int i = 0; i < dev_nnz[d]; i++) {
+					// 	cout << csrColIndex[start_idx[d]+i] << ", ";
+					// }
+					// cout << "]" << endl;
+					// cout << "csrVal[start_idx[d]] = [";
+					// for (int i = 0; i < dev_nnz[d]; i++) {
+					// 	cout << csrVal[start_idx[d]+i] << ", ";
+					// }
+					// cout << "]" << endl;
+					// cout << "y[start_row[d]] = [";
+					// for (int i = 0; i < dev_m[d]; i++) {
+					// 	cout << y[start_row[d]+i] << ", ";
+					// }
+					// cout << "]" << endl;
+					// cout << "dev_x[d] = [";
+					// for (int i = 0; i < dev_n[d]; i++) {
+					// 	cout << x[i] << ", ";
+					// }
+					// cout << "]" << endl;
 
 					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
 					err = A.inputCSR(
@@ -986,24 +986,24 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 						dev_csrRowPtr[d], 
 						dev_csrColIndex[d], 
 						dev_csrVal[d]);
-					cout << "inputCSR err = " << err << endl;
+					//cout << "inputCSR err = " << err << endl;
 					err = A.setX(dev_x[d]);
-					cout << "setX err = " << err << endl;
+					//cout << "setX err = " << err << endl;
 					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
 					A.warmup();
 					err = A.asCSR5();
-					cout << "asCSR5 err = " << err << endl;
+					//cout << "asCSR5 err = " << err << endl;
 					err = A.spmv(*alpha, dev_y[d]);
-					cout << "spmv err = " << err << endl;
+					//cout << "spmv err = " << err << endl;
 
-					cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-					cudaDeviceSynchronize();
-					cout << "after:" <<endl;
-					cout << "y[start_row[d]] = [";
-								for (int i = 0; i < dev_m[d]; i++) {
-									cout << y[start_row[d]+i] << ", ";
-								}
-					cout << "]" << endl;		
+					// cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
+					// cudaDeviceSynchronize();
+					// cout << "after:" <<endl;
+					// cout << "y[start_row[d]] = [";
+					// 			for (int i = 0; i < dev_m[d]; i++) {
+					// 				cout << y[start_row[d]+i] << ", ";
+					// 			}
+					// cout << "]" << endl;		
 
 				}
 				// cudaDeviceSynchronize();
