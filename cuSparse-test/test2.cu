@@ -221,8 +221,8 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < m; i++)
 	{
-		y1[i] = 1.0;
-		y2[i] = 1.0;
+		y1[i] = 0.0;
+		y2[i] = 0.0;
 	}
 
 
@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
-	double ONE = 0.0;
+	double ONE = 1.0;
 	double ZERO = 0.0;
 
 	double time_parse = 0.0;
