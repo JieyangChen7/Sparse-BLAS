@@ -83,7 +83,7 @@ int call_anonymouslib(int m, int n, int nnzA,
 
     cout << "after:" <<endl;
     cout << "y = [";
-    for (int i = 0; i < dev_m[d]; i++) {
+    for (int i = 0; i < m; i++) {
         cout << y[i] << ", ";
     }
     cout << "]" << endl;
