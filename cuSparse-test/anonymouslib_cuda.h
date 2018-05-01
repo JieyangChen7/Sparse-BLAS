@@ -186,7 +186,7 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
             //cout << "has empty rows, _num_offsets = " << _num_offsets << endl;
             //malloc_timer.start();
             checkCudaErrors(cudaMalloc((void **)&_csr5_partition_descriptor_offset, _num_offsets * sizeof(ANONYMOUSLIB_IT)));
-            malloc_time += malloc_timer.stop();
+            //malloc_time += malloc_timer.stop();
 
             //tile_desc_timer.start();
             err = generate_partition_descriptor_offset(_csr5_sigma, _p,
