@@ -116,7 +116,7 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
         //anonymouslib_timer malloc_timer, tile_ptr_timer, tile_desc_timer, transpose_timer;
         // compute sigma
         _csr5_sigma = computeSigma();
-        cout << "omega = " << ANONYMOUSLIB_CSR5_OMEGA << ", sigma = " << _csr5_sigma << ". " << endl;
+        //cout << "omega = " << ANONYMOUSLIB_CSR5_OMEGA << ", sigma = " << _csr5_sigma << ". " << endl;
 
         // compute how many bits required for `y_offset' and `carry_offset'
         int base = 2;
