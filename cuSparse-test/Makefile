@@ -8,10 +8,10 @@ NUM_RUN = 1000
 
 #CUDA_PARAMETERS
 #NVCC_FLAGS = -O3  -w -m64 -arch=sm_30
-NVCC_FLAGS = -O3  -w -m64 -gencode=arch=compute_60,code=sm_60
+NVCC_FLAGS = -O3  -w -m64 -gencode=arch=compute_60,code=compute_60
 CUDA_INSTALL_PATH = /home/chen838/cuda-8.0
 CUDA_INCLUDES = -I$(CUDA_INSTALL_PATH)/include -I/home/chen838/NVIDIA_CUDA-8.0_Samples/common/inc
 CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse
 
 cuda:
-	nvcc $(NVCC_FLAGS) main.cu -o spmv $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
+	nvcc $(NVCC_FLAGS) test2.cu -o spmv $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
