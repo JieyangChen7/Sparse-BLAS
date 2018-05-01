@@ -112,8 +112,8 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
 
     if (_format == ANONYMOUSLIB_FORMAT_CSR)
     {
-        double malloc_time = 0, tile_ptr_time = 0, tile_desc_time = 0, transpose_time = 0;
-        anonymouslib_timer malloc_timer, tile_ptr_timer, tile_desc_timer, transpose_timer;
+        //double malloc_time = 0, tile_ptr_time = 0, tile_desc_time = 0, transpose_time = 0;
+        //anonymouslib_timer malloc_timer, tile_ptr_timer, tile_desc_timer, transpose_timer;
         // compute sigma
         _csr5_sigma = computeSigma();
         cout << "omega = " << ANONYMOUSLIB_CSR5_OMEGA << ", sigma = " << _csr5_sigma << ". " << endl;
@@ -137,7 +137,7 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
         _p = ceil((double)_nnz / (double)(ANONYMOUSLIB_CSR5_OMEGA * _csr5_sigma));
         //cout << "#partition = " << _p << endl;
 
-        malloc_timer.start();
+        //malloc_timer.start();
         // malloc the newly added arrays for CSR5
         checkCudaErrors(cudaMalloc((void **)&_csr5_partition_pointer, (_p + 1) * sizeof(ANONYMOUSLIB_UIT)));
 
@@ -149,69 +149,69 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
 
         checkCudaErrors(cudaMalloc((void **)&_csr5_partition_descriptor_offset_pointer, (_p + 1) * sizeof(ANONYMOUSLIB_IT)));
         checkCudaErrors(cudaMemset(_csr5_partition_descriptor_offset_pointer, 0, (_p + 1) * sizeof(ANONYMOUSLIB_IT)));
-        malloc_time += malloc_timer.stop();
+        //malloc_time += malloc_timer.stop();
 
         // convert csr data to csr5 data (3 steps)
         // step 1. generate partition pointer
-        tile_ptr_timer.start();
+        //tile_ptr_timer.start();
         err = generate_partition_pointer(_csr5_sigma, _p, _m, _nnz,
                                          _csr5_partition_pointer, _csr_row_pointer);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
-        cudaDeviceSynchronize();
-        tile_ptr_time += tile_ptr_timer.stop();
+        //cudaDeviceSynchronize();
+        //tile_ptr_time += tile_ptr_timer.stop();
 
-        malloc_timer.start();
+        //malloc_timer.start();
         ANONYMOUSLIB_UIT tail;
         checkCudaErrors(cudaMemcpy(&tail, &_csr5_partition_pointer[_p-1], sizeof(ANONYMOUSLIB_UIT),   cudaMemcpyDeviceToHost));
         _tail_partition_start = (tail << 1) >> 1;
         //cout << "_tail_partition_start = " << _tail_partition_start << endl;
-        malloc_time += malloc_timer.stop();
+        //malloc_time += malloc_timer.stop();
 
         // step 2. generate partition descriptor
 
         _num_offsets = 0;
-        tile_desc_timer.start();
+        //tile_desc_timer.start();
         err = generate_partition_descriptor(_csr5_sigma, _p, _m,
                                             _bit_y_offset, _bit_scansum_offset, _num_packet,
                                             _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
                                             _csr5_partition_descriptor_offset_pointer, &_num_offsets);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
-        cudaDeviceSynchronize();
-        tile_desc_time += tile_desc_timer.stop(); // fixed a bug here (April 2016)
+        //cudaDeviceSynchronize();
+        //tile_desc_time += tile_desc_timer.stop(); // fixed a bug here (April 2016)
 
         if (_num_offsets)
         {
             //cout << "has empty rows, _num_offsets = " << _num_offsets << endl;
-            malloc_timer.start();
+            //malloc_timer.start();
             checkCudaErrors(cudaMalloc((void **)&_csr5_partition_descriptor_offset, _num_offsets * sizeof(ANONYMOUSLIB_IT)));
             malloc_time += malloc_timer.stop();
 
-            tile_desc_timer.start();
+            //tile_desc_timer.start();
             err = generate_partition_descriptor_offset(_csr5_sigma, _p,
                                                 _bit_y_offset, _bit_scansum_offset, _num_packet,
                                                 _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
                                                 _csr5_partition_descriptor_offset_pointer, _csr5_partition_descriptor_offset);
             if (err != ANONYMOUSLIB_SUCCESS)
                 return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
-            cudaDeviceSynchronize();
-            tile_desc_time += tile_desc_timer.stop();
+            //cudaDeviceSynchronize();
+            //tile_desc_time += tile_desc_timer.stop();
         }
 
         // step 3. transpose column_index and value arrays
-        transpose_timer.start();
+        //transpose_timer.start();
         err = aosoa_transpose(_csr5_sigma, _nnz,
                               _csr5_partition_pointer, _csr_column_index, _csr_value, true);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
-        cudaDeviceSynchronize();
-        transpose_time += transpose_timer.stop();
+        //cudaDeviceSynchronize();
+        //transpose_time += transpose_timer.stop();
 
-        cout << "CSR->CSR5 malloc time = " << malloc_time << " ms." << endl;
-        cout << "CSR->CSR5 tile_ptr time = " << tile_ptr_time << " ms." << endl;
-        cout << "CSR->CSR5 tile_desc time = " << tile_desc_time << " ms." << endl;
-        cout << "CSR->CSR5 transpose time = " << transpose_time << " ms." << endl;
+        //cout << "CSR->CSR5 malloc time = " << malloc_time << " ms." << endl;
+        //cout << "CSR->CSR5 tile_ptr time = " << tile_ptr_time << " ms." << endl;
+        //cout << "CSR->CSR5 tile_desc time = " << tile_desc_time << " ms." << endl;
+        //cout << "CSR->CSR5 transpose time = " << transpose_time << " ms." << endl;
 
         _format = ANONYMOUSLIB_FORMAT_CSR5;
     }
