@@ -238,8 +238,8 @@ int main(int argc, char *argv[]) {
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
-	double ONE = 1.0;
-	double ZERO = 0.0;
+	double ALPHA = 1.0;
+	double BETA = 1.0;
 
 	double time_parse = 0.0;
 	double time_comm = 0.0;
@@ -277,9 +277,9 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		spMV_mgpu_v1(m, n, nnz, &ONE,
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &ZERO,
+					 x, &BETA,
 					 y1,
 					 ngpu,
 					 &time_parse,
@@ -305,9 +305,9 @@ int main(int argc, char *argv[]) {
 		time_comm = 0.0;
 		time_comp = 0.0;
 		time_post = 0.0;
-		spMV_mgpu_v2(m, n, nnz, &ONE,
+		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &ZERO,
+					 x, &BETA,
 					 y2,
 					 ngpu,
 					 &time_parse,
