@@ -267,7 +267,7 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
-	int warm_up_iter = 10;
+	int warm_up_iter = 0;
 	// double start = get_time();
 	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
@@ -336,7 +336,7 @@ int main(int argc, char *argv[]) {
 	//cout << "y = [";
 	bool correct = true;
 	for(int i = 0; i < m; i++) {
-		//cout << y1[i] << " - " << y2[i] << endl;
+		cout << y1[i] << " - " << y2[i] << endl;
 		if (abs(y1[i] - y2[i]) > 1e-3 ) {
 			correct = false;
 		}
