@@ -1,0 +1,24 @@
+Step 1: Install CUDA
+	a. get CUDA 8.0 from: https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run
+	b. make the installation file executable: chmod 700 cuda_8.0.61_375.26_linux-run
+	c. run the installation file to install CUDA: ./cuda_8.0.61_375.26_linux-run. 
+		c1. follow the installation instruction and skip installing the CUDA driver
+		c2. choose the dir to install CUDA and Samples. For example, we install CUDA at: /home/chen838/cuda-8.0 and install the samples at: /home/chen838/NVIDIA_CUDA-8.0_Samples.
+
+Step 2: Config the Makefile
+	a. edit two environment variables in the Makefile: CUDA_INSTALL_PATH and CUDA_SAMPLES_PATH, so that they match with the directory of CUDA and samples.
+
+Step 3. Build
+	a. run 'make'.
+	
+Step 4. Run
+	a. run './spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]'.
+
+	* kernel version = 1: call cuSparseSpmv;
+	* kernel version = 2: call cuSparseSpmv_mp (SM load balanced version);
+	* kernel version = 3: call csr5_spmv (weifeng's csr5 based spmv).
+
+	* data type = 'f': input data is double float;
+	* data type = 'b': input data is binary.
+
+	For example: ./spmv input_matrices/ASIC_680k.mtx 8 10 3 f.
