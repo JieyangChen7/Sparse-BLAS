@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < n; i++)
 	{
-		x[i] = ((double) rand() / (RAND_MAX)); 
+		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
 	}
 
 
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
-	cout << "Using " << ngpu << "GPU(s)." << endl; 
+	cout << "Using " << ngpu << " GPU(s)." << endl; 
 
 	double ALPHA = 1.0;
 	double BETA = 1.0;
