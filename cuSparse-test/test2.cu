@@ -90,6 +90,7 @@ double get_time()
 int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[2]);
 	int repeat_test = atoi(argv[3]);
+	int kernel_version = atoi(argv[4]);
 	char * filename = argv[1];
 	int ret_code;
     MM_typecode matcode;
@@ -127,7 +128,7 @@ int main(int argc, char *argv[]) {
     float progress = 0.0;
     int barWidth = 70;
     for (int i = 0; i < nnz; i++) {
-    	if (argc == 5) {
+    	if (argc == 6) {
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
     		cooVal[i] = 0.00001;
 
@@ -314,7 +315,7 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post,
-					 3);
+					 kernel_version);
 	
 		if (i >= warm_up_iter) {
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
