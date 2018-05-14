@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
 	if (argc < 6) {
 		cout << "Incorrect number of arguments!" << endl;
 		cout << "Usage ./spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]"  << endl;
+		return -1;
 	}
 	int ngpu = atoi(argv[2]);
 	int repeat_test = atoi(argv[3]);
