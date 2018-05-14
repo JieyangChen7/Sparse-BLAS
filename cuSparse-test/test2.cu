@@ -32,20 +32,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  int kernel);
 
 void print_error(cusparseStatus_t status) {
-	// cout << CUSPARSE_STATUS_SUCCESS << endl;
-	// cout << CUSPARSE_STATUS_NOT_INITIALIZED << endl;
-	// cout << CUSPARSE_STATUS_ALLOC_FAILED << endl;
-	// cout << CUSPARSE_STATUS_INVALID_VALUE << endl;
-	// cout << CUSPARSE_STATUS_ARCH_MISMATCH << endl;
-	// cout << CUSPARSE_STATUS_INTERNAL_ERROR << endl;
-	// cout << CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED << endl;
-
 	if (status == CUSPARSE_STATUS_NOT_INITIALIZED)
 		cout << "CUSPARSE_STATUS_NOT_INITIALIZED" << endl;
-		
 	else if (status == CUSPARSE_STATUS_ALLOC_FAILED)
 		cout << "CUSPARSE_STATUS_ALLOC_FAILED" << endl;
-		
 	else if (status == CUSPARSE_STATUS_INVALID_VALUE)
 		cout << "CUSPARSE_STATUS_INVALID_VALUE" << endl;
 	else if (status == CUSPARSE_STATUS_ARCH_MISMATCH)
@@ -54,7 +44,6 @@ void print_error(cusparseStatus_t status) {
 		cout << "CUSPARSE_STATUS_INTERNAL_ERROR" << endl;
 	else if (status == CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED)
 		cout << "CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED" << endl;
-
 }
 
 int get_row_from_index(int n, int * a, int idx) {
@@ -125,40 +114,26 @@ int main(int argc, char *argv[]) {
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
 
-    float progress = 0.0;
-    int barWidth = 70;
+
+    // Read matrix from file into COO format
     for (int i = 0; i < nnz; i++) {
-    	if (argc == 6) {
+    	if (argc == 6) { // binary input
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
     		cooVal[i] = 0.00001;
 
-    	} else {
+    	} else { // float input
         	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         }
         cooRowIndex[i]--;  
         cooColIndex[i]--;
 
-        if (cooRowIndex[i] < 0 || cooColIndex[i] < 0) {
-       
+        if (cooRowIndex[i] < 0 || cooColIndex[i] < 0) { // report error
        		cout << "i = " << i << " [" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
        	}
-
-    	// std::cout << "[";
-    	// int pos = barWidth * progress;
-    	// for (int b = 0; b < barWidth; ++b) {
-     //    	if (b < pos) std::cout << "=";
-     //    	else if (b == pos) std::cout << ">";
-     //    	else std::cout << " ";
-    	// }
-    	// std::cout << "] " << int(progress * 100.0) << " %\r";
-    	// std::cout.flush();
-
-    	// progress = (float)i / nnz; 
 	}
-	std::cout << std::endl;
-       // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
+    // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
 
- //    cout << "cooVal: ";
+ 	// cout << "cooVal: ";
 	// for (int i = 0; i < nnz; i++) {
 	// 	cout << cooVal[i] << ", ";
 	// }
@@ -177,6 +152,7 @@ int main(int argc, char *argv[]) {
 	// cout << endl;
 
 
+	// Convert COO to CSR
     csrRowPtr = (int *) malloc((m+1) * sizeof(int));
     int * counter = new int[m];
     for (int i = 0; i < m; i++) {
@@ -188,15 +164,15 @@ int main(int argc, char *argv[]) {
 		// 	cout << "counter[" << cooRowIndex[i]  << "] = " << counter[cooRowIndex[i]] <<endl;
 		// }
 	}
-	cout << "nnz: " << nnz << endl;
-	cout << "counter: ";
+	//cout << "nnz: " << nnz << endl;
+	//cout << "counter: ";
 	int t = 0;
 	for (int i = 0; i < m; i++) {
 		//cout << counter[i] << ", ";
 		t += counter[i];
 	}
-	cout << t << endl;
-	cout << endl;
+	//cout << t << endl;
+	//cout << endl;
 
 
 	csrRowPtr[0] = 0;
@@ -216,7 +192,7 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < n; i++)
 	{
-		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
+		x[i] = ((double) rand() / (RAND_MAX)); 
 	}
 
 
@@ -238,6 +214,8 @@ int main(int argc, char *argv[]) {
 	    printf("Device %d has compute capability %d.%d.\n",
 	           device, deviceProp.major, deviceProp.minor);
 	}
+
+	cout << "Using " << ngpu << "GPU(s)." << endl; 
 
 	double ALPHA = 1.0;
 	double BETA = 1.0;
@@ -269,9 +247,12 @@ int main(int argc, char *argv[]) {
 	double avg_time_post2 = 0.0;
 
 	int warm_up_iter = 10;
-	// double start = get_time();
-	//int repeat_test = 100;
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
+		for (int i = 0; i < m; i++)
+		{
+			y1[i] = 0.0;
+			y2[i] = 0.0;
+		}
 		cout << "=============Baseline============" <<endl;
 		time_parse = 0.0;
 		time_comm = 0.0;
@@ -343,7 +324,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	// printf("Check result: %s\n", correct ? "True" : "False");
+	printf("Check result: %s\n", correct ? "True" : "False");
 	// cout << "min_time_parse1 = " << min_time_parse1 << endl;
 	// cout << "min_time_comm1 = " << min_time_comm1 << endl;
 	// cout << "min_time_comp1 = " << min_time_comp1 << endl;
@@ -385,10 +366,6 @@ int main(int argc, char *argv[]) {
 	cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
 	cout << "avg_time_post2 = "  << avg_time_post2 << endl;
 	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
-
-	// double end = get_time();
-	// double time = end - start;
-	// printf("spMV_mgpu time = %f s\n", time);
 
 }
 
