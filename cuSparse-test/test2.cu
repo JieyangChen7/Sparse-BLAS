@@ -257,6 +257,9 @@ int main(int argc, char *argv[]) {
 		if (i == 0) {
 			cout << "Warming up GPU(s)..." << endl;
 		}
+		if (i == warm_up_iter) {
+			cout << "Starting tests..." << endl;
+		}
 		for (int i = 0; i < m; i++)
 		{
 			y1[i] = 0.0;
