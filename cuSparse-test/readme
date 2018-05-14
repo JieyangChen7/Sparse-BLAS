@@ -13,12 +13,14 @@ Step 3. Build
 	
 Step 4. Run
 	a. run './spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]'.
+		* kernel version = 1: call cuSparseSpmv;
+		* kernel version = 2: call cuSparseSpmv_mp (SM load balanced version);
+		* kernel version = 3: call csr5_spmv (weifeng's csr5 based spmv).
+		* data type = 'f': input data is double float;
+		* data type = 'b': input data is binary.
+		For example: ./spmv input_matrices/ASIC_680k.mtx 8 10 3 f.
 
-	* kernel version = 1: call cuSparseSpmv;
-	* kernel version = 2: call cuSparseSpmv_mp (SM load balanced version);
-	* kernel version = 3: call csr5_spmv (weifeng's csr5 based spmv).
-
-	* data type = 'f': input data is double float;
-	* data type = 'b': input data is binary.
-
-	For example: ./spmv input_matrices/ASIC_680k.mtx 8 10 3 f.
+	b. output will show:
+		b1. correctness of our optimized version 1 with baseline version;
+		b2. average time breakdown (pre-processing, communication, computation, and post-post-processing);
+		b3. average total time cost.
