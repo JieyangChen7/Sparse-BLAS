@@ -11,7 +11,7 @@
 #include "anonymouslib_cuda.h"
 using namespace std;
 
-int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
@@ -20,7 +20,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				 double * time_comm,
 				 double * time_comp,
 				 double * time_post);
-int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y1,
@@ -305,7 +305,7 @@ int main(int argc, char *argv[]) {
 		time_comm = 0.0;
 		time_comp = 0.0;
 		time_post = 0.0;
-		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y2,
@@ -342,22 +342,22 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	printf("Check result: %s\n", correct ? "True" : "False");
-	cout << "min_time_parse1 = " << min_time_parse1 << endl;
-	cout << "min_time_comm1 = " << min_time_comm1 << endl;
-	cout << "min_time_comp1 = " << min_time_comp1 << endl;
-	cout << "min_time_post1 = " << min_time_post1 << endl;
-	cout << "total_time = " << min_time_parse1+min_time_comm1+min_time_comp1+min_time_post1 << endl;
+	// printf("Check result: %s\n", correct ? "True" : "False");
+	// cout << "min_time_parse1 = " << min_time_parse1 << endl;
+	// cout << "min_time_comm1 = " << min_time_comm1 << endl;
+	// cout << "min_time_comp1 = " << min_time_comp1 << endl;
+	// cout << "min_time_post1 = " << min_time_post1 << endl;
+	// cout << "total_time = " << min_time_parse1+min_time_comm1+min_time_comp1+min_time_post1 << endl;
 
-	cout << endl;
+	// cout << endl;
 
-	cout << "min_time_parse2 = " << min_time_parse2 << endl;
-	cout << "min_time_comm2 = " << min_time_comm2 << endl;
-	cout << "min_time_comp2 = " << min_time_comp2 << endl;
-	cout << "min_time_post2 = " << min_time_post2 << endl;
-	cout << "total_time = " << min_time_parse2+min_time_comm2+min_time_comp2+min_time_post2 << endl;
+	// cout << "min_time_parse2 = " << min_time_parse2 << endl;
+	// cout << "min_time_comm2 = " << min_time_comm2 << endl;
+	// cout << "min_time_comp2 = " << min_time_comp2 << endl;
+	// cout << "min_time_post2 = " << min_time_post2 << endl;
+	// cout << "total_time = " << min_time_parse2+min_time_comm2+min_time_comp2+min_time_post2 << endl;
 
-	cout << endl;
+	// cout << endl;
 
 
 	avg_time_parse1/=repeat_test;
@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
 
 
 
-int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
 				 double * y,
@@ -659,7 +659,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 }
 
-int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
