@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	double ALPHA = 1.0;
-	double BETA = 0.0;
+	double BETA = 1.0;
 
 	double time_parse = 0.0;
 	double time_comm = 0.0;
