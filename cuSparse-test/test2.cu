@@ -252,13 +252,18 @@ int main(int argc, char *argv[]) {
 	double avg_time_post2 = 0.0;
 
 	int warm_up_iter = 10;
+
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
+		if (i == 0) {
+			cout << "Warming up GPU(s)..." << endl;
+		}
 		for (int i = 0; i < m; i++)
 		{
 			y1[i] = 0.0;
 			y2[i] = 0.0;
 		}
-		cout << "=============Baseline============" <<endl;
+
+		
 		time_parse = 0.0;
 		time_comm = 0.0;
 		time_comp = 0.0;
@@ -276,7 +281,7 @@ int main(int argc, char *argv[]) {
 		//cout << "time_comm = " << time_comm << endl;
 
 		if (i >= warm_up_iter) {
- 
+ 			cout << "=============Baseline============" <<endl;
 			if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
 			if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
 			if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
@@ -287,7 +292,7 @@ int main(int argc, char *argv[]) {
 			avg_time_comp1  += time_comp;
 			avg_time_post1  += time_post;
 		}
-		cout << "=============Version 1============" <<endl;
+		
 		time_parse = 0.0;
 		time_comm = 0.0;
 		time_comp = 0.0;
@@ -304,6 +309,7 @@ int main(int argc, char *argv[]) {
 					 kernel_version);
 	
 		if (i >= warm_up_iter) {
+			cout << "=============Version 1============" <<endl;
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
 			if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
 			if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
