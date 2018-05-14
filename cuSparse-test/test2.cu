@@ -77,6 +77,10 @@ double get_time()
 }
 
 int main(int argc, char *argv[]) {
+	if (argc < 6) {
+		cout << "Incorrect number of arguments!" << endl;
+		cout << "Usage ./spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]"  << endl;
+	}
 	int ngpu = atoi(argv[2]);
 	int repeat_test = atoi(argv[3]);
 	int kernel_version = atoi(argv[4]);
@@ -117,11 +121,11 @@ int main(int argc, char *argv[]) {
 
     // Read matrix from file into COO format
     for (int i = 0; i < nnz; i++) {
-    	if (argc == 6) { // binary input
+    	if (argv[5][0] == 'b') { // binary input
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
     		cooVal[i] = 0.00001;
 
-    	} else { // float input
+    	} else if (argv[5][0] == 'f'){ // float input
         	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         }
         cooRowIndex[i]--;  
