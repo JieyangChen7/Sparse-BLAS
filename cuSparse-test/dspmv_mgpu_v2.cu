@@ -71,11 +71,37 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	// thread gpu08 (spmv_worker, spmv_task_pool, spmv_task_completed);
 	//gpu01.join();
 	omp_set_num_threads(ngpu);
-	#pragma omp parallel
+	#pragma omp parallel shared (spmv_task_pool, spmv_task_completed)
 	{
 		unsigned int cpu_thread_id = omp_get_thread_num();
 		cudaSetDevice(cpu_thread_id);
-		cout << "set gpu " << cpu_thread_id << endl;
+		cusparseStatus_t status;
+		cudaStream_t stream;
+		cusparseHandle_t handle;
+		status = cusparseCreate(&handle); 
+		if (status != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("CUSPARSE Library initialization failed");
+			//return 1; 
+		} 
+		status = cusparseSetStream(handle, stream);
+		if (status != CUSPARSE_STATUS_SUCCESS) 
+		{ 
+			printf("Stream bindind failed");
+			//return 1;
+		} 
+
+		while (spmv_task_pool->size() > 0)
+		{
+			// Take one task from pool
+			spmv_task * curr_spmv_task = (*spmv_task_pool)[spmv_task_pool->size() - 1];
+			spmv_task_pool->pop_back();
+			//assign_task(curr_spmv_task, dev_id, stream);
+			//run_task(curr_spmv_task, dev_id, handle, 1);
+			//finalize_task(curr_spmv_task, dev_id, stream);
+			print_task_info(curr_spmv_task);
+			spmv_task_completed->push_back(curr_spmv_task);
+		}
 
 	}
 
