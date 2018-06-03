@@ -29,5 +29,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int kernel,
 				  int nb);
 
+int get_row_from_index(int n, int * a, int idx);
+
 
 #endif /* SPMV_KERNEL */
