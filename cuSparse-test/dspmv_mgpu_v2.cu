@@ -138,7 +138,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 				assign_task(curr_spmv_task, dev_id, stream);
 				run_task(curr_spmv_task, dev_id, handle, kernel);
-				finalize_task(curr_spmv_task, dev_id, stream);
+				//finalize_task(curr_spmv_task, dev_id, stream);
 
 			} else {
 				break;
