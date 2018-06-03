@@ -73,11 +73,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 void * spmv_worker(void * arg) {
 
+	arg_ptr = (pthread_arg_struct*)arg;
 
-
-	vector<spmv_task *> * arg_spmv_task_pool = (pthread_arg_struct*)arg->arg_spmv_task_pool;
-	vector<spmv_task *> * arg_spmv_task_completed = (pthread_arg_struct*)arg->arg_spmv_task_completed;
-	int dev_id = (pthread_arg_struct*)arg->arg_dev_id
+	vector<spmv_task *> * arg_spmv_task_pool = arg_ptr->arg_spmv_task_pool;
+	vector<spmv_task *> * arg_spmv_task_completed = arg_ptr->arg_spmv_task_completed;
+	int dev_id = arg_ptr->arg_dev_id
 
 	cusparseStatus_t status;
 	cudaStream_t stream;
