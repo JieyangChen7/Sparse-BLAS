@@ -4,6 +4,7 @@
 #include <iostream>
 #include <pthread.h>
 #include "spmv_task.h"
+#include "spmv_kernel.h"
 
 using namespace std;
 
@@ -90,27 +91,27 @@ void * spmv_worker(void * arg) {
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
 		printf("CUSPARSE Library initialization failed");
-		return 1; 
+		//return 1; 
 	} 
 	status = cusparseSetStream(handle, stream);
 	if (status != CUSPARSE_STATUS_SUCCESS) 
 	{ 
 		printf("Stream bindind failed");
-		return 1;
+		//return 1;
 	} 
-	while (spmv_task_pool.size() > 0)
+	while (spmv_task_pool->size() > 0)
 	{
 		// Take one task from pool
-		spmv_task * curr_spmv_task = *spmv_task_pool.pop_back();
+		spmv_task * curr_spmv_task = spmv_task_pool->pop_back();
 		//assign_task(curr_spmv_task, dev_id, stream);
 		//run_task(curr_spmv_task, dev_id, handle, 1);
 		//finalize_task(curr_spmv_task, dev_id, stream);
 		print_task_info(curr_spmv_task);
-		*spmv_task_completed.push_back(curr_spmv_task);
+		spmv_task_completed->push_back(curr_spmv_task);
 	}
 
 	//pthread_exit(NULL);
-	return 0;
+	//return 0;
 }
 
 
@@ -150,7 +151,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 		// Mark imcomplete rows
 		// True: imcomplete
-		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row[t]]) {
+		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
 			spmv_task_pool[t].start_flag = true;
 			spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
 		} else {
@@ -219,7 +220,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
-		status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
+		cusparseStatus_t status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
 		if (status != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			printf("Matrix descriptor initialization failed");
