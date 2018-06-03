@@ -370,7 +370,7 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
-	cudaSetDevice(dev_id);
+	//cudaSetDevice(dev_id);
 	cusparseStatus_t status;
 	if(kernel == 1) {
 		status = cusparseDcsrmv(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
