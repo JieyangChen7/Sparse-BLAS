@@ -45,18 +45,18 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	vector<spmv_task *> spmv_task_pool;
 	vector<spmv_task *> spmv_task_completed;
 
-	generate_tasks(m, n, nnz, alpha,
-				  csrVal, csrRowPtr, csrColIndex, 
-				  x, beta, y, nb,
-				  &spmv_task_pool);
+	// generate_tasks(m, n, nnz, alpha,
+	// 			  csrVal, csrRowPtr, csrColIndex, 
+	// 			  x, beta, y, nb,
+	// 			  &spmv_task_pool);
 
-	pthread_arg_struct arg1;
-	arg1.arg_spmv_task_pool = &spmv_task_pool;
-	arg1.arg_spmv_task_completed = &spmv_task_completed;
-	arg1.arg_dev_id = 0;
+	// pthread_arg_struct arg1;
+	// arg1.arg_spmv_task_pool = &spmv_task_pool;
+	// arg1.arg_spmv_task_completed = &spmv_task_completed;
+	// arg1.arg_dev_id = 0;
 
-	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
+	// pthread_t thread_id;
+	// pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
 
 
 	//thread gpu01 (spmv_worker, &spmv_task_pool, &spmv_task_completed);
