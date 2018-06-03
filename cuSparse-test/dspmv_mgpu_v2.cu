@@ -79,7 +79,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 void * spmv_worker(void * arg) {
 
 	int b = *((int *)arg);
-	cout << "b = " << b << endl;
+	//cout << "b = " << b << endl;
 
 	//pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
 
