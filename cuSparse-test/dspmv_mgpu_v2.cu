@@ -52,7 +52,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	arg1.arg_spmv_task_completed = &spmv_task_completed;
 	arg1.arg_dev_id = 0;
 
-	int thread_id;
+	pthread_t thread_id;
 	pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
 
 
