@@ -2,6 +2,7 @@
 #include "cusparse.h"
 #include <vector>
 #include <iostream>
+#include <cstdio>
 #include <pthread.h>
 #include "spmv_task.h"
 #include "spmv_kernel.h"
