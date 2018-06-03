@@ -55,8 +55,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	arg1.arg_spmv_task_completed = &spmv_task_completed;
 	arg1.arg_dev_id = 0;
 
-	// pthread_t thread_id;
-	// pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
+	pthread_t thread_id;
+	pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
 
 
 	//thread gpu01 (spmv_worker, &spmv_task_pool, &spmv_task_completed);
@@ -82,35 +82,35 @@ void * spmv_worker(void * arg) {
 	vector<spmv_task *> * spmv_task_completed = arg_ptr->arg_spmv_task_completed;
 	int dev_id = arg_ptr->arg_dev_id;
 
-	cusparseStatus_t status;
-	cudaStream_t stream;
-	cusparseHandle_t handle;
-	cudaSetDevice(dev_id);
-	cudaStreamCreate(&stream);
+	// cusparseStatus_t status;
+	// cudaStream_t stream;
+	// cusparseHandle_t handle;
+	// cudaSetDevice(dev_id);
+	// cudaStreamCreate(&stream);
 
-	status = cusparseCreate(&handle); 
-	if (status != CUSPARSE_STATUS_SUCCESS) 
-	{ 
-		printf("CUSPARSE Library initialization failed");
-		//return 1; 
-	} 
-	status = cusparseSetStream(handle, stream);
-	if (status != CUSPARSE_STATUS_SUCCESS) 
-	{ 
-		printf("Stream bindind failed");
-		//return 1;
-	} 
-	while (spmv_task_pool->size() > 0)
-	{
-		// Take one task from pool
-		spmv_task * curr_spmv_task = (*spmv_task_pool)[spmv_task_pool->size() - 1];
-		spmv_task_pool->pop_back();
-		//assign_task(curr_spmv_task, dev_id, stream);
-		//run_task(curr_spmv_task, dev_id, handle, 1);
-		//finalize_task(curr_spmv_task, dev_id, stream);
-		print_task_info(curr_spmv_task);
-		spmv_task_completed->push_back(curr_spmv_task);
-	}
+	// status = cusparseCreate(&handle); 
+	// if (status != CUSPARSE_STATUS_SUCCESS) 
+	// { 
+	// 	printf("CUSPARSE Library initialization failed");
+	// 	//return 1; 
+	// } 
+	// status = cusparseSetStream(handle, stream);
+	// if (status != CUSPARSE_STATUS_SUCCESS) 
+	// { 
+	// 	printf("Stream bindind failed");
+	// 	//return 1;
+	// } 
+	// while (spmv_task_pool->size() > 0)
+	// {
+	// 	// Take one task from pool
+	// 	spmv_task * curr_spmv_task = (*spmv_task_pool)[spmv_task_pool->size() - 1];
+	// 	spmv_task_pool->pop_back();
+	// 	//assign_task(curr_spmv_task, dev_id, stream);
+	// 	//run_task(curr_spmv_task, dev_id, handle, 1);
+	// 	//finalize_task(curr_spmv_task, dev_id, stream);
+	// 	print_task_info(curr_spmv_task);
+	// 	spmv_task_completed->push_back(curr_spmv_task);
+	// }
 
 	//pthread_exit(NULL);
 	//return 0;
