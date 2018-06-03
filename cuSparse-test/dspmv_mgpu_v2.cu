@@ -90,7 +90,7 @@ void * spmv_worker(void * arg) {
 	cusparseStatus_t status;
 	cudaStream_t stream;
 	cusparseHandle_t handle;
-	//cudaSetDevice(1);
+	cudaSetDevice(1);
 //	cudaStreamCreate(&stream);
 
 	// status = cusparseCreate(&handle); 
