@@ -102,7 +102,8 @@ void * spmv_worker(void * arg) {
 	while (spmv_task_pool->size() > 0)
 	{
 		// Take one task from pool
-		spmv_task * curr_spmv_task = spmv_task_pool->pop_back();
+		spmv_task * curr_spmv_task = (*spmv_task_pool)[spmv_task_pool->size() - 1];
+		spmv_task_pool->pop_back();
 		//assign_task(curr_spmv_task, dev_id, stream);
 		//run_task(curr_spmv_task, dev_id, handle, 1);
 		//finalize_task(curr_spmv_task, dev_id, stream);
@@ -216,7 +217,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].host_csrVal = csrVal;
 		spmv_task_pool[t].host_y = y;
 		spmv_task_pool[t].host_x = x;
-		spmv_task_pool[t].local_result_y = new double[t.dev_m];
+		spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
