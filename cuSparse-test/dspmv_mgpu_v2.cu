@@ -1,3 +1,5 @@
+#include <cuda_runtime.h>
+#include "cusparse.h"
 #include <vector>
 #include <pthread.h>
 #include "spmv_task.h"
