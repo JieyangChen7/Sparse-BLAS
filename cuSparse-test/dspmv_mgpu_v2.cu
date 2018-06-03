@@ -90,6 +90,7 @@ void * spmv_worker(void * arg) {
 	cusparseHandle_t handle;
 	cudaSetDevice(0);
 //	cudaStreamCreate(&stream);
+	cout << "dev_id = " << dev_id << endl;
 
 	// status = cusparseCreate(&handle); 
 	// if (status != CUSPARSE_STATUS_SUCCESS) 
