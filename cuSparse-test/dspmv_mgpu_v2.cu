@@ -91,18 +91,29 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			//return 1;
 		} 
 
-		while (spmv_task_pool.size() > 0)
-		{
-			// Take one task from pool
-			spmv_task * curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
-			spmv_task_pool.pop_back();
-			//assign_task(curr_spmv_task, dev_id, stream);
-			//run_task(curr_spmv_task, dev_id, handle, 1);
-			//finalize_task(curr_spmv_task, dev_id, stream);
-			print_task_info(curr_spmv_task);
-			spmv_task_completed.push_back(curr_spmv_task);
-		}
+		while (true) {
 
+
+			spmv_task * curr_spmv_task;
+
+			#pragma omp critical
+			{
+				if(spmv_task_pool.size() > 0) {
+					curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
+					spmv_task_pool.pop_back();
+				} else {
+					curr_spmv_task = NULL;
+				}
+			}
+
+			if (curr_spmv_task) {
+
+				print_task_info(curr_spmv_task);
+			} else {
+				break;
+			}
+
+		}
 	}
 
 
