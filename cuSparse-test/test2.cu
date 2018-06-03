@@ -9,27 +9,10 @@
 #include "mmio.h"
 #include <float.h>
 #include "anonymouslib_cuda.h"
+#include "spmv_kernel.h"
 using namespace std;
 
-int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
-				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
-				 double * x, double * beta,
-				 double * y,
-				 int ngpu,
-				 double * time_parse,
-				 double * time_comm,
-				 double * time_comp,
-				 double * time_post);
-int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
-				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
-				  double * x, double * beta,
-				  double * y,
-				  int ngpu,
-				  double * time_parse,
-				  double * time_comm,
-				  double * time_comp,
-				  double * time_post,
-				  int kernel);
+
 
 void print_error(cusparseStatus_t status) {
 	if (status == CUSPARSE_STATUS_NOT_INITIALIZED)
@@ -194,6 +177,7 @@ int main(int argc, char *argv[]) {
 	double * x = (double *)malloc(n * sizeof(double)); 
 	double * y1 = (double *)malloc(m * sizeof(double)); 
 	double * y2 = (double *)malloc(m * sizeof(double)); 
+	double * y3 = (double *)malloc(m * sizeof(double)); 
 
 	for (int i = 0; i < n; i++)
 	{
@@ -205,6 +189,7 @@ int main(int argc, char *argv[]) {
 	{
 		y1[i] = 0.0;
 		y2[i] = 0.0;
+		y3[i] = 0.0;
 	}
 
 
@@ -251,7 +236,7 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
-	int warm_up_iter = 10;
+	int warm_up_iter = 0;
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
@@ -264,65 +249,74 @@ int main(int argc, char *argv[]) {
 		{
 			y1[i] = 0.0;
 			y2[i] = 0.0;
+			y3[i] = 0.0;
 		}
 
 		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
+		// time_parse = 0.0;
+		// time_comm = 0.0;
+		// time_comp = 0.0;
+		// time_post = 0.0;
 
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
-		//cout << "time_comm = " << time_comm << endl;
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y1,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post);
+		// //cout << "time_comm = " << time_comm << endl;
 
-		if (i >= warm_up_iter) {
- 			cout << "=============Baseline============" <<endl;
-			if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
-			if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
-			if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
-			if (time_post < min_time_post1) min_time_post1 = time_post;
+		// if (i >= warm_up_iter) {
+ 	// 		cout << "=============Baseline============" <<endl;
+		// 	if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
+		// 	if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
+		// 	if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
+		// 	if (time_post < min_time_post1) min_time_post1 = time_post;
 
-			avg_time_parse1 += time_parse;
-			avg_time_comm1  += time_comm;
-			avg_time_comp1  += time_comp;
-			avg_time_post1  += time_post;
-		}
+		// 	avg_time_parse1 += time_parse;
+		// 	avg_time_comm1  += time_comm;
+		// 	avg_time_comp1  += time_comp;
+		// 	avg_time_post1  += time_post;
+		// }
 		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
-					 kernel_version);
+		// time_parse = 0.0;
+		// time_comm = 0.0;
+		// time_comp = 0.0;
+		// time_post = 0.0;
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post,
+		// 			 kernel_version);
 	
-		if (i >= warm_up_iter) {
-			cout << "=============Version 1============" <<endl;
-			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
-			if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
-			if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
-			if (time_post < min_time_post2) min_time_post2 = time_post;
+		// if (i >= warm_up_iter) {
+		// 	cout << "=============Version 1============" <<endl;
+		// 	if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
+		// 	if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
+		// 	if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
+		// 	if (time_post < min_time_post2) min_time_post2 = time_post;
 
-			avg_time_parse2 += time_parse;
-			avg_time_comm2  += time_comm;
-			avg_time_comp2  += time_comp;
-			avg_time_post2  += time_post;
-		}
+		// 	avg_time_parse2 += time_parse;
+		// 	avg_time_comm2  += time_comm;
+		// 	avg_time_comp2  += time_comp;
+		// 	avg_time_post2  += time_post;
+		// }
+
+		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y3,
+					 ngpu,
+					 kernel_version,
+					 10);
 
 
 	
@@ -330,16 +324,16 @@ int main(int argc, char *argv[]) {
 
 
 	//cout << "y = [";
-	bool correct = true;
-	for(int i = 0; i < m; i++) {
-		//cout << y1[i] << " - " << y2[i] << endl;
-		if (abs(y1[i] - y2[i]) > 1e-3 ) {
-			cout << y1[i] << " - " << y2[i] << endl;
-			correct = false;
-		}
-	}
+	// bool correct = true;
+	// for(int i = 0; i < m; i++) {
+	// 	//cout << y1[i] << " - " << y2[i] << endl;
+	// 	if (abs(y1[i] - y2[i]) > 1e-3 ) {
+	// 		cout << y1[i] << " - " << y2[i] << endl;
+	// 		correct = false;
+	// 	}
+	// }
 
-	printf("Check result: %s\n", correct ? "True" : "False");
+	// printf("Check result: %s\n", correct ? "True" : "False");
 	// cout << "min_time_parse1 = " << min_time_parse1 << endl;
 	// cout << "min_time_comm1 = " << min_time_comm1 << endl;
 	// cout << "min_time_comp1 = " << min_time_comp1 << endl;
@@ -357,30 +351,30 @@ int main(int argc, char *argv[]) {
 	// cout << endl;
 
 
-	avg_time_parse1/=repeat_test;
-	avg_time_comm1/=repeat_test;
-	avg_time_comp1/=repeat_test;
-	avg_time_post1/=repeat_test;
+	// avg_time_parse1/=repeat_test;
+	// avg_time_comm1/=repeat_test;
+	// avg_time_comp1/=repeat_test;
+	// avg_time_post1/=repeat_test;
 
-	avg_time_parse2/=repeat_test;
-	avg_time_comm2/=repeat_test;
-	avg_time_comp2/=repeat_test;
-	avg_time_post2/=repeat_test;
+	// avg_time_parse2/=repeat_test;
+	// avg_time_comm2/=repeat_test;
+	// avg_time_comp2/=repeat_test;
+	// avg_time_post2/=repeat_test;
 
-    cout << "avg_time_parse1 = " << avg_time_parse1 << endl;
-	cout << "avg_time_comm1 = "  << avg_time_comm1 << endl;
-	cout << "avg_time_comp1 = "  << avg_time_comp1 << endl;
-	cout << "avg_time_post1 = "  << avg_time_post1 << endl;
-	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
+ //    cout << "avg_time_parse1 = " << avg_time_parse1 << endl;
+	// cout << "avg_time_comm1 = "  << avg_time_comm1 << endl;
+	// cout << "avg_time_comp1 = "  << avg_time_comp1 << endl;
+	// cout << "avg_time_post1 = "  << avg_time_post1 << endl;
+	// cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
 
 
-	cout << endl;
+	// cout << endl;
 
-	cout << "avg_time_parse2 = " << avg_time_parse2 << endl;
-	cout << "avg_time_comm2 = "  << avg_time_comm2 << endl;
-	cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
-	cout << "avg_time_post2 = "  << avg_time_post2 << endl;
-	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
+	// cout << "avg_time_parse2 = " << avg_time_parse2 << endl;
+	// cout << "avg_time_comm2 = "  << avg_time_comm2 << endl;
+	// cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
+	// cout << "avg_time_post2 = "  << avg_time_post2 << endl;
+	// cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
 
 }
 
