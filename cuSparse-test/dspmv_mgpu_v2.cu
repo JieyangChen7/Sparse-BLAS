@@ -56,7 +56,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	arg1.arg_dev_id = 0;
 
 	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, spmv_worker, (void *)arg1);
+	pthread_create(&thread_id, NULL, spmv_worker, (void *)&arg1);
 
 
 	//thread gpu01 (spmv_worker, &spmv_task_pool, &spmv_task_completed);
