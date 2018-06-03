@@ -316,7 +316,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 9);
+					 4);
 
 
 	
