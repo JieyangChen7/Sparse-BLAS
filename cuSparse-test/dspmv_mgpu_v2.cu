@@ -103,9 +103,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		for (c = 0; c < copy_of_workspace; c++) {
 
-			cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
+			cudaMalloc((void**)&(dev_csrVal[c]),      nnz      * sizeof(double));
 			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
-			cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
+			cudaMalloc((void**)&(dev_csrColIndex[c]), nnz      * sizeof(int)   );
 			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
 	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
 
