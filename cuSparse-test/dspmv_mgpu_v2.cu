@@ -73,7 +73,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 void * spmv_worker(void * arg) {
 
-	arg_ptr = (pthread_arg_struct*)arg;
+	pthread_arg_struct * arg_ptr = (pthread_arg_struct*)arg;
 
 	vector<spmv_task *> * arg_spmv_task_pool = arg_ptr->arg_spmv_task_pool;
 	vector<spmv_task *> * arg_spmv_task_completed = arg_ptr->arg_spmv_task_completed;
