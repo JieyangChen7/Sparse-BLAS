@@ -71,8 +71,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	// thread gpu08 (spmv_worker, spmv_task_pool, spmv_task_completed);
 	//gpu01.join();
 	omp_set_num_threads(ngpu);
-	#pragma omp parallel shared (spmv_task_pool, spmv_task_completed)
+	#pragma omp parallel default (shared)
 	{
+		int c;
 		unsigned int cpu_thread_id = omp_get_thread_num();
 		cudaSetDevice(cpu_thread_id);
 		cusparseStatus_t status;
@@ -91,8 +92,27 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			//return 1;
 		} 
 
-		while (true) {
+		int copy_of_workspace = 2;
 
+		double ** dev_csrVal = new double * [copy_of_workspace];
+		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
+		int ** dev_csrColIndex = new int  * [copy_of_workspace];
+		double ** dev_x = new double      * [copy_of_workspace];
+		double ** dev_y = new double      * [copy_of_workspace];
+
+		for (c = 0; c < copy_of_workspace; c++) {
+
+			cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
+			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
+			cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
+			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
+	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
+
+    	}
+
+    	c = 0; 
+    
+		while (true) {
 
 			spmv_task * curr_spmv_task;
 
@@ -109,11 +129,31 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			if (curr_spmv_task) {
 
 				print_task_info(curr_spmv_task);
+				curr_spmv_task->dev_csrVal = dev_csrVal[c];
+				curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+				curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+				curr_spmv_task->dev_x = dev_x[c];
+				curr_spmv_task->dev_y = dev_y[c];
+
+				assign_task(curr_spmv_task, dev_id, stream);
+				run_task(curr_spmv_task, dev_id, handle, kernel);
+				finalize_task(curr_spmv_task, dev_id, stream);
+
 			} else {
 				break;
 			}
 
 		}
+
+		for (c = 0; c < copy_of_workspace; c++) {
+
+			cudaFree(dev_csrVal[c]);
+			cudaFree(dev_csrRowPtr[c]);
+			cudaFree(dev_csrColIndex[c]);
+			cudaFree(dev_x[c]);
+			cudaFree(dev_y[c]);
+		}
+
 	}
 
 
@@ -305,12 +345,12 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
-	cudaSetDevice(dev_id);
-	cudaMalloc((void**)&(t->dev_csrVal),      (t->dev_nnz)   * sizeof(double));
-	cudaMalloc((void**)&(t->dev_csrRowPtr),   (t->dev_m + 1) * sizeof(int)   );
-	cudaMalloc((void**)&(t->dev_csrColIndex), (t->dev_nnz)   * sizeof(int)   );
-	cudaMalloc((void**)&(t->dev_x),           (t->dev_n)     * sizeof(double));
-    cudaMalloc((void**)&(t->dev_y),        (t->dev_m)        * sizeof(double));
+	// cudaSetDevice(dev_id);
+	// cudaMalloc((void**)&(t->dev_csrVal),      (t->dev_nnz)   * sizeof(double));
+	// cudaMalloc((void**)&(t->dev_csrRowPtr),   (t->dev_m + 1) * sizeof(int)   );
+	// cudaMalloc((void**)&(t->dev_csrColIndex), (t->dev_nnz)   * sizeof(int)   );
+	// cudaMalloc((void**)&(t->dev_x),           (t->dev_n)     * sizeof(double));
+ //    cudaMalloc((void**)&(t->dev_y),           (t->dev_m)     * sizeof(double));
 
     cudaMemcpyAsync(t->dev_csrRowPtr,   t->host_csrRowPtr,          
     			   (size_t)((t->dev_m + 1) * sizeof(int)), cudaMemcpyHostToDevice, stream);
@@ -364,15 +404,15 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
-	cudaSetDevice(dev_id);
+	//cudaSetDevice(dev_id);
 
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
     			   (size_t)((t->dev_m) * sizeof(double)), 
     			   cudaMemcpyDeviceToHost, stream);
-	cudaFree(t->dev_csrVal);
-	cudaFree(t->dev_csrRowPtr);
-	cudaFree(t->dev_csrColIndex);
-	cudaFree(t->dev_x);
+	// cudaFree(t->dev_csrVal);
+	// cudaFree(t->dev_csrRowPtr);
+	// cudaFree(t->dev_csrColIndex);
+	// cudaFree(t->dev_x);
 }
 
 void print_task_info(spmv_task * t) {
