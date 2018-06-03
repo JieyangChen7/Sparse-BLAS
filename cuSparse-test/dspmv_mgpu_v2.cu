@@ -418,8 +418,8 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 	}
 	cout << "]" << endl;
 
-	cout << "t->alpha = " << t->alpha << endl;
-	cout << "t->beta = " << t->beta << endl;
+	cout << "t->alpha = " << *(t->alpha) << endl;
+	cout << "t->beta = " << *(t->beta) << endl;
 
 	cusparseStatus_t status;
 	if(kernel == 1) {
