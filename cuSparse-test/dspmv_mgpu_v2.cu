@@ -231,7 +231,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
 	}
 
-	for (t = 0; t < num_of_blocks; t++) {
+	for (t = 0; t < num_of_tasks; t++) {
 		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
 	}
 
