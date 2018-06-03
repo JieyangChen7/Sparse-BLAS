@@ -79,6 +79,20 @@ void * spmv_worker(void * arg) {
 	//int b = *((int *)arg);
 	//cout << "b = " << b << endl;
 
+	int deviceCount;
+	cudaGetDeviceCount(&deviceCount);
+	int device;
+	for (device = 0; device < deviceCount; ++device) 
+	{
+	    cudaDeviceProp deviceProp;
+	    cudaGetDeviceProperties(&deviceProp, device);
+	    printf("Device %d has compute capability %d.%d.\n",
+	           device, deviceProp.major, deviceProp.minor);
+	}
+
+	
+
+
 	pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
 
 	vector<spmv_task *> * spmv_task_pool = arg_ptr.arg_spmv_task_pool;
@@ -88,7 +102,7 @@ void * spmv_worker(void * arg) {
 	cusparseStatus_t status;
 	cudaStream_t stream;
 	cusparseHandle_t handle;
-	cudaSetDevice(0);
+	//cudaSetDevice(0);
 //	cudaStreamCreate(&stream);
 	cout << "dev_id = " << dev_id << endl;
 
