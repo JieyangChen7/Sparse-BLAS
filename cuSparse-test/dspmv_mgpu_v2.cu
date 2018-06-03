@@ -82,11 +82,11 @@ void * spmv_worker(void * arg) {
 	vector<spmv_task *> * spmv_task_completed = arg_ptr->arg_spmv_task_completed;
 	int dev_id = arg_ptr->arg_dev_id;
 
-	// cusparseStatus_t status;
-	// cudaStream_t stream;
-	// cusparseHandle_t handle;
-	// cudaSetDevice(dev_id);
-	// cudaStreamCreate(&stream);
+	cusparseStatus_t status;
+	cudaStream_t stream;
+	cusparseHandle_t handle;
+	cudaSetDevice(dev_id);
+	cudaStreamCreate(&stream);
 
 	// status = cusparseCreate(&handle); 
 	// if (status != CUSPARSE_STATUS_SUCCESS) 
