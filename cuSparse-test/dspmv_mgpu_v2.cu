@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include "spmv_task.h"
 #include "spmv_kernel.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -55,8 +56,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	arg1->arg_spmv_task_completed = &spmv_task_completed;
 	arg1->arg_dev_id = 0;
 
-	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, spmv_worker, (void *)arg1);
+
+//	pthread_t thread_id;
+//	pthread_create(&thread_id, NULL, spmv_worker, (void *)arg1);
 
 
 	//thread gpu01 (spmv_worker, &spmv_task_pool, &spmv_task_completed);
@@ -68,6 +70,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	// thread gpu07 (spmv_worker, spmv_task_pool, spmv_task_completed);
 	// thread gpu08 (spmv_worker, spmv_task_pool, spmv_task_completed);
 	//gpu01.join();
+	omp_set_num_threads(ngpu);
+	#pragma omp parallel
+	{
+		unsigned int cpu_thread_id = omp_get_thread_num();
+		cudaSetDevice(cpu_thread_id);
+		cout << "set gpu " << cpu_thread_id << endl;
+
+	}
 
 
 
@@ -90,7 +100,7 @@ void * spmv_worker(void * arg) {
 	           device, deviceProp.major, deviceProp.minor);
 	}
 
-	
+
 
 
 	pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
