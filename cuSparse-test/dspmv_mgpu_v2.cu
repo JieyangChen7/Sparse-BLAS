@@ -50,15 +50,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  x, beta, y, nb,
 				  &spmv_task_pool);
 
-	pthread_arg_struct arg1;
-	arg1.arg_spmv_task_pool = &spmv_task_pool;
-	arg1.arg_spmv_task_completed = &spmv_task_completed;
-	arg1.arg_dev_id = 0;
-
-	int a = 123;
+	pthread_arg_struct * arg1 = new pthread_arg_struct();
+	arg1->arg_spmv_task_pool = &spmv_task_pool;
+	arg1->arg_spmv_task_completed = &spmv_task_completed;
+	arg1->arg_dev_id = 0;
 
 	pthread_t thread_id;
-	pthread_create(&thread_id, NULL, spmv_worker, (void *)&a);
+	pthread_create(&thread_id, NULL, spmv_worker, (void *)arg1);
 
 
 	//thread gpu01 (spmv_worker, &spmv_task_pool, &spmv_task_completed);
@@ -78,15 +76,15 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 void * spmv_worker(void * arg) {
 
-	int b = *((int *)arg);
+	//int b = *((int *)arg);
 	//cout << "b = " << b << endl;
 
-	//pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
+	pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
 
-	//vector<spmv_task *> * spmv_task_pool = arg_ptr.arg_spmv_task_pool;
-	//vector<spmv_task *> * spmv_task_completed = arg_ptr.arg_spmv_task_completed;
-	//int dev_id = arg_ptr.arg_dev_id;
-	//cout << "dev_id = " << dev_id << endl;
+	vector<spmv_task *> * spmv_task_pool = arg_ptr.arg_spmv_task_pool;
+	vector<spmv_task *> * spmv_task_completed = arg_ptr.arg_spmv_task_completed;
+	int dev_id = arg_ptr.arg_dev_id;
+	cout << "dev_id = " << dev_id << endl;
 	cusparseStatus_t status;
 	cudaStream_t stream;
 	cusparseHandle_t handle;
