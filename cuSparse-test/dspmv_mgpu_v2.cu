@@ -325,6 +325,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].host_y = y;
 		spmv_task_pool[t].host_x = x;
 		spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
+		spmv_task_pool[t].alpha = alpha;
+		spmv_task_pool[t].beta = beta;
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
