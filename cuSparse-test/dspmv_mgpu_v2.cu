@@ -4,6 +4,8 @@
 #include <pthread.h>
 #include "spmv_task.h"
 
+using namespace std;
+
 void * spmv_worker(void * arg);
 
 void generate_tasks(int m, int n, int nnz, double * alpha,
