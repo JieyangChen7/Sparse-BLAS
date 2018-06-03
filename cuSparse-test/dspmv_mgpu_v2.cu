@@ -131,7 +131,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	int t;
 	int d;
 
-	spmv_task * spmv_task_pool = new spmv_task[num_of_blocks];
+	spmv_task * spmv_task_pool = new spmv_task[num_of_tasks];
 
 	// Calculate the start and end index
 	for (t = 0; t < num_of_tasks; t++) {
@@ -225,7 +225,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		if (status != CUSPARSE_STATUS_SUCCESS) 
 		{ 
 			printf("Matrix descriptor initialization failed");
-			return 1;
+			//return 1;
 		} 	
 		cusparseSetMatType(spmv_task_pool[t].descr,CUSPARSE_MATRIX_TYPE_GENERAL); 
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);

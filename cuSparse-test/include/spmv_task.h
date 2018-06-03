@@ -12,9 +12,9 @@ struct spmv_task
 	bool start_flag;
 	bool end_flag;
 
-	double * host_csrRowPtr;
+	int * host_csrRowPtr;
 	int * host_csrColIndex;
-	int * host_csrVal;
+	double * host_csrVal;
 	double * host_x;
 	double * host_y;
 	double y2;
