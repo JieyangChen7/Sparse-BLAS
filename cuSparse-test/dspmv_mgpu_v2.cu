@@ -74,8 +74,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	#pragma omp parallel default (shared)
 	{
 		int c;
-		unsigned int cpu_thread_id = omp_get_thread_num();
-		cudaSetDevice(cpu_thread_id);
+		unsigned int dev_id = omp_get_thread_num();
+		cudaSetDevice(dev_id);
 		cusparseStatus_t status;
 		cudaStream_t stream;
 		cusparseHandle_t handle;
