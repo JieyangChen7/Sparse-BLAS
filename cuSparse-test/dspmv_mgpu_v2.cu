@@ -117,14 +117,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 				if (curr_spmv_task) {
 
-					curr_spmv_task->dev_csrVal = dev_csrVal[c];
-					curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
-					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
-					curr_spmv_task->dev_x = dev_x[c];
-					curr_spmv_task->dev_y = dev_y[c];
-					assign_task(curr_spmv_task, dev_id, stream[c]);
-					run_task(curr_spmv_task, dev_id, handle[c], kernel);
-					finalize_task(curr_spmv_task, dev_id, stream[c]);
+					// curr_spmv_task->dev_csrVal = dev_csrVal[c];
+					// curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+					// curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+					// curr_spmv_task->dev_x = dev_x[c];
+					// curr_spmv_task->dev_y = dev_y[c];
+					// assign_task(curr_spmv_task, dev_id, stream[c]);
+					// run_task(curr_spmv_task, dev_id, handle[c], kernel);
+					// finalize_task(curr_spmv_task, dev_id, stream[c]);
 				}
 			}
 			if (!curr_spmv_task) {
