@@ -176,18 +176,18 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		double tmp3 = (double)(tmp1 / num_of_tasks);
 		double tmp4 = (double)(tmp2 / num_of_tasks);
 
-		cout << "tmp1 = " << tmp1 << endl;
-		cout << "tmp2 = " << tmp2 << endl;
+		// cout << "tmp1 = " << tmp1 << endl;
+		// cout << "tmp2 = " << tmp2 << endl;
 
-		cout << "tmp3 = " << tmp3 << endl;
-		cout << "tmp4 = " << tmp4 << endl;
+		// cout << "tmp3 = " << tmp3 << endl;
+		// cout << "tmp4 = " << tmp4 << endl;
 
 		spmv_task_pool[t].start_idx = floor((double)(tmp1 / num_of_tasks));
 		spmv_task_pool[t].end_idx   = floor((double)(tmp2 / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 
-		cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
-		cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
+		// cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
+		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
 	}
 
 	// Calculate the start and end row
@@ -195,7 +195,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	for (t = 0; t < num_of_tasks; t++) {
 
 		spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
-		cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
+		//cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
 		// Mark imcomplete rows
 		// True: imcomplete
 		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
@@ -209,7 +209,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
-		cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
+		//cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
 
 		// Mark imcomplete rows
 		// True: imcomplete
@@ -224,38 +224,38 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
 		spmv_task_pool[t].dev_n = n;
-		cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
-		cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
-		cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
-		cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
-		cout << "spmv_task_pool[t].dev_m = " << spmv_task_pool[t].dev_m << endl;
+		// cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
+		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
+		// cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
+		// cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
+		// cout << "spmv_task_pool[t].dev_m = " << spmv_task_pool[t].dev_m << endl;
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
 
 
-		cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
+		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
 		spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
-		// spmv_task_pool[t].host_csrRowPtr[0] = 0;
-		// spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
+		spmv_task_pool[t].host_csrRowPtr[0] = 0;
+		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
 
-		// memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
-		// 	   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
-		// 	   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
+		memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
+			   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
+			   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
-		// for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
-		// 	spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
-		// }
+		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
+			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
+		}
 
-		// spmv_task_pool[t].host_csrColIndex = csrColIndex;
-		// spmv_task_pool[t].host_csrVal = csrVal;
-		// spmv_task_pool[t].host_y = y;
-		// spmv_task_pool[t].host_x = x;
-		// spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
-		// spmv_task_pool[t].alpha = new double[1];
-		// spmv_task_pool[t].beta = new double[1]; 
-		// spmv_task_pool[t].alpha[0] = *alpha;
-		// spmv_task_pool[t].beta[0] = *beta;
+		spmv_task_pool[t].host_csrColIndex = csrColIndex;
+		spmv_task_pool[t].host_csrVal = csrVal;
+		spmv_task_pool[t].host_y = y;
+		spmv_task_pool[t].host_x = x;
+		spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
+		spmv_task_pool[t].alpha = new double[1];
+		spmv_task_pool[t].beta = new double[1]; 
+		spmv_task_pool[t].alpha[0] = *alpha;
+		spmv_task_pool[t].beta[0] = *beta;
 
 	}
 
@@ -270,9 +270,9 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
 	}
 
-	// for (t = 0; t < num_of_tasks; t++) {
-	// 	(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
-	// }
+	for (t = 0; t < num_of_tasks; t++) {
+		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
+	}
 
 }
 
