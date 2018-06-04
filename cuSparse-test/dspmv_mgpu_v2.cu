@@ -223,15 +223,15 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
 		}
 
-		spmv_task_pool[t].host_csrColIndex = csrColIndex;
-		spmv_task_pool[t].host_csrVal = csrVal;
-		spmv_task_pool[t].host_y = y;
-		spmv_task_pool[t].host_x = x;
+		// spmv_task_pool[t].host_csrColIndex = csrColIndex;
+		// spmv_task_pool[t].host_csrVal = csrVal;
+		// spmv_task_pool[t].host_y = y;
+		// spmv_task_pool[t].host_x = x;
 		// spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
-		spmv_task_pool[t].alpha = new double[1];
-		spmv_task_pool[t].beta = new double[1]; 
-		spmv_task_pool[t].alpha[0] = *alpha;
-		spmv_task_pool[t].beta[0] = *beta;
+		// spmv_task_pool[t].alpha = new double[1];
+		// spmv_task_pool[t].beta = new double[1]; 
+		// spmv_task_pool[t].alpha[0] = *alpha;
+		// spmv_task_pool[t].beta[0] = *beta;
 
 	}
 
