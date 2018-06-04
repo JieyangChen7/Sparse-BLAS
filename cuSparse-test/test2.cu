@@ -265,7 +265,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-
+		cout << "=============Baseline============" <<endl;
 		curr_time = get_time();
 
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
@@ -280,9 +280,9 @@ int main(int argc, char *argv[]) {
 
 		
 	
-
+		
 		if (i >= warm_up_iter) {
- 			cout << "=============Baseline============" <<endl;
+ 			
 			if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
 			if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
 			if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
@@ -300,7 +300,8 @@ int main(int argc, char *argv[]) {
 		time_comm = 0.0;
 		time_comp = 0.0;
 		time_post = 0.0;
-
+		
+		cout << "=============Version 1============" <<endl;
 		curr_time = get_time();
 
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
@@ -315,9 +316,9 @@ int main(int argc, char *argv[]) {
 					 kernel_version);
 
 		
-	
+		
 		if (i >= warm_up_iter) {
-			cout << "=============Version 1============" <<endl;
+			
 			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
 			if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
 			if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
@@ -332,7 +333,7 @@ int main(int argc, char *argv[]) {
 		}
 
 
-		
+		cout << "=============Version 2============" <<endl;
 		curr_time = get_time();
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
@@ -342,9 +343,9 @@ int main(int argc, char *argv[]) {
 					 ngpu,
 					 kernel_version,
 					 nnz/32);
-
+		
 		if (i >= warm_up_iter) {
-			cout << "=============Version 2============" <<endl;
+			
 			total_time_v2 += get_time() - curr_time;
 		}
 
