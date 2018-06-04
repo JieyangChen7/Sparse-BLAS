@@ -173,11 +173,17 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		long long tmp1 = t * (long long)nnz;
 		long long tmp2 = (t + 1) * (long long)nnz;
 
+		double tmp3 = (double)(tmp1 / num_of_tasks);
+		double tmp4 = (double)(tmp2 / num_of_tasks);
+
 		cout << "tmp1 = " << tmp1 << endl;
 		cout << "tmp2 = " << tmp2 << endl;
 
-		spmv_task_pool[t].start_idx = floor((int)(tmp1 / num_of_tasks));
-		spmv_task_pool[t].end_idx   = floor((int)(tmp2 / num_of_tasks)) - 1;
+		cout << "tmp3 = " << tmp3 << endl;
+		cout << "tmp4 = " << tmp4 << endl;
+
+		spmv_task_pool[t].start_idx = floor((double)(tmp1 / num_of_tasks));
+		spmv_task_pool[t].end_idx   = floor((double)(tmp2 / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 	}
 
