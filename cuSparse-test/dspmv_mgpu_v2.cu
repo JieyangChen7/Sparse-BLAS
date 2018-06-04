@@ -76,24 +76,15 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
 		cudaSetDevice(dev_id);
-		cusparseStatus_t status;
-		cudaStream_t stream;
-		cusparseHandle_t handle;
-		cudaStreamCreate(&stream);
-		status = cusparseCreate(&handle); 
-		if (status != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("CUSPARSE Library initialization failed");
-			//return 1; 
-		} 
-		status = cusparseSetStream(handle, stream);
-		if (status != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Stream bindind failed");
-			//return 1;
-		} 
+		
 
 		int copy_of_workspace = 2;
+
+		cusparseStatus_t status[copy_of_workspace];
+		cudaStream_t stream[copy_of_workspace];
+		cusparseHandle_t handle[copy_of_workspace];
+
+
 
 		double ** dev_csrVal = new double * [copy_of_workspace];
 		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
@@ -102,6 +93,19 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		double ** dev_y = new double      * [copy_of_workspace];
 
 		for (c = 0; c < copy_of_workspace; c++) {
+			cudaStreamCreate(&(stream[c]));
+			status[c] = cusparseCreate(&(handle[c])); 
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("CUSPARSE Library initialization failed");
+				//return 1; 
+			} 
+			status[c] = cusparseSetStream(handle[c], stream[c]);
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("Stream bindind failed");
+				//return 1;
+			} 
 
 			cudaMalloc((void**)&(dev_csrVal[c]),      nnz      * sizeof(double));
 			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
@@ -117,34 +121,37 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			spmv_task * curr_spmv_task;
 
-			#pragma omp critical
-			{
-				if(spmv_task_pool.size() > 0) {
-					curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
-					spmv_task_pool.pop_back();
-				} else {
-					curr_spmv_task = NULL;
+			for (c = 0; c < copy_of_workspace; c++) {
+
+
+				#pragma omp critical
+				{
+					if(spmv_task_pool.size() > 0) {
+						curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
+						spmv_task_pool.pop_back();
+					} else {
+						curr_spmv_task = NULL;
+					}
+				}
+
+				if (curr_spmv_task) {
+
+					curr_spmv_task->dev_csrVal = dev_csrVal[c];
+					curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+					curr_spmv_task->dev_x = dev_x[c];
+					curr_spmv_task->dev_y = dev_y[c];
+					assign_task(curr_spmv_task, dev_id, stream[c]);
+					run_task(curr_spmv_task, dev_id, handle[c], kernel);
+					finalize_task(curr_spmv_task, dev_id, stream[c]);
 				}
 			}
-
-			if (curr_spmv_task) {
-
-				print_task_info(curr_spmv_task);
-				curr_spmv_task->dev_csrVal = dev_csrVal[c];
-				curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
-				curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
-				curr_spmv_task->dev_x = dev_x[c];
-				curr_spmv_task->dev_y = dev_y[c];
-
-				assign_task(curr_spmv_task, dev_id, stream);
-				run_task(curr_spmv_task, dev_id, handle, kernel);
-				finalize_task(curr_spmv_task, dev_id, stream);
-
-			} else {
+			if (!curr_spmv_task) {
 				break;
 			}
-
 		}
+
+		cudaDeviceSynchronize();
 
 		for (c = 0; c < copy_of_workspace; c++) {
 
@@ -154,74 +161,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_x[c]);
 			cudaFree(dev_y[c]);
 		}
-
 	}
-
-
-
 }
-
-
-void * spmv_worker(void * arg) {
-
-	//int b = *((int *)arg);
-	//cout << "b = " << b << endl;
-
-	int deviceCount;
-	cudaGetDeviceCount(&deviceCount);
-	int device;
-	for (device = 0; device < deviceCount; ++device) 
-	{
-	    cudaDeviceProp deviceProp;
-	    cudaGetDeviceProperties(&deviceProp, device);
-	    printf("Device %d has compute capability %d.%d.\n",
-	           device, deviceProp.major, deviceProp.minor);
-	}
-
-
-
-
-	pthread_arg_struct arg_ptr = *((pthread_arg_struct*)arg);
-
-	vector<spmv_task *> * spmv_task_pool = arg_ptr.arg_spmv_task_pool;
-	vector<spmv_task *> * spmv_task_completed = arg_ptr.arg_spmv_task_completed;
-	int dev_id = arg_ptr.arg_dev_id;
-	cout << "dev_id = " << dev_id << endl;
-	cusparseStatus_t status;
-	cudaStream_t stream;
-	cusparseHandle_t handle;
-	//cudaSetDevice(0);
-//	cudaStreamCreate(&stream);
-	cout << "dev_id = " << dev_id << endl;
-
-	// status = cusparseCreate(&handle); 
-	// if (status != CUSPARSE_STATUS_SUCCESS) 
-	// { 
-	// 	printf("CUSPARSE Library initialization failed");
-	// 	//return 1; 
-	// } 
-	// status = cusparseSetStream(handle, stream);
-	// if (status != CUSPARSE_STATUS_SUCCESS) 
-	// { 
-	// 	printf("Stream bindind failed");
-	// 	//return 1;
-	// } 
-	// while (spmv_task_pool->size() > 0)
-	// {
-	// 	// Take one task from pool
-	// 	spmv_task * curr_spmv_task = (*spmv_task_pool)[spmv_task_pool->size() - 1];
-	// 	spmv_task_pool->pop_back();
-	// 	//assign_task(curr_spmv_task, dev_id, stream);
-	// 	//run_task(curr_spmv_task, dev_id, handle, 1);
-	// 	//finalize_task(curr_spmv_task, dev_id, stream);
-	// 	print_task_info(curr_spmv_task);
-	// 	spmv_task_completed->push_back(curr_spmv_task);
-	// }
-
-	//pthread_exit(NULL);
-	//return 0;
-}
-
 
 
 
