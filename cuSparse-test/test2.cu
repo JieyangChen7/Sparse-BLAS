@@ -322,7 +322,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 10240);
+					 1024000);
 		total_time_v2 = get_time() - curr_time;
 
 	
