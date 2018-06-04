@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
 	double total_time_v2 = 0.0;
 
 
-	int warm_up_iter = 10;
+	int warm_up_iter = 3;
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
