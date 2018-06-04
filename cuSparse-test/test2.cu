@@ -236,7 +236,12 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
+
+	double curr_time = 0.0;
+	double total_time_base = 0.0;
+	double total_time_v1 = 0.0;
 	double total_time_v2 = 0.0;
+
 
 	int warm_up_iter = 10;
 
@@ -260,6 +265,9 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
+
+		curr_time = get_time();
+
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
@@ -269,6 +277,8 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post);
+
+		
 	
 
 		if (i >= warm_up_iter) {
@@ -282,12 +292,17 @@ int main(int argc, char *argv[]) {
 			avg_time_comm1  += time_comm;
 			avg_time_comp1  += time_comp;
 			avg_time_post1  += time_post;
+
+			total_time_base += get_time() - curr_time;
 		}
 		
 		time_parse = 0.0;
 		time_comm = 0.0;
 		time_comp = 0.0;
 		time_post = 0.0;
+
+		curr_time = get_time();
+
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
@@ -298,6 +313,8 @@ int main(int argc, char *argv[]) {
 					 &time_comp,
 					 &time_post,
 					 kernel_version);
+
+		
 	
 		if (i >= warm_up_iter) {
 			cout << "=============Version 1============" <<endl;
@@ -310,10 +327,12 @@ int main(int argc, char *argv[]) {
 			avg_time_comm2  += time_comm;
 			avg_time_comp2  += time_comp;
 			avg_time_post2  += time_post;
+
+			total_time_v1 += get_time() - curr_time;
 		}
 
 
-		double curr_time = 0.0;
+		
 		curr_time = get_time();
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
@@ -323,7 +342,11 @@ int main(int argc, char *argv[]) {
 					 ngpu,
 					 kernel_version,
 					 nnz/8);
-		total_time_v2 = get_time() - curr_time;
+
+		if (i >= warm_up_iter) {
+			cout << "=============Version 2============" <<endl;
+			total_time_v2 += get_time() - curr_time;
+		}
 
 	
 	}
@@ -371,7 +394,7 @@ int main(int argc, char *argv[]) {
 	// cout << "avg_time_comm1 = "  << avg_time_comm1 << endl;
 	// cout << "avg_time_comp1 = "  << avg_time_comp1 << endl;
 	// cout << "avg_time_post1 = "  << avg_time_post1 << endl;
-	 cout << "total_time (baseline) = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
+	// cout << "total_time (baseline) = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
 
 
 	// cout << endl;
@@ -380,9 +403,11 @@ int main(int argc, char *argv[]) {
 	// cout << "avg_time_comm2 = "  << avg_time_comm2 << endl;
 	// cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
 	// cout << "avg_time_post2 = "  << avg_time_post2 << endl;
-	 cout << "total_time (v1) = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
+	// cout << "total_time (v1) = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
 
-	 cout << "total_time (v2) = " << total_time_v2 << endl;
+	cout << "total_time (baseline) = " << total_time_base/repeat_test << endl;
+    cout << "total_time (v2) = " << total_time_v1/repeat_test << endl;
+	cout << "total_time (v2) = " << total_time_v2/repeat_test << endl;
 }
 
 
