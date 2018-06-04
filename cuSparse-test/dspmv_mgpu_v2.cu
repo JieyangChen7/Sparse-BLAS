@@ -208,6 +208,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
 		spmv_task_pool[t].dev_n = n;
+		cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
+		cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
 		cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
 		cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
 		cout << "spmv_task_pool[t].dev_m = " << spmv_task_pool[t].dev_m << endl;
