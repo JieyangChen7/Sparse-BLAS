@@ -195,7 +195,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	for (t = 0; t < num_of_tasks; t++) {
 
 		spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
-
+		cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
 		// Mark imcomplete rows
 		// True: imcomplete
 		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
@@ -209,6 +209,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
+		cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
 
 		// Mark imcomplete rows
 		// True: imcomplete
