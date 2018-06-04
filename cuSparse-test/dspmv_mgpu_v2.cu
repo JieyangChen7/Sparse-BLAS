@@ -170,11 +170,14 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 	// Calculate the start and end index
 	for (t = 0; t < num_of_tasks; t++) {
-		long long tmp1 = t * nnz;
-		long long tmp2 = (t + 1) * nnz;
+		long long tmp1 = t * (long long)nnz;
+		long long tmp2 = (t + 1) * (long long)nnz;
 
-		spmv_task_pool[t].start_idx = floor(tmp1 / num_of_tasks);
-		spmv_task_pool[t].end_idx   = floor(tmp2 / num_of_tasks) - 1;
+		cout << "tmp1 = " << tmp1 << endl;
+		cout << "tmp2 = " << tmp2 << endl;
+
+		spmv_task_pool[t].start_idx = floor((int)(tmp1 / num_of_tasks));
+		spmv_task_pool[t].end_idx   = floor((int)(tmp2 / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 	}
 
