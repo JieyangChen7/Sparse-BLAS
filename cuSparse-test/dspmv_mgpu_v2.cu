@@ -211,9 +211,9 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
-		spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
-		spmv_task_pool[t].host_csrRowPtr[0] = 0;
-		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
+		// spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
+		// spmv_task_pool[t].host_csrRowPtr[0] = 0;
+		// spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
 
 		// memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
 		// 	   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
