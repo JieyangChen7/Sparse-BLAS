@@ -215,13 +215,13 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
 		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
 
-		memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
-			   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
-			   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
+		// memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
+		// 	   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
+		// 	   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
-		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
-			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
-		}
+		// for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
+		// 	spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
+		// }
 
 		// spmv_task_pool[t].host_csrColIndex = csrColIndex;
 		// spmv_task_pool[t].host_csrVal = csrVal;
