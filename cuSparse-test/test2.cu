@@ -341,7 +341,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 nnz/16);
+					 nnz/32);
 
 		if (i >= warm_up_iter) {
 			cout << "=============Version 2============" <<endl;
