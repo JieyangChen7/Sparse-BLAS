@@ -57,7 +57,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// int c;
 		unsigned int dev_id = omp_get_thread_num();
 		cout << "get dev_id = " << dev_id << endl;
-		//cudaSetDevice(dev_id);
+		cudaSetDevice(0);
 		//cout << "set dev_id = " << dev_id << endl;
 		
 
