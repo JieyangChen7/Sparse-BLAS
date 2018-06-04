@@ -160,6 +160,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 				  	vector<spmv_task *> * spmv_task_pool_ptr) {
 
 	int num_of_tasks = (nnz + nb - 1) / nb;
+	cout << "num_of_tasks = " << num_of_tasks << endl;
 
 	int curr_row;
 	int t;
@@ -174,105 +175,80 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 	}
 
-	// Calculate the start and end row
-	curr_row = 0;
-	for (t = 0; t < num_of_tasks; t++) {
-		// while (csrRowPtr[curr_row] <= start_idx[i]) {
-		// 	curr_row++;
-		// }
+	// // Calculate the start and end row
+	// curr_row = 0;
+	// for (t = 0; t < num_of_tasks; t++) {
 
-		//  start_row[i] = curr_row - 1; 
-		spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
+	// 	spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
 
-		// Mark imcomplete rows
-		// True: imcomplete
-		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
-			spmv_task_pool[t].start_flag = true;
-			spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
-		} else {
-			spmv_task_pool[t].start_flag = false;
-		}
-	}
+	// 	// Mark imcomplete rows
+	// 	// True: imcomplete
+	// 	if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
+	// 		spmv_task_pool[t].start_flag = true;
+	// 		spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
+	// 	} else {
+	// 		spmv_task_pool[t].start_flag = false;
+	// 	}
+	// }
 
-	curr_row = 0;
-	for (t = 0; t < num_of_tasks; t++) {
-		// while (csrRowPtr[curr_row] <= end_idx[i]) {
-		// 	curr_row++;
-		// 	//cout << "." << csrRowPtr[curr_row] << endl;
-		// }
+	// curr_row = 0;
+	// for (t = 0; t < num_of_tasks; t++) {
+	// 	spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
 
-		// end_row[i] = curr_row - 1;
-		spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
+	// 	// Mark imcomplete rows
+	// 	// True: imcomplete
+	// 	if (spmv_task_pool[t].end_idx < csrRowPtr[spmv_task_pool[t].end_row + 1] - 1)  {
+	// 		spmv_task_pool[t].end_flag = true;
+	// 	} else {
+	// 		spmv_task_pool[t].end_flag = false;
+	// 	}
+	// }
 
-		// Mark imcomplete rows
-		// True: imcomplete
-		if (spmv_task_pool[t].end_idx < csrRowPtr[spmv_task_pool[t].end_row + 1] - 1)  {
-			spmv_task_pool[t].end_flag = true;
-		} else {
-			spmv_task_pool[t].end_flag = false;
-		}
-	}
+	// // Cacluclate dimensions
+	// for (t = 0; t < num_of_tasks; t++) {
+	// 	spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
+	// 	spmv_task_pool[t].dev_n = n;
+	// }
 
-	// Cacluclate dimensions
-	for (t = 0; t < num_of_tasks; t++) {
-		spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
-		spmv_task_pool[t].dev_n = n;
-	}
+	// for (t = 0; t < num_of_tasks; t++) {
+	// 	spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
+	// 	spmv_task_pool[t].host_csrRowPtr[0] = 0;
+	// 	spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
 
-	for (t = 0; t < num_of_tasks; t++) {
-		spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
-		spmv_task_pool[t].host_csrRowPtr[0] = 0;
-		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
+	// 	memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
+	// 		   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
+	// 		   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
-		// for (int j = 1; j < dev_m[i]; j++) {
-		// 	host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
-		// }
+	// 	for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
+	// 		spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
+	// 	}
 
-		memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
-			   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
-			   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
+	// 	spmv_task_pool[t].host_csrColIndex = csrColIndex;
+	// 	spmv_task_pool[t].host_csrVal = csrVal;
+	// 	spmv_task_pool[t].host_y = y;
+	// 	spmv_task_pool[t].host_x = x;
+	// 	spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
+	// 	spmv_task_pool[t].alpha = new double[1];
+	// 	spmv_task_pool[t].beta = new double[1]; 
+	// 	spmv_task_pool[t].alpha[0] = *alpha;
+	// 	spmv_task_pool[t].beta[0] = *beta;
 
-		// cout << "host_csrRowPtr: ";
-		// for (int j = 0; j <= dev_m[i]; j++) {
-		// 	cout << host_csrRowPtr[i][j] << ", ";
-		// }
-		// cout << endl;
+	// }
 
-		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
-			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
-		}
+	// for (t = 0; t < num_of_tasks; t++) {
+	// 	cusparseStatus_t status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
+	// 	if (status != CUSPARSE_STATUS_SUCCESS) 
+	// 	{ 
+	// 		printf("Matrix descriptor initialization failed");
+	// 		//return 1;
+	// 	} 	
+	// 	cusparseSetMatType(spmv_task_pool[t].descr,CUSPARSE_MATRIX_TYPE_GENERAL); 
+	// 	cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
+	// }
 
-		// cout << "host_csrRowPtr: ";
-		// for (int j = 0; j <= dev_m[i]; j++) {
-		// 	cout << host_csrRowPtr[i][j] << ", ";
-		// }
-		// cout << endl;
-		spmv_task_pool[t].host_csrColIndex = csrColIndex;
-		spmv_task_pool[t].host_csrVal = csrVal;
-		spmv_task_pool[t].host_y = y;
-		spmv_task_pool[t].host_x = x;
-		spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
-		spmv_task_pool[t].alpha = new double[1];
-		spmv_task_pool[t].beta = new double[1]; 
-		spmv_task_pool[t].alpha[0] = *alpha;
-		spmv_task_pool[t].beta[0] = *beta;
-
-	}
-
-	for (t = 0; t < num_of_tasks; t++) {
-		cusparseStatus_t status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
-		if (status != CUSPARSE_STATUS_SUCCESS) 
-		{ 
-			printf("Matrix descriptor initialization failed");
-			//return 1;
-		} 	
-		cusparseSetMatType(spmv_task_pool[t].descr,CUSPARSE_MATRIX_TYPE_GENERAL); 
-		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
-	}
-
-	for (t = 0; t < num_of_tasks; t++) {
-		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
-	}
+	// for (t = 0; t < num_of_tasks; t++) {
+	// 	(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
+	// }
 
 }
 
