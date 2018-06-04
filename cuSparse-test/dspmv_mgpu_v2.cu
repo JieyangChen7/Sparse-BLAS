@@ -303,8 +303,8 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 
 	cusparseGetStream(handle, &stream);
 
-	cout << "dev_m[d] = " << t->dev_m << endl;
-	cout << "dev_n[d] = " << t->dev_n << endl;
+	// cout << "dev_m[d] = " << t->dev_m << endl;
+	// cout << "dev_n[d] = " << t->dev_n << endl;
 	cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
 	cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
 	cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
@@ -314,34 +314,34 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 
 	cudaDeviceSynchronize();
 
-	cout << "dev_csrRowPtr = [";
-	for (int i = 0; i < t->dev_m + 1; i++) {
-		cout << t->host_csrRowPtr[i] << ", ";
-	}
-	cout << "]" << endl;
-	cout << "csrColIndex = [";
-	for (int i = 0; i < t->dev_nnz; i++) {
-		cout << t->host_csrColIndex[t->start_idx+i] << ", ";
-	}
-	cout << "]" << endl;
-	cout << "csrVal[start_idx[d]] = [";
-	for (int i = 0; i < t->dev_nnz; i++) {
-		cout << t->host_csrVal[t->start_idx+i] << ", ";
-	}
-	cout << "]" << endl;
-	cout << "y[start_row[d]] = [";
-	for (int i = 0; i < t->dev_m; i++) {
-		cout << t->host_y[t->start_row+i] << ", ";
-	}
-	cout << "]" << endl;
-	cout << "dev_x[d] = [";
-	for (int i = 0; i < t->dev_n; i++) {
-		cout << t->host_x[i] << ", ";
-	}
-	cout << "]" << endl;
+	// cout << "dev_csrRowPtr = [";
+	// for (int i = 0; i < t->dev_m + 1; i++) {
+	// 	cout << t->host_csrRowPtr[i] << ", ";
+	// }
+	// cout << "]" << endl;
+	// cout << "csrColIndex = [";
+	// for (int i = 0; i < t->dev_nnz; i++) {
+	// 	cout << t->host_csrColIndex[t->start_idx+i] << ", ";
+	// }
+	// cout << "]" << endl;
+	// cout << "csrVal[start_idx[d]] = [";
+	// for (int i = 0; i < t->dev_nnz; i++) {
+	// 	cout << t->host_csrVal[t->start_idx+i] << ", ";
+	// }
+	// cout << "]" << endl;
+	// cout << "y[start_row[d]] = [";
+	// for (int i = 0; i < t->dev_m; i++) {
+	// 	cout << t->host_y[t->start_row+i] << ", ";
+	// }
+	// cout << "]" << endl;
+	// cout << "dev_x[d] = [";
+	// for (int i = 0; i < t->dev_n; i++) {
+	// 	cout << t->host_x[i] << ", ";
+	// }
+	// cout << "]" << endl;
 
-	cout << "t->alpha = " << *(t->alpha) << endl;
-	cout << "t->beta = " << *(t->beta) << endl;
+	// cout << "t->alpha = " << *(t->alpha) << endl;
+	// cout << "t->beta = " << *(t->beta) << endl;
 
 	cusparseStatus_t status;
 	if(kernel == 1) {
