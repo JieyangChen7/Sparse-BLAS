@@ -175,21 +175,21 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 	}
 
-	// // Calculate the start and end row
-	// curr_row = 0;
-	// for (t = 0; t < num_of_tasks; t++) {
+	// Calculate the start and end row
+	curr_row = 0;
+	for (t = 0; t < num_of_tasks; t++) {
 
-	// 	spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
+		spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
 
-	// 	// Mark imcomplete rows
-	// 	// True: imcomplete
-	// 	if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
-	// 		spmv_task_pool[t].start_flag = true;
-	// 		spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
-	// 	} else {
-	// 		spmv_task_pool[t].start_flag = false;
-	// 	}
-	// }
+		// Mark imcomplete rows
+		// True: imcomplete
+		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
+			spmv_task_pool[t].start_flag = true;
+			spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
+		} else {
+			spmv_task_pool[t].start_flag = false;
+		}
+	}
 
 	// curr_row = 0;
 	// for (t = 0; t < num_of_tasks; t++) {
