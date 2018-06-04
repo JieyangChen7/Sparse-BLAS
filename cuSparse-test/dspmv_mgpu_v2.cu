@@ -54,16 +54,16 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	omp_set_num_threads(ngpu);
 	#pragma omp parallel default (shared)
 	{
-		int c;
-		unsigned int dev_id = omp_get_thread_num();
-		cudaSetDevice(dev_id);
+		// int c;
+		// unsigned int dev_id = omp_get_thread_num();
+		// cudaSetDevice(dev_id);
 		
 
-		int copy_of_workspace = 2;
+		// int copy_of_workspace = 2;
 
-		cusparseStatus_t status[copy_of_workspace];
-		cudaStream_t stream[copy_of_workspace];
-		cusparseHandle_t handle[copy_of_workspace];
+		// cusparseStatus_t status[copy_of_workspace];
+		// cudaStream_t stream[copy_of_workspace];
+		// cusparseHandle_t handle[copy_of_workspace];
 
 
 
