@@ -273,7 +273,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
-	// cudaSetDevice(dev_id);
+	cudaSetDevice(dev_id);
 	// cudaMalloc((void**)&(t->dev_csrVal),      (t->dev_nnz)   * sizeof(double));
 	// cudaMalloc((void**)&(t->dev_csrRowPtr),   (t->dev_m + 1) * sizeof(int)   );
 	// cudaMalloc((void**)&(t->dev_csrColIndex), (t->dev_nnz)   * sizeof(int)   );
@@ -297,7 +297,7 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
-	//cudaSetDevice(dev_id);
+	cudaSetDevice(dev_id);
 
 	cudaStream_t stream;
 
@@ -377,7 +377,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
-	//cudaSetDevice(dev_id);
+	cudaSetDevice(dev_id);
 
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
     			   (size_t)((t->dev_m) * sizeof(double)), 
