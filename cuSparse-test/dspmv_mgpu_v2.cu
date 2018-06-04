@@ -198,12 +198,12 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
 		// Mark imcomplete rows
 		// True: imcomplete
-		// if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
-		// 	spmv_task_pool[t].start_flag = true;
-		// 	spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_idx];
-		// } else {
-		// 	spmv_task_pool[t].start_flag = false;
-		// }
+		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
+			spmv_task_pool[t].start_flag = true;
+			spmv_task_pool[t].y2 = y[spmv_task_pool[t].start_row];
+		} else {
+			spmv_task_pool[t].start_flag = false;
+		}
 	}
 
 	curr_row = 0;
