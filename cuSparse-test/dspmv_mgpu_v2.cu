@@ -299,20 +299,20 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 	cudaSetDevice(dev_id);
 
-	cudaStream_t stream;
+	//cudaStream_t stream;
 
-	cusparseGetStream(handle, &stream);
+	//cusparseGetStream(handle, &stream);
 
 	// cout << "dev_m[d] = " << t->dev_m << endl;
 	// cout << "dev_n[d] = " << t->dev_n << endl;
-	cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
-	cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
-	cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	// cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
+	// cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
+	// cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
 
-	cudaMemcpyAsync(&(t->host_y[t->start_row]),  t->dev_y,  (size_t)( t->dev_m*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
-	cudaMemcpyAsync(t->host_x, t->dev_x,                (size_t)(t->dev_n*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	// cudaMemcpyAsync(&(t->host_y[t->start_row]),  t->dev_y,  (size_t)( t->dev_m*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	// cudaMemcpyAsync(t->host_x, t->dev_x,                (size_t)(t->dev_n*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
 
-	cudaDeviceSynchronize();
+	// cudaDeviceSynchronize();
 
 	// cout << "dev_csrRowPtr = [";
 	// for (int i = 0; i < t->dev_m + 1; i++) {
