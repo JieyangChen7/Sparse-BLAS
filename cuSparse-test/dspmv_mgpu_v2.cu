@@ -170,8 +170,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 	// Calculate the start and end index
 	for (t = 0; t < num_of_tasks; t++) {
-		spmv_task_pool[t].start_idx = floor((t) * nnz / num_of_tasks);
-		spmv_task_pool[t].end_idx   = floor((t + 1) * nnz / num_of_tasks) - 1;
+		spmv_task_pool[t].start_idx = floor((t) * (nnz / num_of_tasks));
+		spmv_task_pool[t].end_idx   = floor((t + 1) * (nnz / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
 	}
 
