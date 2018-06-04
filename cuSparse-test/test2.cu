@@ -236,6 +236,8 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
+	double total_time_v2 = 0.0;
+
 	int warm_up_iter = 0;
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
@@ -321,7 +323,7 @@ int main(int argc, char *argv[]) {
 					 ngpu,
 					 kernel_version,
 					 10240);
-		double total_time_v2 = get_time() - curr_time;
+		total_time_v2 = get_time() - curr_time;
 
 	
 	}
