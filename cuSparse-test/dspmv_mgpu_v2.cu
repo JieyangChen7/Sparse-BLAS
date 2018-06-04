@@ -96,7 +96,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
   //   	}
 
-    	c = 0; 
+  //  	c = 0; 
     
 		// while (true) {
 
