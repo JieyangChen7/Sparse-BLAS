@@ -132,16 +132,16 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// 	}
 		// }
 
-		cudaDeviceSynchronize();
+		// cudaDeviceSynchronize();
 
-		for (c = 0; c < copy_of_workspace; c++) {
+		// for (c = 0; c < copy_of_workspace; c++) {
 
-			cudaFree(dev_csrVal[c]);
-			cudaFree(dev_csrRowPtr[c]);
-			cudaFree(dev_csrColIndex[c]);
-			cudaFree(dev_x[c]);
-			cudaFree(dev_y[c]);
-		}
+		// 	cudaFree(dev_csrVal[c]);
+		// 	cudaFree(dev_csrRowPtr[c]);
+		// 	cudaFree(dev_csrColIndex[c]);
+		// 	cudaFree(dev_x[c]);
+		// 	cudaFree(dev_y[c]);
+		// }
 	}
 }
 
