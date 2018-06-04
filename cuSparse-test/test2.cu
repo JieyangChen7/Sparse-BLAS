@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
 
 	double total_time_v2 = 0.0;
 
-	int warm_up_iter = 0;
+	int warm_up_iter = 10;
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
@@ -322,7 +322,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 1024000);
+					 nnz/8);
 		total_time_v2 = get_time() - curr_time;
 
 	
