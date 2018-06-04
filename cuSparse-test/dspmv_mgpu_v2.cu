@@ -185,6 +185,9 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].start_idx = floor((double)(tmp1 / num_of_tasks));
 		spmv_task_pool[t].end_idx   = floor((double)(tmp2 / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
+
+		cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
+		cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
 	}
 
 	// Calculate the start and end row
