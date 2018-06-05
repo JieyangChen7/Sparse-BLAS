@@ -62,7 +62,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  x, beta, y, nb,
 				  spmv_task_pool);
 
-	spmv_task_completed.reserve(spmv_task_pool.size());
+	(*spmv_task_completed).reserve(spmv_task_pool.size());
 
 	*time_parse = get_time() - curr_time;
 
@@ -127,9 +127,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				#pragma omp critical
 				{
 					if(spmv_task_pool.size() > 0) {
-						curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
-						spmv_task_pool.pop_back();
-						spmv_task_completed.push_back(curr_spmv_task);
+						curr_spmv_task = spmv_task_pool[(*spmv_task_pool).size() - 1];
+						(*spmv_task_pool).pop_back();
+						(*spmv_task_completed).push_back(curr_spmv_task);
 					} else {
 						curr_spmv_task = NULL;
 					}
@@ -168,7 +168,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-	gather_results(vector<spmv_task *> * spmv_task_completed, double * y);
+	gather_results(spmv_task_completed, y);
 
 	*time_post = get_time() - curr_time;
 }
@@ -413,7 +413,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 void gather_results(vector<spmv_task *> * spmv_task_completed, double * y) {
 	
 	int t = 0;
-	for (t = 0; t < spmv_task_completed.size(); t++) {
+	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		double tmp = 0.0;
 		
 		if ((*spmv_task_completed)[t].start_flag) {
