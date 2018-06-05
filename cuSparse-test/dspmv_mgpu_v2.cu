@@ -25,7 +25,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream);
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y);
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta);
 
 void print_task_info(spmv_task * t);
 
@@ -168,7 +168,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-	gather_results(spmv_task_completed, y);
+	gather_results(spmv_task_completed, y, beta);
 
 	*time_post = get_time() - curr_time;
 }
@@ -410,7 +410,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	// cudaFree(t->dev_x);
 }
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y) {
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
 	
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
