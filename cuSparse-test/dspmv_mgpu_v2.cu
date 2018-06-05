@@ -280,11 +280,11 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cudaMallocHost((void **)&(spmv_task_pool[t].local_result_y), spmv_task_pool[t].dev_m * sizeof(double));
 
 
-		spmv_task_pool[t].alpha = new double[1];
-		//cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
+		//spmv_task_pool[t].alpha = new double[1];
+		cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
 
-		spmv_task_pool[t].beta = new double[1]; 
-		//cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
+		//spmv_task_pool[t].beta = new double[1]; 
+		cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
 
 		spmv_task_pool[t].alpha[0] = *alpha;
 		spmv_task_pool[t].beta[0] = *beta;
