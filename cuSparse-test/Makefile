@@ -31,7 +31,7 @@ anonymouslib_cuda.o: anonymouslib_cuda.h
 	nvcc -c anonymouslib_cuda.h $(INC) $(CUDA_INCLUDES)
 
 dspmv_test.o: dspmv_test.cpp 
-	nvcc -c dspmv_test.cpp $(INC) $(CUDA_INCLUDES)
+	nvcc -c dspmv_test.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_helper.o: dspmv_helper.cpp 
-	nvcc -c dspmv_helper.cpp $(INC) $(CUDA_INCLUDES)
+	nvcc -c dspmv_helper.cu $(INC) $(CUDA_INCLUDES)
