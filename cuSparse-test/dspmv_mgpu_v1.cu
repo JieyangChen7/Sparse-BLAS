@@ -418,11 +418,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		for (int d = 0; d < ngpu; d++) {
 			cudaSetDevice(d);
-			cudafree(dev_csrVal[d]);
-			cudafree(dev_csrRowPtr[d]);
-			cudafree(dev_csrColIndex[d]);
-			cudafree(dev_x[d]);
-			cudafree(dev_y[d]);
+			cudaFree(dev_csrVal[d]);
+			cudaFree(dev_csrRowPtr[d]);
+			cudaFree(dev_csrColIndex[d]);
+			cudaFree(dev_x[d]);
+			cudaFree(dev_y[d]);
 		}
 
 		*time_post = get_time() - curr_time;
