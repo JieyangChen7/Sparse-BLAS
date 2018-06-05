@@ -25,6 +25,8 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream);
 
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y);
+
 void print_task_info(spmv_task * t);
 
 struct pthread_arg_struct
