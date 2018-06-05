@@ -249,15 +249,15 @@ int main(int argc, char *argv[]) {
 
 		cout << "=============Baseline[start]============" <<endl;
 
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y1,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post);
 		cout << "=============Baseline[done]============" <<endl;
 
 		
@@ -277,16 +277,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1[start]============" <<endl;
 
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post,
+		// 			 kernel_version);
 
 		cout << "=============Version 1[done]============" <<endl;
 		
@@ -305,7 +305,7 @@ int main(int argc, char *argv[]) {
 		cout << "=============Version 2[start]============" <<endl;
 
 
-		cudaProfilerStart();
+		//cudaProfilerStart();
 
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
@@ -320,7 +320,7 @@ int main(int argc, char *argv[]) {
 					 &time_comp,
 					 &time_post);
 
-		cudaProfilerStop();
+		//
 		cout << "=============Version 2[done]============" <<endl;
 		
 		if (i >= warm_up_iter) {
@@ -332,6 +332,8 @@ int main(int argc, char *argv[]) {
 
 	
 	}
+
+	cudaProfilerStop();
 
 	
 
