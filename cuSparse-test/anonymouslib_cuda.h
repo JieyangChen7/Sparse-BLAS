@@ -1,6 +1,7 @@
 #ifndef ANONYMOUSLIB_CUDA_H
 #define ANONYMOUSLIB_CUDA_H
 
+#include "detail/cuda/common_cuda.h"
 
 
 template <class ANONYMOUSLIB_IT, class ANONYMOUSLIB_UIT, class ANONYMOUSLIB_VT>
