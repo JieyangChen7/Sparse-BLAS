@@ -257,7 +257,6 @@ int main(int argc, char *argv[]) {
 		time_post = 0.0;
 
 		cout << "=============Baseline============" <<endl;
-		curr_time = get_time();
 
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -285,7 +284,6 @@ int main(int argc, char *argv[]) {
 		time_post = 0.0;
 		
 		cout << "=============Version 1============" <<endl;
-		curr_time = get_time();
 
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
