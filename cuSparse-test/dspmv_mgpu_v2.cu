@@ -55,7 +55,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	//cudaSetDevice(1);
 
 	omp_set_num_threads(ngpu);
-	#pragma omp parallel default (shared)
+	#pragma omp parallel
 	{
 		// int c;
 		unsigned int dev_id = omp_get_thread_num();
