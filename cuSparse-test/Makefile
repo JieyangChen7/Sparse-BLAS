@@ -19,19 +19,19 @@ cuda: csr5_kernel.o dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1.o dspmv_mgp
 	nvcc $(NVCC_FLAGS) csr5_kernel.o spmv_helper.o dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1.o dspmv_mgpu_v2.o -o spmv $(INC) $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
 
 dspmv_mgpu_v2.o: dspmv_mgpu_v2.cu 
-	nvcc -c dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_v1.o: dspmv_mgpu_v1.cu 
-	nvcc -c dspmv_mgpu_v1.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_v1.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_baseline.o: dspmv_mgpu_baseline.cu 
-	nvcc -c dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_test.o: dspmv_test.cu 
-	nvcc -c dspmv_test.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_test.cu $(INC) $(CUDA_INCLUDES)
 
 csr5_kernel.o: csr5_kernel.cu 
 	nvcc -c $(NVCC_FLAGS) csr5_kernel.cu $(INC) $(CUDA_INCLUDES)
 
 spmv_helper.o: spmv_helper.cu 
-	nvcc -c spmv_helper.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) spmv_helper.cu $(INC) $(CUDA_INCLUDES)

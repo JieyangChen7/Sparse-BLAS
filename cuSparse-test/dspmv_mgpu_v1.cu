@@ -293,8 +293,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 												dev_csrRowPtr[d], dev_csrColIndex[d], 
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
-					csr5_kernel(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-								dev_m[d], dev_n[d], dev_nnz[d], 
+					csr5_kernel(dev_m[d], dev_n[d], dev_nnz[d], 
 								alpha, descr[d], dev_csrVal[d], 
 								dev_csrRowPtr[d], dev_csrColIndex[d], 
 								dev_x[d],  beta, dev_y[d]); 
