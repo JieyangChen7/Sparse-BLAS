@@ -2,7 +2,7 @@
 // #include "detail/cuda/utils_cuda.h"
 
 // #include "detail/cuda/common_cuda.h"
-#include "detail/cuda/format_cuda.h"
+//#include "detail/cuda/format_cuda.h"
 // #include "detail/cuda/csr5_spmv_cuda.h"
 
 #include "anonymouslib_cuda.h"
@@ -11,7 +11,7 @@
 template <class ANONYMOUSLIB_IT, class ANONYMOUSLIB_UIT, class ANONYMOUSLIB_VT>
 int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::warmup()
 {
-    format_warmup();
+    //format_warmup();
 }
 
 template <class ANONYMOUSLIB_IT, class ANONYMOUSLIB_UIT, class ANONYMOUSLIB_VT>
@@ -42,8 +42,8 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
     if (_format == ANONYMOUSLIB_FORMAT_CSR5)
     {
         // convert csr5 data to csr data
-        err = aosoa_transpose(_csr5_sigma, _nnz,
-                              _csr5_partition_pointer, _csr_column_index, _csr_value, false);
+        // err = aosoa_transpose(_csr5_sigma, _nnz,
+        //                       _csr5_partition_pointer, _csr_column_index, _csr_value, false);
 
         // free the two newly added CSR5 arrays
         checkCudaErrors(cudaFree(_csr5_partition_pointer));
@@ -71,7 +71,7 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
         //double malloc_time = 0, tile_ptr_time = 0, tile_desc_time = 0, transpose_time = 0;
         //anonymouslib_timer malloc_timer, tile_ptr_timer, tile_desc_timer, transpose_timer;
         // compute sigma
-        _csr5_sigma = computeSigma();
+      //  _csr5_sigma = computeSigma();
         //cout << "omega = " << ANONYMOUSLIB_CSR5_OMEGA << ", sigma = " << _csr5_sigma << ". " << endl;
 
         // compute how many bits required for `y_offset' and `carry_offset'
@@ -87,10 +87,10 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
             return ANONYMOUSLIB_UNSUPPORTED_CSR5_OMEGA;
 
         int bit_all = _bit_y_offset + _bit_scansum_offset + _csr5_sigma;
-        _num_packet = ceil((double)bit_all / (double)(sizeof(ANONYMOUSLIB_UIT) * 8));
+      //  _num_packet = ceil((double)bit_all / (double)(sizeof(ANONYMOUSLIB_UIT) * 8));
 
         // calculate the number of partitions
-        _p = ceil((double)_nnz / (double)(ANONYMOUSLIB_CSR5_OMEGA * _csr5_sigma));
+      //  _p = ceil((double)_nnz / (double)(ANONYMOUSLIB_CSR5_OMEGA * _csr5_sigma));
         //cout << "#partition = " << _p << endl;
 
         //malloc_timer.start();
@@ -110,8 +110,8 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
         // convert csr data to csr5 data (3 steps)
         // step 1. generate partition pointer
         //tile_ptr_timer.start();
-        err = generate_partition_pointer(_csr5_sigma, _p, _m, _nnz,
-                                         _csr5_partition_pointer, _csr_row_pointer);
+     //   err = generate_partition_pointer(_csr5_sigma, _p, _m, _nnz,
+    //                                   _csr5_partition_pointer, _csr_row_pointer);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
         //cudaDeviceSynchronize();
@@ -128,10 +128,10 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
 
         _num_offsets = 0;
         //tile_desc_timer.start();
-        err = generate_partition_descriptor(_csr5_sigma, _p, _m,
-                                            _bit_y_offset, _bit_scansum_offset, _num_packet,
-                                            _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
-                                            _csr5_partition_descriptor_offset_pointer, &_num_offsets);
+        // err = generate_partition_descriptor(_csr5_sigma, _p, _m,
+        //                                     _bit_y_offset, _bit_scansum_offset, _num_packet,
+        //                                     _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
+        //                                    _csr5_partition_descriptor_offset_pointer, &_num_offsets);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
         //cudaDeviceSynchronize();
@@ -145,10 +145,10 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
             //malloc_time += malloc_timer.stop();
 
             //tile_desc_timer.start();
-            err = generate_partition_descriptor_offset(_csr5_sigma, _p,
-                                                _bit_y_offset, _bit_scansum_offset, _num_packet,
-                                                _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
-                                                _csr5_partition_descriptor_offset_pointer, _csr5_partition_descriptor_offset);
+            // err = generate_partition_descriptor_offset(_csr5_sigma, _p,
+            //                                     _bit_y_offset, _bit_scansum_offset, _num_packet,
+            //                                     _csr_row_pointer, _csr5_partition_pointer, _csr5_partition_descriptor,
+            //                                     _csr5_partition_descriptor_offset_pointer, _csr5_partition_descriptor_offset);
             if (err != ANONYMOUSLIB_SUCCESS)
                 return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
             //cudaDeviceSynchronize();
@@ -157,8 +157,8 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::asCS
 
         // step 3. transpose column_index and value arrays
         //transpose_timer.start();
-        err = aosoa_transpose(_csr5_sigma, _nnz,
-                              _csr5_partition_pointer, _csr_column_index, _csr_value, true);
+        // err = aosoa_transpose(_csr5_sigma, _nnz,
+        //                       _csr5_partition_pointer, _csr_column_index, _csr_value, true);
         if (err != ANONYMOUSLIB_SUCCESS)
             return ANONYMOUSLIB_CSR_TO_CSR5_FAILED;
         //cudaDeviceSynchronize();
