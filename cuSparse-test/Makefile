@@ -16,7 +16,7 @@ CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse -Xcompiler="-lpthre
 INC = -I ./include
 
 cuda: dspmv_test.o anonymouslib_cuda.o dspmv_mgpu_baseline.o dspmv_mgpu_v1 dspmv_mgpu_v2.o dspmv_helper.o
-	nvcc $(NVCC_FLAGS) dspmv_helper.o dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1 dspmv_mgpu_v2.o -o spmv $(INC) $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
+	nvcc $(NVCC_FLAGS) dspmv_helper.o dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1.o dspmv_mgpu_v2.o -o spmv $(INC) $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
 
 dspmv_mgpu_v2.o: dspmv_mgpu_v2.cu 
 	nvcc -c dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
