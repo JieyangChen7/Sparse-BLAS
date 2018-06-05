@@ -304,6 +304,10 @@ int main(int argc, char *argv[]) {
 
 		cout << "=============Version 2[start]============" <<endl;
 
+
+		cudaProfilerStart();
+
+
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
@@ -315,6 +319,8 @@ int main(int argc, char *argv[]) {
 					 &time_parse,
 					 &time_comp,
 					 &time_post);
+
+		cudaProfilerStop();
 		cout << "=============Version 2[done]============" <<endl;
 		
 		if (i >= warm_up_iter) {
@@ -327,7 +333,7 @@ int main(int argc, char *argv[]) {
 	
 	}
 
-	cudaProfilerStop();
+	
 
 
 	//cout << "y = [";
