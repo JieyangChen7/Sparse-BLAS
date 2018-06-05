@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		//cout << "=============Baseline============" <<endl;
+		cout << "=============Baseline============" <<endl;
 
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -274,7 +274,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 		
-		//cout << "=============Version 1============" <<endl;
+		cout << "=============Version 1============" <<endl;
 
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		//cout << "=============Version 2============" <<endl;
+		cout << "=============Version 2============" <<endl;
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
