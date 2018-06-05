@@ -4,6 +4,8 @@
 #include "detail/cuda/common_cuda.h"
 #include "detail/cuda/format_cuda.h"
 #include "detail/cuda/csr5_spmv_cuda.h"
+#include "anonymouslib_cuda.h"
+
 
 template <class ANONYMOUSLIB_IT, class ANONYMOUSLIB_UIT, class ANONYMOUSLIB_VT>
 int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::warmup()
