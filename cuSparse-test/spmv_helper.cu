@@ -1,3 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctime>
+#include <sys/time.h>
+#include <cuda_runtime.h>
+#include "cusparse.h"
+#include <iostream>
+#include <cmath>
+#include "mmio.h"
+#include <float.h>
+#include "anonymouslib_cuda.h"
+#include "spmv_kernel.h"
+
 int get_row_from_index(int n, int * a, int idx) {
 	int l = 0;
 	int r = n;
