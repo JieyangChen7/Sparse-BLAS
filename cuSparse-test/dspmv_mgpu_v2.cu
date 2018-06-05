@@ -62,7 +62,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  x, beta, y, nb,
 				  spmv_task_pool);
 
-	(*spmv_task_completed).reserve(spmv_task_pool.size());
+	(*spmv_task_completed).reserve((*spmv_task_pool).size());
 
 	*time_parse = get_time() - curr_time;
 
@@ -126,8 +126,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 				#pragma omp critical
 				{
-					if(spmv_task_pool.size() > 0) {
-						curr_spmv_task = spmv_task_pool[(*spmv_task_pool).size() - 1];
+					if((*spmv_task_pool).size() > 0) {
+						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
 					} else {
@@ -422,9 +422,9 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 
 		memcpy(&y[(*spmv_task_completed)[t].start_row], 
 			   (*spmv_task_completed)[t].local_result_y, 
-			  ((*spmv_task_completed)[t].dev_m*sizeof(double))); 
+			  ((*spmv_task_completed)[t].dev_m * sizeof(double))); 
 
-		if (start_flag[d]) {
+		if ((*spmv_task_completed)[t].start_flag) {
 			y[(*spmv_task_completed)[t].start_row] += tmp;
 			y[(*spmv_task_completed)[t].start_row] -= (*spmv_task_completed)[t].y2 * (*beta);
 		}
