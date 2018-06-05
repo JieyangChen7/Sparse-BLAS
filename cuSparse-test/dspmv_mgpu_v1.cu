@@ -103,7 +103,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
-		curr_row = 0;
+		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
 			// while (csrRowPtr[curr_row] <= end_idx[i]) {
 			// 	curr_row++;
