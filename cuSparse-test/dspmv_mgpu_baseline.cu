@@ -238,7 +238,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cudaMemcpy( &y[start_row[d]], dev_y[d], (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost);
 	}
 
-	*time_post = get_time() - curr_time;
+	
 
 
 	// double end = get_time();
@@ -252,15 +252,16 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 	// printf("GFLOPS = %f\n", gflops);
 	// return gflops;
 
-	// for (int d = 0; d < ngpu; d++) {
-	// 		cudaSetDevice(d);
-	// 		cudafree(dev_csrVal[d]);
-	// 		cudafree(dev_csrRowPtr[d]);
-	// 		cudafree(dev_csrColIndex[d]);
-	// 		cudafree(dev_x[d]);
-	// 		cudafree(dev_y[d]);
-	// 		delete [] host_csrRowPtr[d]
-	// 	}
+	for (int d = 0; d < ngpu; d++) {
+		cudaSetDevice(d);
+		cudaFree(dev_csrVal[d]);
+		cudaFree(dev_csrRowPtr[d]);
+		cudaFree(dev_csrColIndex[d]);
+		cudaFree(dev_x[d]);
+		cudaFree(dev_y[d]);
+	}
+
+	*time_post = get_time() - curr_time;
 	// 	delete[] dev_csrVal;
 	// 	delete[] dev_csrRowPtr;
 	// 	delete[] dev_csrColIndex;
