@@ -75,11 +75,11 @@ int main(int argc, char *argv[]) {
     cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
     //cooRowIndex = (int *) malloc(nnz * sizeof(int));
-    cooColIndex = (int *) malloc(nnz * sizeof(int));
+    //cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
 
-     cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
-    // cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
+    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
     // cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
     
 
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		cout << "=============Baseline============" <<endl;
+		cout << "=============Baseline[start]============" <<endl;
 
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -258,6 +258,7 @@ int main(int argc, char *argv[]) {
 					 &time_comm,
 					 &time_comp,
 					 &time_post);
+		cout << "=============Baseline[done]============" <<endl;
 
 		
 	
@@ -274,7 +275,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 		
-		cout << "=============Version 1============" <<endl;
+		cout << "=============Version 1[start]============" <<endl;
 
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -287,7 +288,7 @@ int main(int argc, char *argv[]) {
 					 &time_post,
 					 kernel_version);
 
-		
+		cout << "=============Version 1[done]============" <<endl;
 		
 		if (i >= warm_up_iter) {
 			avg_time_parse2 += time_parse;
@@ -301,7 +302,7 @@ int main(int argc, char *argv[]) {
 		time_comp = 0.0;
 		time_post = 0.0;
 
-		cout << "=============Version 2============" <<endl;
+		cout << "=============Version 2[start]============" <<endl;
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -314,6 +315,7 @@ int main(int argc, char *argv[]) {
 					 &time_parse,
 					 &time_comp,
 					 &time_post);
+		cout << "=============Version 2[done]============" <<endl;
 		
 		if (i >= warm_up_iter) {
 			avg_time_parse3 += time_parse;
