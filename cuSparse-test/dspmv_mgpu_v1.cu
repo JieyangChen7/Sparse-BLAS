@@ -24,7 +24,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		double curr_time = 0.0;
 
-		double tmp = 0.0;
+		//double tmp = 0.0;
 		// tmp = get_time();
 
 		curr_time = get_time();
@@ -40,7 +40,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		bool * start_flag = new bool[ngpu];
 		bool * end_flag   = new bool[ngpu];
 
-		int curr_row;
+		//int curr_row;
 
 		double ** dev_csrVal      = new double * [ngpu];
 		int    ** host_csrRowPtr  = new int    * [ngpu];
@@ -79,7 +79,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// tmp = get_time();
 
 		// Calculate the start and end row
-		curr_row = 0;
+		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
 			// while (csrRowPtr[curr_row] <= start_idx[i]) {
 			// 	curr_row++;
@@ -293,7 +293,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 												dev_csrRowPtr[d], dev_csrColIndex[d], 
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
-					int err = 0;
+					//int err = 0;
 					// cout << "before CSR5" << endl;
 					// cout << "dev_m[d] = " << dev_m[d] << endl;
 					// cout << "dev_n[d] = " << dev_n[d] << endl;
@@ -439,6 +439,6 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// double gflops = gflop / time;
 		// printf("GFLOPS = %f\n", gflops);
 		//return gflops;
-
+		return 0;
 	}
 
