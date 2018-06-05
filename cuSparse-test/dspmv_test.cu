@@ -74,13 +74,13 @@ int main(int argc, char *argv[]) {
 
     cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
-    // cooRowIndex = (int *) malloc(nnz * sizeof(int));
-    // cooColIndex = (int *) malloc(nnz * sizeof(int));
-    // cooVal      = (double *) malloc(nnz * sizeof(double));
+    cooRowIndex = (int *) malloc(nnz * sizeof(int));
+    cooColIndex = (int *) malloc(nnz * sizeof(int));
+    cooVal      = (double *) malloc(nnz * sizeof(double));
 
-    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
-    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
-    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
+    // cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+    // cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
+    // cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
     
 
 
