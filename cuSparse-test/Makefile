@@ -31,7 +31,7 @@ dspmv_test.o: dspmv_test.cu
 	nvcc -c dspmv_test.cu $(INC) $(CUDA_INCLUDES)
 
 csr5_kernel.o: csr5_kernel.cu 
-	nvcc -c csr5_kernel.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) csr5_kernel.cu $(INC) $(CUDA_INCLUDES)
 
 spmv_helper.o: spmv_helper.cu 
 	nvcc -c spmv_helper.cu $(INC) $(CUDA_INCLUDES)

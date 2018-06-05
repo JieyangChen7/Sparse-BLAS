@@ -1,3 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctime>
+#include <sys/time.h>
+#include <cuda_runtime.h>
+#include "cusparse.h"
+#include <iostream>
+#include <cmath>
+#include "mmio.h"
+#include <float.h>
 #include "anonymouslib_cuda.h"
 
 int csr5_kernel(int m, int n, int nnz, double * alpha,

@@ -336,22 +336,22 @@ void fetch_x(cudaTextureObject_t  d_x_tex,
     *x = __hiloint2double(x_int2.y, x_int2.x);
 }
 
-__forceinline__ __device__
-static double atomicAdd(double *addr, double val)
-{
-    double old = *addr, assumed;
-    do
-    {
-        assumed = old;
-        old = __longlong_as_double(
-                    atomicCAS((unsigned long long int*)addr,
-                              __double_as_longlong(assumed),
-                              __double_as_longlong(val+assumed)));
+// __forceinline__ __device__
+// static double atomicAdd(double *addr, double val)
+// {
+//     double old = *addr, assumed;
+//     do
+//     {
+//         assumed = old;
+//         old = __longlong_as_double(
+//                     atomicCAS((unsigned long long int*)addr,
+//                               __double_as_longlong(assumed),
+//                               __double_as_longlong(val+assumed)));
 
-    }while(assumed != old);
+//     }while(assumed != old);
 
-    return old;
-}
+//     return old;
+// }
 
 __global__
 void warmup_kernel(int *d_scan)

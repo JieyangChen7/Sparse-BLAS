@@ -323,5 +323,4 @@ int anonymouslibHandle<ANONYMOUSLIB_IT, ANONYMOUSLIB_UIT, ANONYMOUSLIB_VT>::comp
     return _csr5_sigma;
 }
 
-
 #endif // ANONYMOUSLIB_CUDA_H
