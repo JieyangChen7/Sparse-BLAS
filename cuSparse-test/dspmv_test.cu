@@ -74,9 +74,14 @@ int main(int argc, char *argv[]) {
 
     cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
-    cooRowIndex = (int *) malloc(nnz * sizeof(int));
-    cooColIndex = (int *) malloc(nnz * sizeof(int));
-    cooVal      = (double *) malloc(nnz * sizeof(double));
+    // cooRowIndex = (int *) malloc(nnz * sizeof(int));
+    // cooColIndex = (int *) malloc(nnz * sizeof(int));
+    // cooVal      = (double *) malloc(nnz * sizeof(double));
+
+    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
+    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
+    
 
 
     // Read matrix from file into COO format
@@ -117,7 +122,9 @@ int main(int argc, char *argv[]) {
 
 
 	// Convert COO to CSR
-    csrRowPtr = (int *) malloc((m+1) * sizeof(int));
+    //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
+    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+
     int * counter = new int[m];
     for (int i = 0; i < m; i++) {
     	counter[i] = 0;
@@ -150,10 +157,20 @@ int main(int argc, char *argv[]) {
 	// }
 	// cout << endl;
 
-	double * x = (double *)malloc(n * sizeof(double)); 
-	double * y1 = (double *)malloc(m * sizeof(double)); 
-	double * y2 = (double *)malloc(m * sizeof(double)); 
-	double * y3 = (double *)malloc(m * sizeof(double)); 
+	double * x;
+	double * y1;
+	double * y2;
+	double * y3;
+
+	// x = (double *)malloc(n * sizeof(double)); 
+	// y1 = (double *)malloc(m * sizeof(double)); 
+	// y2 = (double *)malloc(m * sizeof(double)); 
+	// y3 = (double *)malloc(m * sizeof(double)); 
+
+	cudaMallocHost((void **)&x, n * sizeof(double));
+	cudaMallocHost((void **)&y1, m * sizeof(double));
+	cudaMallocHost((void **)&y2, m * sizeof(double));
+	cudaMallocHost((void **)&y3, m * sizeof(double));
 
 	for (int i = 0; i < n; i++)
 	{
