@@ -30,7 +30,7 @@ dspmv_mgpu_baseline.o: dspmv_mgpu_baseline.cu
 anonymouslib_cuda.o: anonymouslib_cuda.cu
 	nvcc -c anonymouslib_cuda.cu $(INC) $(CUDA_INCLUDES)
 
-dspmv_test.o: dspmv_test.cpp 
+dspmv_test.o: dspmv_test.cu 
 	nvcc -c dspmv_test.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_helper.o: dspmv_helper.cpp 
