@@ -74,11 +74,11 @@ int main(int argc, char *argv[]) {
 
     cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
-    cooRowIndex = (int *) malloc(nnz * sizeof(int));
+    //cooRowIndex = (int *) malloc(nnz * sizeof(int));
     cooColIndex = (int *) malloc(nnz * sizeof(int));
     cooVal      = (double *) malloc(nnz * sizeof(double));
 
-    // cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+     cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
     // cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
     // cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
     
@@ -276,16 +276,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1============" <<endl;
 
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post,
+		// 			 kernel_version);
 
 		
 		
