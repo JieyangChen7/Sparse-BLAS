@@ -2,7 +2,7 @@
 // #include "detail/cuda/utils_cuda.h"
 
 // #include "detail/cuda/common_cuda.h"
-// #include "detail/cuda/format_cuda.h"
+#include "detail/cuda/format_cuda.h"
 // #include "detail/cuda/csr5_spmv_cuda.h"
 
 #include "anonymouslib_cuda.h"
