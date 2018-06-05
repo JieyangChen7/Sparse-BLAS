@@ -69,6 +69,10 @@ int main(int argc, char *argv[]) {
 	int repeat_test = atoi(argv[3]);
 	int kernel_version = atoi(argv[4]);
 	char * filename = argv[1];
+	char data_type = argv[5][0];
+	int divide = atoi(argv[6]);
+	int copy_of_workspace = atoi(argv[7]);
+
 	int ret_code;
     MM_typecode matcode;
     FILE *f;
@@ -105,11 +109,11 @@ int main(int argc, char *argv[]) {
 
     // Read matrix from file into COO format
     for (int i = 0; i < nnz; i++) {
-    	if (argv[5][0] == 'b') { // binary input
+    	if (data_type == 'b') { // binary input
     		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
     		cooVal[i] = 0.00001;
 
-    	} else if (argv[5][0] == 'f'){ // float input
+    	} else if (data_type == 'f'){ // float input
         	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
         }
         cooRowIndex[i]--;  
@@ -342,7 +346,8 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 nnz/32);
+					 nnz/divide,
+					 copy_of_workspace);
 		
 		if (i >= warm_up_iter) {
 			

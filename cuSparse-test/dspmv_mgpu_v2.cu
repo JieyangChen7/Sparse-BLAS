@@ -41,7 +41,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  double * y,
 				  int ngpu, 
 				  int kernel,
-				  int nb)
+				  int nb,
+				  int copy_of_workspace)
 {
 	vector<spmv_task *> spmv_task_pool;
 	vector<spmv_task *> spmv_task_completed;
@@ -64,89 +65,89 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		//cout << "set dev_id = " << dev_id << endl;
 		
 
-		// int copy_of_workspace = 2;
+		//int copy_of_workspace = 2;
 
-		// cusparseStatus_t status[copy_of_workspace];
-		// cudaStream_t stream[copy_of_workspace];
-		// cusparseHandle_t handle[copy_of_workspace];
+		cusparseStatus_t status[copy_of_workspace];
+		cudaStream_t stream[copy_of_workspace];
+		cusparseHandle_t handle[copy_of_workspace];
 
 
 
-		// double ** dev_csrVal = new double * [copy_of_workspace];
-		// int ** dev_csrRowPtr = new int    * [copy_of_workspace];
-		// int ** dev_csrColIndex = new int  * [copy_of_workspace];
-		// double ** dev_x = new double      * [copy_of_workspace];
-		// double ** dev_y = new double      * [copy_of_workspace];
+		double ** dev_csrVal = new double * [copy_of_workspace];
+		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
+		int ** dev_csrColIndex = new int  * [copy_of_workspace];
+		double ** dev_x = new double      * [copy_of_workspace];
+		double ** dev_y = new double      * [copy_of_workspace];
 
-		// for (c = 0; c < copy_of_workspace; c++) {
-		// 	cudaStreamCreate(&(stream[c]));
-		// 	status[c] = cusparseCreate(&(handle[c])); 
-		// 	if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-		// 	{ 
-		// 		printf("CUSPARSE Library initialization failed");
-		// 		//return 1; 
-		// 	} 
-		// 	status[c] = cusparseSetStream(handle[c], stream[c]);
-		// 	if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-		// 	{ 
-		// 		printf("Stream bindind failed");
-		// 		//return 1;
-		// 	} 
+		for (c = 0; c < copy_of_workspace; c++) {
+			cudaStreamCreate(&(stream[c]));
+			status[c] = cusparseCreate(&(handle[c])); 
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("CUSPARSE Library initialization failed");
+				//return 1; 
+			} 
+			status[c] = cusparseSetStream(handle[c], stream[c]);
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("Stream bindind failed");
+				//return 1;
+			} 
 
-		// 	cudaMalloc((void**)&(dev_csrVal[c]),      nnz      * sizeof(double));
-		// 	cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
-		// 	cudaMalloc((void**)&(dev_csrColIndex[c]), nnz      * sizeof(int)   );
-		// 	cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
-	 //    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
+			cudaMalloc((void**)&(dev_csrVal[c]),      nnz      * sizeof(double));
+			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
+			cudaMalloc((void**)&(dev_csrColIndex[c]), nnz      * sizeof(int)   );
+			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
+	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
 
-  //   	}
+    	}
 
-  //  	c = 0; 
+   	c = 0; 
     
-		// while (true) {
+		while (true) {
 
-		// 	spmv_task * curr_spmv_task;
+			spmv_task * curr_spmv_task;
 
-		// 	for (c = 0; c < copy_of_workspace; c++) {
+			for (c = 0; c < copy_of_workspace; c++) {
 
 
-		// 		#pragma omp critical
-		// 		{
-		// 			if(spmv_task_pool.size() > 0) {
-		// 				curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
-		// 				spmv_task_pool.pop_back();
-		// 			} else {
-		// 				curr_spmv_task = NULL;
-		// 			}
-		// 		}
+				#pragma omp critical
+				{
+					if(spmv_task_pool.size() > 0) {
+						curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
+						spmv_task_pool.pop_back();
+					} else {
+						curr_spmv_task = NULL;
+					}
+				}
 
-		// 		if (curr_spmv_task) {
+				if (curr_spmv_task) {
 
-		// 			// curr_spmv_task->dev_csrVal = dev_csrVal[c];
-		// 			// curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
-		// 			// curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
-		// 			// curr_spmv_task->dev_x = dev_x[c];
-		// 			// curr_spmv_task->dev_y = dev_y[c];
-		// 			// assign_task(curr_spmv_task, dev_id, stream[c]);
-		// 			// run_task(curr_spmv_task, dev_id, handle[c], kernel);
-		// 			// finalize_task(curr_spmv_task, dev_id, stream[c]);
-		// 		}
-		// 	}
-		// 	if (!curr_spmv_task) {
-		// 		break;
-		// 	}
-		// }
+					curr_spmv_task->dev_csrVal = dev_csrVal[c];
+					curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+					curr_spmv_task->dev_x = dev_x[c];
+					curr_spmv_task->dev_y = dev_y[c];
+					assign_task(curr_spmv_task, dev_id, stream[c]);
+					run_task(curr_spmv_task, dev_id, handle[c], kernel);
+					finalize_task(curr_spmv_task, dev_id, stream[c]);
+				}
+			}
+			if (!curr_spmv_task) {
+				break;
+			}
+		}
 
-		// cudaDeviceSynchronize();
+		cudaDeviceSynchronize();
 
-		// for (c = 0; c < copy_of_workspace; c++) {
+		for (c = 0; c < copy_of_workspace; c++) {
 
-		// 	cudaFree(dev_csrVal[c]);
-		// 	cudaFree(dev_csrRowPtr[c]);
-		// 	cudaFree(dev_csrColIndex[c]);
-		// 	cudaFree(dev_x[c]);
-		// 	cudaFree(dev_y[c]);
-		// }
+			cudaFree(dev_csrVal[c]);
+			cudaFree(dev_csrRowPtr[c]);
+			cudaFree(dev_csrColIndex[c]);
+			cudaFree(dev_x[c]);
+			cudaFree(dev_y[c]);
+		}
 	}
 }
 
