@@ -122,8 +122,8 @@ int main(int argc, char *argv[]) {
 
 
 	// Convert COO to CSR
-    csrRowPtr = (int *) malloc((m+1) * sizeof(int));
-    //cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+    //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
+    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
     int * counter = new int[m];
     for (int i = 0; i < m; i++) {
