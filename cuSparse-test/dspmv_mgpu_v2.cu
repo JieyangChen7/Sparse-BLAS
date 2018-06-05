@@ -381,7 +381,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 									t->dev_x,  t->beta, t->dev_y); 
 	} else if (kernel == 3) {
 		csr5_kernel(t->dev_m, t->dev_n, t->dev_nnz, 
-					t->alpha, t->descr, t->dev_csrVal, 
+					t->alpha, t->dev_csrVal, 
 					t->dev_csrRowPtr, t->dev_csrColIndex, 
 					t->dev_x,  t->beta, t->dev_y); 
 		// int err = 0;
