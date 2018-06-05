@@ -51,7 +51,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  x, beta, y, nb,
 				  &spmv_task_pool);
 
-	cudaSetDevice(0);
+	//cudaSetDevice(0);
 	cudaSetDevice(1);
 
 	omp_set_num_threads(ngpu);
