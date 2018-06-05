@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <float.h>
-#include "anonymouslib_cuda.h"
+//#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 

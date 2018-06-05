@@ -8,7 +8,7 @@
 #include <cmath>
 #include "mmio.h"
 #include <float.h>
-#include "anonymouslib_cuda.h"
+//#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 using namespace std;
 

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <float.h>
-#include "anonymouslib_cuda.h"
+//#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 
 
@@ -293,6 +293,12 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 												dev_csrRowPtr[d], dev_csrColIndex[d], 
 												dev_x[d],  beta, dev_y[d]); 
 				} else if (kernel == 3) {
+					csr5_kernel(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+								dev_m[d], dev_n[d], dev_nnz[d], 
+								alpha, descr[d], dev_csrVal[d], 
+								dev_csrRowPtr[d], dev_csrColIndex[d], 
+								dev_x[d],  beta, dev_y[d]); 
+
 					//int err = 0;
 					// cout << "before CSR5" << endl;
 					// cout << "dev_m[d] = " << dev_m[d] << endl;

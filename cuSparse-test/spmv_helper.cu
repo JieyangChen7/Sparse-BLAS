@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <float.h>
-#include "anonymouslib_cuda.h"
+//#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 
 int get_row_from_index(int n, int * a, int idx) {
