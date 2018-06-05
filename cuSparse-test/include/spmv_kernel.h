@@ -28,9 +28,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int ngpu, 
 				  int kernel,
 				  int nb,
-				  int copy_of_workspace);
+				  int copy_of_workspace,
+				  double * time_parse,
+				  double * time_comm_comp,
+				  double * time_post);
 
 int get_row_from_index(int n, int * a, int idx);
+
+double get_time();
 
 
 #endif /* SPMV_KERNEL */

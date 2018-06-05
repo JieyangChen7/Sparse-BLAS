@@ -219,17 +219,6 @@ int main(int argc, char *argv[]) {
 	double time_comp = 0.0;
 	double time_post = 0.0;
 
-	double min_time_parse1 = DBL_MAX;
-	double min_time_comm1 = DBL_MAX;
-	double min_time_comp1 = DBL_MAX;
-	double min_time_post1 = DBL_MAX;
-
-	double min_time_parse2 = DBL_MAX;
-	double min_time_comm2 = DBL_MAX;
-	double min_time_comp2 = DBL_MAX;
-	double min_time_post2 = DBL_MAX;
-
-
 	double avg_time_parse1 = 0.0;
 	double avg_time_comm1 = 0.0;
 	double avg_time_comp1 = 0.0;
@@ -240,12 +229,10 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp2 = 0.0;
 	double avg_time_post2 = 0.0;
 
-
-	double curr_time = 0.0;
-	double total_time_base = 0.0;
-	double total_time_v1 = 0.0;
-	double total_time_v2 = 0.0;
-
+	double avg_time_parse3 =  0.0;
+	double avg_time_comm3= 0.0;
+	double avg_time_comp3 = 0.0;
+	double avg_time_post3 = 0.0;
 
 	int warm_up_iter = 3;
 
@@ -286,18 +273,10 @@ int main(int argc, char *argv[]) {
 	
 		
 		if (i >= warm_up_iter) {
- 			
-			if (time_parse < min_time_parse1) min_time_parse1 = time_parse;
-			if (time_comm < min_time_comm1) min_time_comm1 = time_comm;
-			if (time_comp < min_time_comp1) min_time_comp1 = time_comp;
-			if (time_post < min_time_post1) min_time_post1 = time_post;
-
 			avg_time_parse1 += time_parse;
 			avg_time_comm1  += time_comm;
 			avg_time_comp1  += time_comp;
 			avg_time_post1  += time_post;
-
-			total_time_base += get_time() - curr_time;
 		}
 		
 		time_parse = 0.0;
@@ -322,23 +301,18 @@ int main(int argc, char *argv[]) {
 		
 		
 		if (i >= warm_up_iter) {
-			
-			if (time_parse < min_time_parse2) min_time_parse2 = time_parse;
-			if (time_comm < min_time_comm2) min_time_comm2 = time_comm;
-			if (time_comp < min_time_comp2) min_time_comp2 = time_comp;
-			if (time_post < min_time_post2) min_time_post2 = time_post;
-
 			avg_time_parse2 += time_parse;
 			avg_time_comm2  += time_comm;
 			avg_time_comp2  += time_comp;
 			avg_time_post2  += time_post;
-
-			total_time_v1 += get_time() - curr_time;
 		}
 
+		time_parse = 0.0;
+		time_comm = 0.0;
+		time_comp = 0.0;
+		time_post = 0.0;
 
 		cout << "=============Version 2============" <<endl;
-		curr_time = get_time();
 
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -347,11 +321,16 @@ int main(int argc, char *argv[]) {
 					 ngpu,
 					 kernel_version,
 					 nnz/divide,
-					 copy_of_workspace);
+					 copy_of_workspace,
+					 &time_parse,
+					 &time_comp,
+					 &time_post);
 		
 		if (i >= warm_up_iter) {
-			
-			total_time_v2 += get_time() - curr_time;
+			avg_time_parse3 += time_parse;
+			avg_time_comm3  += time_comm;
+			avg_time_comp3  += time_comp;
+			avg_time_post3  += time_post;
 		}
 
 	
@@ -368,52 +347,48 @@ int main(int argc, char *argv[]) {
 	// 	}
 	// }
 
-	// printf("Check result: %s\n", correct ? "True" : "False");
-	// cout << "min_time_parse1 = " << min_time_parse1 << endl;
-	// cout << "min_time_comm1 = " << min_time_comm1 << endl;
-	// cout << "min_time_comp1 = " << min_time_comp1 << endl;
-	// cout << "min_time_post1 = " << min_time_post1 << endl;
-	// cout << "total_time = " << min_time_parse1+min_time_comm1+min_time_comp1+min_time_post1 << endl;
+	
+	avg_time_parse1/=repeat_test;
+	avg_time_comm1/=repeat_test;
+	avg_time_comp1/=repeat_test;
+	avg_time_post1/=repeat_test;
 
-	// cout << endl;
+	avg_time_parse2/=repeat_test;
+	avg_time_comm2/=repeat_test;
+	avg_time_comp2/=repeat_test;
+	avg_time_post2/=repeat_test;
 
-	// cout << "min_time_parse2 = " << min_time_parse2 << endl;
-	// cout << "min_time_comm2 = " << min_time_comm2 << endl;
-	// cout << "min_time_comp2 = " << min_time_comp2 << endl;
-	// cout << "min_time_post2 = " << min_time_post2 << endl;
-	// cout << "total_time = " << min_time_parse2+min_time_comm2+min_time_comp2+min_time_post2 << endl;
+	avg_time_parse3/=repeat_test;
+	avg_time_comm3/=repeat_test;
+	avg_time_comp3/=repeat_test;
+	avg_time_post3/=repeat_test;
 
-	// cout << endl;
-
-
-	// avg_time_parse1/=repeat_test;
-	// avg_time_comm1/=repeat_test;
-	// avg_time_comp1/=repeat_test;
-	// avg_time_post1/=repeat_test;
-
-	// avg_time_parse2/=repeat_test;
-	// avg_time_comm2/=repeat_test;
-	// avg_time_comp2/=repeat_test;
-	// avg_time_post2/=repeat_test;
-
- //    cout << "avg_time_parse1 = " << avg_time_parse1 << endl;
-	// cout << "avg_time_comm1 = "  << avg_time_comm1 << endl;
-	// cout << "avg_time_comp1 = "  << avg_time_comp1 << endl;
-	// cout << "avg_time_post1 = "  << avg_time_post1 << endl;
-	// cout << "total_time (baseline) = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
+	cout << "[BASELINE]" << endl;
+    cout << "avg_time_parse = " << avg_time_parse1 << endl;
+	cout << "avg_time_comm = "  << avg_time_comm1 << endl;
+	cout << "avg_time_comp = "  << avg_time_comp1 << endl;
+	cout << "avg_time_post = "  << avg_time_post1 << endl;
+	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
 
 
-	// cout << endl;
+	cout << endl;
 
-	// cout << "avg_time_parse2 = " << avg_time_parse2 << endl;
-	// cout << "avg_time_comm2 = "  << avg_time_comm2 << endl;
-	// cout << "avg_time_comp2 = "  << avg_time_comp2 << endl;
-	// cout << "avg_time_post2 = "  << avg_time_post2 << endl;
-	// cout << "total_time (v1) = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
+	cout << "V1" << endl;
+	cout << "avg_time_parse = " << avg_time_parse2 << endl;
+	cout << "avg_time_comm = "  << avg_time_comm2 << endl;
+	cout << "avg_time_comp = "  << avg_time_comp2 << endl;
+	cout << "avg_time_post = "  << avg_time_post2 << endl;
+	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
 
-	cout << "total_time (baseline) = " << total_time_base/repeat_test << endl;
-    cout << "total_time (v2) = " << total_time_v1/repeat_test << endl;
-	cout << "total_time (v2) = " << total_time_v2/repeat_test << endl;
+	cout << endl;
+
+	cout << "V2" << endl;
+	cout << "avg_time_parse = " << avg_time_parse3 << endl;
+//	cout << "avg_time_comm = "  << avg_time_comm3 << endl;
+	cout << "avg_time_comp = "  << avg_time_comp3 << endl;
+	cout << "avg_time_post = "  << avg_time_post3 << endl;
+	cout << "total_time = " << avg_time_parse3+avg_time_comp3+avg_time_post3 << endl;
+
 }
 
 

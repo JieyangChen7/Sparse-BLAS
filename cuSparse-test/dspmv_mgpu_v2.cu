@@ -42,18 +42,29 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int ngpu, 
 				  int kernel,
 				  int nb,
-				  int copy_of_workspace)
+				  int copy_of_workspace,
+				  double * time_parse,
+				  double * time_comm_comp,
+				  double * time_post)
 {
-	vector<spmv_task *> spmv_task_pool;
-	vector<spmv_task *> spmv_task_completed;
+
+	double curr_time = 0.0;
+
+	curr_time = get_time();
+
+	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
+	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
 
 	generate_tasks(m, n, nnz, alpha,
 				  csrVal, csrRowPtr, csrColIndex, 
 				  x, beta, y, nb,
-				  &spmv_task_pool);
+				  spmv_task_pool);
 
-	//cudaSetDevice(0);
-	//cudaSetDevice(1);
+	spmv_task_completed.reserve(spmv_task_pool.size());
+
+	*time_parse = get_time() - curr_time;
+
+	curr_time = get_time();
 
 	omp_set_num_threads(ngpu);
 	#pragma omp parallel default (shared)
@@ -116,6 +127,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 					if(spmv_task_pool.size() > 0) {
 						curr_spmv_task = spmv_task_pool[spmv_task_pool.size() - 1];
 						spmv_task_pool.pop_back();
+						spmv_task_completed.push_back(curr_spmv_task);
 					} else {
 						curr_spmv_task = NULL;
 					}
@@ -149,6 +161,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_y[c]);
 		}
 	}
+
+	*time_comm_comp = get_time() - curr_time;
+
+	curr_time = get_time();
+
+	gather_results(vector<spmv_task *> * spmv_task_completed, double * y);
+
+	*time_post = get_time() - curr_time;
 }
 
 
@@ -233,8 +253,6 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	}
 
 	for (t = 0; t < num_of_tasks; t++) {
-
-
 		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
 		spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
@@ -271,6 +289,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
 	}
 
+	(*spmv_task_pool_ptr).reserve(num_of_tasks);
 	for (t = 0; t < num_of_tasks; t++) {
 		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
 	}
@@ -279,12 +298,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
-	cudaSetDevice(dev_id);
-	// cudaMalloc((void**)&(t->dev_csrVal),      (t->dev_nnz)   * sizeof(double));
-	// cudaMalloc((void**)&(t->dev_csrRowPtr),   (t->dev_m + 1) * sizeof(int)   );
-	// cudaMalloc((void**)&(t->dev_csrColIndex), (t->dev_nnz)   * sizeof(int)   );
-	// cudaMalloc((void**)&(t->dev_x),           (t->dev_n)     * sizeof(double));
- //    cudaMalloc((void**)&(t->dev_y),           (t->dev_m)     * sizeof(double));
+	//cudaSetDevice(dev_id);
 
     cudaMemcpyAsync(t->dev_csrRowPtr,   t->host_csrRowPtr,          
     			   (size_t)((t->dev_m + 1) * sizeof(int)), cudaMemcpyHostToDevice, stream);
@@ -303,7 +317,7 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
-	cudaSetDevice(dev_id);
+	//cudaSetDevice(dev_id);
 
 	//cudaStream_t stream;
 
@@ -383,7 +397,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
-	cudaSetDevice(dev_id);
+	//cudaSetDevice(dev_id);
 
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
     			   (size_t)((t->dev_m) * sizeof(double)), 
@@ -392,6 +406,27 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	// cudaFree(t->dev_csrRowPtr);
 	// cudaFree(t->dev_csrColIndex);
 	// cudaFree(t->dev_x);
+}
+
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y) {
+	
+	int t = 0;
+	for (t = 0; t < spmv_task_completed.size(); t++) {
+		double tmp = 0.0;
+		
+		if ((*spmv_task_completed)[t].start_flag) {
+			tmp = y[(*spmv_task_completed)[t].start_row];
+		}
+
+		memcpy(&y[(*spmv_task_completed)[t].start_row], 
+			   (*spmv_task_completed)[t].local_result_y, 
+			  ((*spmv_task_completed)[t].dev_m*sizeof(double))); 
+
+		if (start_flag[d]) {
+			y[(*spmv_task_completed)[t].start_row] += tmp;
+			y[(*spmv_task_completed)[t].start_row] -= (*spmv_task_completed)[t].y2 * (*beta);
+		}
+	}
 }
 
 void print_task_info(spmv_task * t) {
