@@ -55,12 +55,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	//cudaSetDevice(1);
 
 	omp_set_num_threads(ngpu);
-	#pragma omp parallel
+	#pragma omp parallel default (shared)
 	{
 		// int c;
 		unsigned int dev_id = omp_get_thread_num();
-		cout << "get dev_id = " << dev_id << endl;
-		cudaSetDevice(1);
+		//cout << "get dev_id = " << dev_id << endl;
+		cudaSetDevice(dev_id);
 		//cout << "set dev_id = " << dev_id << endl;
 		
 
