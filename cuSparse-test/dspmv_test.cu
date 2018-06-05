@@ -9,6 +9,7 @@
 #include "mmio.h"
 #include <float.h>
 //#include "anonymouslib_cuda.h"
+#include <cuda_profiler_api.h>
 #include "spmv_kernel.h"
 using namespace std;
 
@@ -207,6 +208,8 @@ int main(int argc, char *argv[]) {
 
 	int warm_up_iter = 3;
 
+	cudaProfilerStart();
+
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
 			cout << "Warming up GPU(s)..." << endl;
@@ -304,6 +307,8 @@ int main(int argc, char *argv[]) {
 
 	
 	}
+
+	cudaProfilerStop();
 
 
 	//cout << "y = [";
