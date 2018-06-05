@@ -6,7 +6,6 @@
 #include "cusparse.h"
 #include <iostream>
 #include <cmath>
-#include "mmio.h"
 #include <float.h>
 #include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
