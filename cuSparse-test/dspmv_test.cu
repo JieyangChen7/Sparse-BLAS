@@ -276,16 +276,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1============" <<endl;
 
-		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y2,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post,
-		// 			 kernel_version);
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y2,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post,
+					 kernel_version);
 
 		
 		
