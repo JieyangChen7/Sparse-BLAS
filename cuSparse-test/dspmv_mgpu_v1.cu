@@ -1,12 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctime>
+#include <sys/time.h>
 #include <cuda_runtime.h>
 #include "cusparse.h"
-#include <vector>
 #include <iostream>
-#include <cstdio>
-#include <pthread.h>
-#include "spmv_task.h"
+#include <cmath>
+#include "mmio.h"
+#include <float.h>
+#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
-#include <omp.h>
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
