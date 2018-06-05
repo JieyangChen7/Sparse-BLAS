@@ -76,11 +76,11 @@ int main(int argc, char *argv[]) {
 
     //cooRowIndex = (int *) malloc(nnz * sizeof(int));
     //cooColIndex = (int *) malloc(nnz * sizeof(int));
-    cooVal      = (double *) malloc(nnz * sizeof(double));
+    //cooVal      = (double *) malloc(nnz * sizeof(double));
 
     cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
     cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
-    // cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
+    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
     
 
 
