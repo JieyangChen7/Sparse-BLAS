@@ -257,8 +257,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 	for (t = 0; t < num_of_tasks; t++) {
 		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
-		//spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
-		cudaMallocHost((void **)&(spmv_task_pool[t].host_csrRowPtr), (spmv_task_pool[t].dev_m + 1) * sizeof(int));
+		spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
+		//cudaMallocHost((void **)&(spmv_task_pool[t].host_csrRowPtr), (spmv_task_pool[t].dev_m + 1) * sizeof(int));
 
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
 		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
@@ -276,16 +276,16 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		spmv_task_pool[t].host_y = y;
 		spmv_task_pool[t].host_x = x;
 
-		//spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
-		cudaMallocHost((void **)&(spmv_task_pool[t].local_result_y), spmv_task_pool[t].dev_m * sizeof(double));
+		spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
+		//cudaMallocHost((void **)&(spmv_task_pool[t].local_result_y), spmv_task_pool[t].dev_m * sizeof(double));
 
 
-		//spmv_task_pool[t].alpha = new double[1];
-		cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
+		spmv_task_pool[t].alpha = new double[1];
+		//cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
 
-		//spmv_task_pool[t].beta = new double[1]; 
-		cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
-		
+		spmv_task_pool[t].beta = new double[1]; 
+		//cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
+
 		spmv_task_pool[t].alpha[0] = *alpha;
 		spmv_task_pool[t].beta[0] = *beta;
 
