@@ -410,7 +410,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	// cudaFree(t->dev_x);
 }
 
-void gather_results(vector<spmv_task *> spmv_task_completed, double * y, double * beta) {
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
 	
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
