@@ -332,30 +332,23 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 					// }
 					// cout << "]" << endl;
 
-					anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
-					err = A.inputCSR(
-						dev_nnz[d], 
-						dev_csrRowPtr[d], 
-						dev_csrColIndex[d], 
-						dev_csrVal[d]);
-					//cout << "inputCSR err = " << err << endl;
-					err = A.setX(dev_x[d]);
-					//cout << "setX err = " << err << endl;
-					A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-					A.warmup();
-					err = A.asCSR5();
-					//cout << "asCSR5 err = " << err << endl;
-					err = A.spmv(*alpha, dev_y[d]);
-					//cout << "spmv err = " << err << endl;
+					// anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
+					// err = A.inputCSR(
+					// 	dev_nnz[d], 
+					// 	dev_csrRowPtr[d], 
+					// 	dev_csrColIndex[d], 
+					// 	dev_csrVal[d]);
+					// //cout << "inputCSR err = " << err << endl;
+					// err = A.setX(dev_x[d]);
+					// //cout << "setX err = " << err << endl;
+					// A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+					// A.warmup();
+					// err = A.asCSR5();
+					// //cout << "asCSR5 err = " << err << endl;
+					// err = A.spmv(*alpha, dev_y[d]);
+					// //cout << "spmv err = " << err << endl;
 
-					// cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-					// cudaDeviceSynchronize();
-					// cout << "after:" <<endl;
-					// cout << "y[start_row[d]] = [";
-					// 			for (int i = 0; i < dev_m[d]; i++) {
-					// 				cout << y[start_row[d]+i] << ", ";
-					// 			}
-					// cout << "]" << endl;		
+					
 
 				}
 				// cudaDeviceSynchronize();
