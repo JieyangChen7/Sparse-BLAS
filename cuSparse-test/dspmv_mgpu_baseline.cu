@@ -1,3 +1,12 @@
+#include <cuda_runtime.h>
+#include "cusparse.h"
+#include <vector>
+#include <iostream>
+#include <cstdio>
+#include <pthread.h>
+#include "spmv_task.h"
+#include "spmv_kernel.h"
+#include <omp.h>
 int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 				 double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				 double * x, double * beta,
