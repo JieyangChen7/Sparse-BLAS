@@ -7,7 +7,7 @@
 #include "spmv_task.h"
 #include "spmv_kernel.h"
 #include <omp.h>
-#include "anonymouslib_cuda.h"
+//#include "anonymouslib_cuda.h"
 
 using namespace std;
 
