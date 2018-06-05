@@ -27,8 +27,8 @@ dspmv_mgpu_v1.o: dspmv_mgpu_v1.cu
 dspmv_mgpu_baseline.o: dspmv_mgpu_baseline.cu 
 	nvcc -c dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
 
-anonymouslib_cuda.o: anonymouslib_cuda.h 
-	nvcc -c anonymouslib_cuda.h $(INC) $(CUDA_INCLUDES)
+anonymouslib_cuda.o: anonymouslib_cuda.cu
+	nvcc -c anonymouslib_cuda.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_test.o: dspmv_test.cpp 
 	nvcc -c dspmv_test.cu $(INC) $(CUDA_INCLUDES)
