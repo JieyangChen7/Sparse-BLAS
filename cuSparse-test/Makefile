@@ -19,16 +19,16 @@ cuda: dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1 dspmv_mgpu_v2.o dspmv_hel
 	nvcc $(NVCC_FLAGS) dspmv_helper.o dspmv_test.o dspmv_mgpu_baseline.o dspmv_mgpu_v1 dspmv_mgpu_v2.o -o spmv $(INC) $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
 
 dspmv_mgpu_v2.o: dspmv_mgpu_v2.cu 
-	nvcc -c dspmv_mgpu_v2.cu $(INC)
+	nvcc -c dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_v1.o: dspmv_mgpu_v1.cu 
-	nvcc -c dspmv_mgpu_v1.cu $(INC)
+	nvcc -c dspmv_mgpu_v1.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_baseline.o: dspmv_mgpu_baseline.cu 
-	nvcc -c dspmv_mgpu_baseline.cu $(INC)
+	nvcc -c dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_test.o: dspmv_test.cpp 
-	gcc -c dspmv_test.cpp $(INC)
+	gcc -c dspmv_test.cpp $(INC) $(CUDA_INCLUDES)
 
 dspmv_helper.o: dspmv_helper.cpp 
-	gcc -c dspmv_helper.cpp $(INC)
+	gcc -c dspmv_helper.cpp $(INC) $(CUDA_INCLUDES)
