@@ -410,23 +410,23 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	// cudaFree(t->dev_x);
 }
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
+void gather_results(vector<spmv_task *> spmv_task_completed, double * y, double * beta) {
 	
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		double tmp = 0.0;
 		
-		if ((*spmv_task_completed)[t].start_flag) {
-			tmp = y[(*spmv_task_completed)[t].start_row];
+		if ((*spmv_task_completed)[t]->start_flag) {
+			tmp = y[(*spmv_task_completed)[t]->start_row];
 		}
 
-		memcpy(&y[(*spmv_task_completed)[t].start_row], 
-			   (*spmv_task_completed)[t].local_result_y, 
-			  ((*spmv_task_completed)[t].dev_m * sizeof(double))); 
+		memcpy(&y[(*spmv_task_completed)[t]->start_row], 
+			   (*spmv_task_completed)[t]->local_result_y, 
+			  ((*spmv_task_completed)[t]->dev_m * sizeof(double))); 
 
-		if ((*spmv_task_completed)[t].start_flag) {
-			y[(*spmv_task_completed)[t].start_row] += tmp;
-			y[(*spmv_task_completed)[t].start_row] -= (*spmv_task_completed)[t].y2 * (*beta);
+		if ((*spmv_task_completed)[t]->start_flag) {
+			y[(*spmv_task_completed)[t]->start_row] += tmp;
+			y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
 		}
 	}
 }
