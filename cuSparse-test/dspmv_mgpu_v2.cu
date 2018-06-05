@@ -7,6 +7,7 @@
 #include "spmv_task.h"
 #include "spmv_kernel.h"
 #include <omp.h>
+#include "anonymouslib_cuda.h"
 
 using namespace std;
 
@@ -379,21 +380,21 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 									t->dev_csrRowPtr, t->dev_csrColIndex, 
 									t->dev_x,  t->beta, t->dev_y); 
 	} else if (kernel == 3) {
-		// int err = 0;
-		// anonymouslibHandle<int, unsigned int, double> A(t->dev_m, t->dev_n);
-		// err = A.inputCSR(
-		// 	            t->dev_nnz, 
-		// 				t->dev_csrRowPtr, 
-		// 				t->dev_csrColIndex, 
-		// 				t->dev_csrVal);
-		// //cout << "inputCSR err = " << err << endl;
-		// err = A.setX(t->dev_x);
-		// //cout << "setX err = " << err << endl;
-		// A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-		// A.warmup();
-		// err = A.asCSR5();
-		// //cout << "asCSR5 err = " << err << endl;
-		// err = A.spmv(*(t->alpha), t->dev_y);
+		int err = 0;
+		anonymouslibHandle<int, unsigned int, double> A(t->dev_m, t->dev_n);
+		err = A.inputCSR(
+			            t->dev_nnz, 
+						t->dev_csrRowPtr, 
+						t->dev_csrColIndex, 
+						t->dev_csrVal);
+		//cout << "inputCSR err = " << err << endl;
+		err = A.setX(t->dev_x);
+		//cout << "setX err = " << err << endl;
+		A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
+		A.warmup();
+		err = A.asCSR5();
+		//cout << "asCSR5 err = " << err << endl;
+		err = A.spmv(*(t->alpha), t->dev_y);
 	}
 
 }
