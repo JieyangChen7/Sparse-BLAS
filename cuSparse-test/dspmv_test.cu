@@ -37,13 +37,17 @@ int main(int argc, char *argv[]) {
 		cout << "Usage ./spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]"  << endl;
 		return -1;
 	}
-	int ngpu = atoi(argv[2]);
-	int repeat_test = atoi(argv[3]);
-	int kernel_version = atoi(argv[4]);
-	char * filename = argv[1];
-	char data_type = argv[5][0];
-	int divide = atoi(argv[6]);
-	int copy_of_workspace = atoi(argv[7]);
+
+	char input_type = argv[1][0];
+
+	char * filename = argv[2];
+
+	int ngpu = atoi(argv[3]);
+	int repeat_test = atoi(argv[4]);
+	int kernel_version = atoi(argv[5]);
+	char data_type = argv[6][0];
+	int divide = atoi(argv[7]);
+	int copy_of_workspace = atoi(argv[8]);
 
 	int ret_code;
     MM_typecode matcode;
@@ -54,76 +58,103 @@ int main(int argc, char *argv[]) {
     double * cooVal;
     int * csrRowPtr;
 
-    cout << "loading input matrix from " << filename << endl;
+    if (input_type != 'f') {
 
-    if ((f = fopen(filename, "r")) == NULL) {
-        exit(1);
-    }
+	    cout << "loading input matrix from " << filename << endl;
+	    if ((f = fopen(filename, "r")) == NULL) {
+	        exit(1);
+	    }
+	    if (mm_read_banner(f, &matcode) != 0) {
+	        printf("Could not process Matrix Market banner.\n");
+	        exit(1);
+	    }
+	    if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
+	        exit(1);
+	    }
+	    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+
+	    //cooRowIndex = (int *) malloc(nnz * sizeof(int));
+	    //cooColIndex = (int *) malloc(nnz * sizeof(int));
+	    //cooVal      = (double *) malloc(nnz * sizeof(double));
+
+	    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
+	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
+	   
+	    // Read matrix from file into COO format
+	    for (int i = 0; i < nnz; i++) {
+	    	if (data_type == 'b') { // binary input
+	    		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
+	    		cooVal[i] = 0.00001;
+
+	    	} else if (data_type == 'f'){ // float input
+	        	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
+	        }
+	        cooRowIndex[i]--;  
+	        cooColIndex[i]--;
+
+	        if (cooRowIndex[i] < 0 || cooColIndex[i] < 0) { // report error
+	       		cout << "i = " << i << " [" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
+	       	}
+		}
+	} else if(input_type != 'g') { // generate data
+		//int n = 10000;
+		n = atoi(filename);
+
+		m = n;
+		int nb = m / 8;
+		double r1 = 1.0;
+		double r2 = 0.001;
+
+		int nnz = nb * m * r1 + (n - nb) * m * r2;
+
+		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+
+		cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
+	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
+	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
 
 
-    if (mm_read_banner(f, &matcode) != 0) {
-        printf("Could not process Matrix Market banner.\n");
-        exit(1);
-    }
+		int p = 0;
+
+		for (int i = 0; i < m; i += nb) {
+			if (i == 0) {
+				r = 1.0;
+			} else {
+				r = 0.001;
+			}
+
+			for (int ii = i; ii < i + nb; ii++) {
+				for (int j = 0; j < n * r; j++) {
+					cooRowIndex[p] = i;
+					cooColIndex[p] = j;
+					cooVal[p] = ((double) rand() / (RAND_MAX));
+					p++;
+
+				}
+			}
 
 
-    if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
-        exit(1);
-    }
+		}
 
 
-    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
-    //cooRowIndex = (int *) malloc(nnz * sizeof(int));
-    //cooColIndex = (int *) malloc(nnz * sizeof(int));
-    //cooVal      = (double *) malloc(nnz * sizeof(double));
+	}
 
-    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
-    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
-    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
+
+
     
 
 
-    // Read matrix from file into COO format
-    for (int i = 0; i < nnz; i++) {
-    	if (data_type == 'b') { // binary input
-    		fscanf(f, "%d %d\n", &cooRowIndex[i], &cooColIndex[i]);
-    		cooVal[i] = 0.00001;
-
-    	} else if (data_type == 'f'){ // float input
-        	fscanf(f, "%d %d %lg\n", &cooRowIndex[i], &cooColIndex[i], &cooVal[i]);
-        }
-        cooRowIndex[i]--;  
-        cooColIndex[i]--;
-
-        if (cooRowIndex[i] < 0 || cooColIndex[i] < 0) { // report error
-       		cout << "i = " << i << " [" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
-       	}
-	}
-    // cout << cooRowIndex[i] << "---" << cooColIndex[i] << " : " << cooVal[i] << endl;
-
- 	// cout << "cooVal: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooVal[i] << ", ";
-	// }
-	// cout << endl;
-
-	// cout << "cooRowIndex: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooRowIndex[i] << ", ";
-	// }
-	// cout << endl;
-
-	// cout << "cooColIndex: ";
-	// for (int i = 0; i < nnz; i++) {
-	// 	cout << cooColIndex[i] << ", ";
-	// }
-	// cout << endl;
 
 
 	// Convert COO to CSR
     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+
+    long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
+
+    cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
 
     int * counter = new int[m];
     for (int i = 0; i < m; i++) {
@@ -131,9 +162,6 @@ int main(int argc, char *argv[]) {
     }
 	for (int i = 0; i < nnz; i++) {
 		counter[cooRowIndex[i]]++;
-		// if (counter[cooRowIndex[i]] > 6000) {
-		// 	cout << "counter[" << cooRowIndex[i]  << "] = " << counter[cooRowIndex[i]] <<endl;
-		// }
 	}
 	//cout << "nnz: " << nnz << endl;
 	//cout << "counter: ";
