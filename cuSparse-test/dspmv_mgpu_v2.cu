@@ -206,6 +206,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
 	}
 
+	cout << "test1" << endl;
+
 	// Calculate the start and end row
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
@@ -222,6 +224,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		}
 	}
 
+	cout << "test2" << endl;
+
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
@@ -236,6 +240,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		}
 	}
 
+	cout << "test3" << endl;
+
 	// Cacluclate dimensions
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
@@ -247,41 +253,71 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		// cout << "spmv_task_pool[t].dev_m = " << spmv_task_pool[t].dev_m << endl;
 	}
 
+	cout << "test4" << endl;
+
 	for (t = 0; t < num_of_tasks; t++) {
 		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
 		//spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
 		cudaMallocHost((void **)&(spmv_task_pool[t].host_csrRowPtr), (spmv_task_pool[t].dev_m + 1) * sizeof(int));
 
+		cout << "test4-1" << endl;
+
+
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
 		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
+
+		cout << "test4-2" << endl;
+
 
 		memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
 			   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
 			   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
+		cout << "test4-3" << endl;
+
+
 		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
 			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
 		}
+
+		cout << "test4-4" << endl;
+
 
 		spmv_task_pool[t].host_csrColIndex = csrColIndex;
 		spmv_task_pool[t].host_csrVal = csrVal;
 		spmv_task_pool[t].host_y = y;
 		spmv_task_pool[t].host_x = x;
 
+		cout << "test4-5" << endl;
+
+
 		//spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
 		cudaMallocHost((void **)&(spmv_task_pool[t].local_result_y), spmv_task_pool[t].dev_m * sizeof(double));
+
+		cout << "test4-6" << endl;
 
 
 		//spmv_task_pool[t].alpha = new double[1];
 		cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
 
+		cout << "test4-7" << endl;
+
+
 		//spmv_task_pool[t].beta = new double[1]; 
 		cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
+
+		cout << "test4-8" << endl;
+
 
 		spmv_task_pool[t].alpha[0] = *alpha;
 		spmv_task_pool[t].beta[0] = *beta;
 
+		cout << "test4-9" << endl;
+
+
 	}
+
+	cout << "test5" << endl;
 
 	for (t = 0; t < num_of_tasks; t++) {
 		cusparseStatus_t status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
@@ -294,16 +330,22 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
 	}
 
+	cout << "test6" << endl;
+
 	(*spmv_task_pool_ptr).reserve(num_of_tasks);
 	for (t = 0; t < num_of_tasks; t++) {
 		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
 	}
+
+	cout << "test7" << endl;
 
 }
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
 	//cudaSetDevice(dev_id);
+
+	cout << "test8" << endl;
 
     cudaMemcpyAsync(t->dev_csrRowPtr,   t->host_csrRowPtr,          
     			   (size_t)((t->dev_m + 1) * sizeof(int)), cudaMemcpyHostToDevice, stream);
@@ -318,7 +360,9 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 		           (size_t)(t->dev_m * sizeof(double)), cudaMemcpyHostToDevice, stream); 
 	
 	cudaMemcpyAsync(t->dev_x, t->host_x,
-				   (size_t)(t->dev_n * sizeof(double)),  cudaMemcpyHostToDevice, stream); 
+				   (size_t)(t->dev_n * sizeof(double)),  cudaMemcpyHostToDevice, stream);
+
+	cout << "test9" << endl; 
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
@@ -368,6 +412,8 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 	// cout << "t->alpha = " << *(t->alpha) << endl;
 	// cout << "t->beta = " << *(t->beta) << endl;
 
+	cout << "test10" << endl;
+
 	cusparseStatus_t status;
 	if(kernel == 1) {
 		status = cusparseDcsrmv(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
@@ -403,14 +449,19 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 		// err = A.spmv(*(t->alpha), t->dev_y);
 	}
 
+	cout << "test11" << endl;
+
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	//cudaSetDevice(dev_id);
+	cout << "test12" << endl;
 
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
     			   (size_t)((t->dev_m) * sizeof(double)), 
     			   cudaMemcpyDeviceToHost, stream);
+
+	cout << "test13" << endl;
 	// cudaFree(t->dev_csrVal);
 	// cudaFree(t->dev_csrRowPtr);
 	// cudaFree(t->dev_csrColIndex);
@@ -419,6 +470,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 
 void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
 	
+	cout << "test14" << endl;
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		double tmp = 0.0;
@@ -436,6 +488,8 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 			y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
 		}
 	}
+
+	cout << "test15" << endl;
 }
 
 void print_task_info(spmv_task * t) {
