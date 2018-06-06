@@ -234,9 +234,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
-		*time_parse = get_time() - curr_time;
-
-		curr_time = get_time();
+		
 
 			
 		for (int d = 0; d < ngpu; d++) {
@@ -277,6 +275,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		    cudaMalloc((void**)&dev_y[d],           dev_m[d]       * sizeof(double)); 
 		}
 
+
+		*time_parse = get_time() - curr_time;
+
+		curr_time = get_time();
 
 		cout << "test8" << endl;
 
