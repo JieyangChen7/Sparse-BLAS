@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     double * cooVal;
     int * csrRowPtr;
 
-    if (input_type != 'f') {
+    if (input_type == 'f') {
 
 	    cout << "loading input matrix from " << filename << endl;
 	    if ((f = fopen(filename, "r")) == NULL) {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 	       		cout << "i = " << i << " [" <<cooRowIndex[i] << ", " << cooColIndex[i] << "] = " << cooVal[i] << endl;
 	       	}
 		}
-	} else if(input_type != 'g') { // generate data
+	} else if(input_type == 'g') { // generate data
 		//int n = 10000;
 		n = atoi(filename);
 
