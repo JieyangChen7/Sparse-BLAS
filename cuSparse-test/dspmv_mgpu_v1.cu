@@ -468,6 +468,12 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_csrColIndex[d]);
 			cudaFree(dev_x[d]);
 			cudaFree(dev_y[d]);
+			delete [] host_y[d];
+			delete [] host_csrRowPtr[d];
+			cusparseDestroyMatDescr(descr[d]);
+			cusparseDestroy(handle[d]);
+			cudaStreamDestroy(stream[d]);
+
 		}
 
 		*time_post = get_time() - curr_time;

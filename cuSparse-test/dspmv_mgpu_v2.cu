@@ -154,7 +154,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_csrColIndex[c]);
 			cudaFree(dev_x[c]);
 			cudaFree(dev_y[c]);
+			cudaFreeHost(spmv_task_pool[t].host_csrRowPtr);
+			cusparseDestroy(handle[c]);
+			cudaStreamDestroy(stream[c]);
 		}
+
+		
+
+
 	}
 
 	*time_comm_comp = get_time() - curr_time;
@@ -162,6 +169,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	curr_time = get_time();
 
 	gather_results(spmv_task_completed, y, beta);
+
+	for (int t = 0; t < spmv_task_completed.size(); t++) {
+		cudaFreeHost(spmv_task_completed[t]->host_csrRowPtr);
+		cudaFreeHost(spmv_task_completed[t]->local_result_y);
+		cudaFreeHost(spmv_task_completed[t]->alpha);
+		cudaFreeHost(spmv_task_completed[t]->beta);
+
+	}
 
 	*time_post = get_time() - curr_time;
 }
