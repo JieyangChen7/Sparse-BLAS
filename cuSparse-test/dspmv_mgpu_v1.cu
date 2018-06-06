@@ -77,11 +77,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			double tmp3 = (double)(tmp1 / ngpu);
 			double tmp4 = (double)(tmp2 / ngpu);
 
-			cout << "tmp1 = " << tmp1 << endl;
-			cout << "tmp2 = " << tmp2 << endl;
+			// cout << "tmp1 = " << tmp1 << endl;
+			// cout << "tmp2 = " << tmp2 << endl;
 
-			cout << "tmp3 = " << tmp3 << endl;
-			cout << "tmp4 = " << tmp4 << endl;
+			// cout << "tmp3 = " << tmp3 << endl;
+			// cout << "tmp4 = " << tmp4 << endl;
 
 			start_idx[i]   = floor((double)tmp1 / ngpu);
 			end_idx[i]     = floor((double)tmp2 / ngpu) - 1;
@@ -95,7 +95,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// Calculate the start and end row
 
-		cout << "test1" << endl;
+		//cout << "test1" << endl;
 
 		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
@@ -106,7 +106,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			//  start_row[i] = curr_row - 1; 
 			start_row[i] = get_row_from_index(m, csrRowPtr, start_idx[i]);
 
-			cout << "test1-1" << endl;
+			//cout << "test1-1" << endl;
 
 			// Mark imcomplete rows
 			// True: imcomplete
@@ -132,7 +132,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
-		cout << "test2" << endl;
+		//cout << "test2" << endl;
 
 		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
@@ -153,7 +153,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		cout << "test3" << endl;
+		//cout << "test3" << endl;
 
 		// tmp = get_time() - tmp;
 		// cout << "t4 = " << tmp << endl;
@@ -166,13 +166,13 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			dev_n[i] = n;
 		}
 
-		cout << "test4" << endl;
+		//cout << "test4" << endl;
 
 		for (int i = 0; i < ngpu; i++) {
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		cout << "test5" << endl;
+		//cout << "test5" << endl;
 		// tmp = get_time() - tmp;
 		// cout << "t5 = " << tmp << endl;
 
@@ -227,7 +227,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			// cout << endl;
 		}
 
-		cout << "test6" << endl;
+		//cout << "test6" << endl;
 
 		// tmp = get_time() - tmp;
 		// cout << "t7 = " << tmp << endl;
@@ -264,7 +264,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
-		cout << "test7" << endl;
+		//cout << "test7" << endl;
 
 		for (int d = 0; d < ngpu; d++) {
 			cudaSetDevice(d);
@@ -280,7 +280,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		curr_time = get_time();
 
-		cout << "test8" << endl;
+		//cout << "test8" << endl;
 
 
 		for (int d = 0; d < ngpu; d++) {
@@ -311,7 +311,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 		*time_comm = get_time() - curr_time;
 
-		cout << "test9" << endl;
+		//cout << "test9" << endl;
 
 		curr_time = get_time();
 
@@ -417,7 +417,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		curr_time = get_time();
 
 
-		cout << "test10" << endl;
+		//cout << "test10" << endl;
 
 		for (int d = 0; d < ngpu; d++) {
 			double tmp = 0.0;
@@ -434,7 +434,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		cout << "test11" << endl;
+		//cout << "test11" << endl;
 
 		// double * partial_result = new double[ngpu];
 		// for (int d = 0; d < ngpu; d++) {
