@@ -10,6 +10,8 @@
 //#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 
+using namespace std;
+
 int get_row_from_index(int n, int * a, int idx) {
 	int l = 0;
 	int r = n;
