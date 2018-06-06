@@ -154,7 +154,6 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_csrColIndex[c]);
 			cudaFree(dev_x[c]);
 			cudaFree(dev_y[c]);
-			cudaFreeHost(spmv_task_pool[t].host_csrRowPtr);
 			cusparseDestroy(handle[c]);
 			cudaStreamDestroy(stream[c]);
 		}
