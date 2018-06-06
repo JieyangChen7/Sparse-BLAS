@@ -14,7 +14,10 @@ int get_row_from_index(int n, int * a, int idx) {
 	int l = 0;
 	int r = n;
 	while (l < r - 1 ) {
+		cout << "l = " << l <<endl;
+		cout << "r = " << r <<endl;
 		int m = l + (r - l) / 2;
+		cout << "m = " << m <<endl;
 		if (idx < a[m]) {
 			r = m;
 		} else if (idx > a[m]) {

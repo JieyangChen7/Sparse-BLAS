@@ -106,6 +106,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			//  start_row[i] = curr_row - 1; 
 			start_row[i] = get_row_from_index(m, csrRowPtr, start_idx[i]);
 
+			cout << "test1-1" << endl;
+
 			// Mark imcomplete rows
 			// True: imcomplete
 			if (start_idx[i] > csrRowPtr[start_row[i]]) {
