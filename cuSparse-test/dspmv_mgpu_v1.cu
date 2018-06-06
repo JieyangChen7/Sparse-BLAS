@@ -94,6 +94,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// tmp = get_time();
 
 		// Calculate the start and end row
+
+		cout << "test1" << endl;
+
 		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
 			// while (csrRowPtr[curr_row] <= start_idx[i]) {
@@ -118,6 +121,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// tmp = get_time();
 
+		cout << "test2" << endl;
+
 		//curr_row = 0;
 		for (int i = 0; i < ngpu; i++) {
 			// while (csrRowPtr[curr_row] <= end_idx[i]) {
@@ -137,6 +142,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			}
 		}
 
+		cout << "test3" << endl;
+
 		// tmp = get_time() - tmp;
 		// cout << "t4 = " << tmp << endl;
 
@@ -148,10 +155,13 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			dev_n[i] = n;
 		}
 
+		cout << "test4" << endl;
+
 		for (int i = 0; i < ngpu; i++) {
 			host_y[i] = new double[dev_m[i]];
 		}
 
+		cout << "test5" << endl;
 		// tmp = get_time() - tmp;
 		// cout << "t5 = " << tmp << endl;
 
@@ -206,6 +216,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			// cout << endl;
 		}
 
+		cout << "test6" << endl;
+
 		// tmp = get_time() - tmp;
 		// cout << "t7 = " << tmp << endl;
 
@@ -243,6 +255,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
+		cout << "test7" << endl;
+
 		for (int d = 0; d < ngpu; d++) {
 			cudaSetDevice(d);
 			cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d]     * sizeof(double));
@@ -253,7 +267,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 
 
-	
+		cout << "test8" << endl;
 
 
 		for (int d = 0; d < ngpu; d++) {
@@ -284,6 +298,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 		*time_comm = get_time() - curr_time;
 
+		cout << "test9" << endl;
 
 		curr_time = get_time();
 
@@ -389,7 +404,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		curr_time = get_time();
 
 
-
+		cout << "test10" << endl;
 
 		for (int d = 0; d < ngpu; d++) {
 			double tmp = 0.0;
@@ -405,6 +420,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				y[start_row[d]] -= y2[d] * (*beta);
 			}
 		}
+
+		cout << "test11" << endl;
 
 		// double * partial_result = new double[ngpu];
 		// for (int d = 0; d < ngpu; d++) {
