@@ -308,17 +308,17 @@ int main(int argc, char *argv[]) {
 		//cudaProfilerStart();
 
 
-		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y3,
-		// 			 ngpu,
-		// 			 kernel_version,
-		// 			 nnz/divide,
-		// 			 copy_of_workspace,
-		// 			 &time_parse,
-		// 			 &time_comp,
-		// 			 &time_post);
+		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y3,
+					 ngpu,
+					 kernel_version,
+					 nnz/divide,
+					 copy_of_workspace,
+					 &time_parse,
+					 &time_comp,
+					 &time_post);
 
 		//
 		cout << "=============Version 2[done]============" <<endl;
