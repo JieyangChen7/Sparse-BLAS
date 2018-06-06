@@ -154,6 +154,8 @@ int main(int argc, char *argv[]) {
     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
+    cout << matrix_data_space << endl;
+
 
     cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
 
