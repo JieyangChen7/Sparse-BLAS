@@ -110,11 +110,20 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 			// Mark imcomplete rows
 			// True: imcomplete
+			cout << "start_idx[i] = " << start_idx[i] << endl;
+			cout << "csrRowPtr[start_row[i]] = " << csrRowPtr[start_row[i]] << endl;
+			cout << "y[start_idx[i]] = " << y[start_idx[i]] << endl;
+			cout << "y2[i] = " << y2[i] << endl;
 			if (start_idx[i] > csrRowPtr[start_row[i]]) {
+				cout << "test1-2" << endl;
 				start_flag[i] = true;
+				cout << "test1-3" << endl;
 				y2[i] = y[start_idx[i]];
+				cout << "test1-4" << endl;
 			} else {
+				cout << "test1-5" << endl;
 				start_flag[i] = false;
+				cout << "test1-6" << endl;
 			}
 		}
 
