@@ -107,6 +107,8 @@ int main(int argc, char *argv[]) {
 		double r1 = 1.0;
 		double r2 = 0.001;
 
+
+		cout << "nb = " << nb << endl;
 		nnz = nb * n * r1 + (m - nb) * n * r2;
 
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
@@ -121,6 +123,7 @@ int main(int argc, char *argv[]) {
 		cout << "Start generating data ..." << endl;
 		for (int i = 0; i < m; i += nb) {
 			cout << ((double)p / nnz) * 100 << "%" << endl;
+			cout << p << endl;
 			if (i == 0) {
 				r = r1;
 			} else {
