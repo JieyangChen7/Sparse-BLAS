@@ -110,7 +110,11 @@ int main(int argc, char *argv[]) {
 
 		cout << "nb = " << nb << endl;
 		cout << nb * n * r1 << endl;
+
+		cout << m - nb << endl;
+		cout << (m - nb) * n << endl;
 		cout << (m - nb) * n * r2 << endl;
+
 		nnz = nb * n * r1 + (m - nb) * n * r2;
 
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
