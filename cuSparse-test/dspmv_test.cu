@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
 
 		}
 
-		cout << "p = " << endl;
+		cout << "p = " << p<< endl;
 		cout << "Done generating data." << endl;
 
 
