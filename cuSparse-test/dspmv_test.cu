@@ -153,6 +153,7 @@ int main(int argc, char *argv[]) {
     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
+    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
     cout << matrix_data_space << endl;
 
