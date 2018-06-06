@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	int ret_code;
     MM_typecode matcode;
     FILE *f;
-    int m, n, nnz;   
+    long long m, n, nnz;   
     int * cooRowIndex;
     int * cooColIndex;
     double * cooVal;
@@ -106,14 +106,6 @@ int main(int argc, char *argv[]) {
 		double r;
 		double r1 = 1.0;
 		double r2 = 0.001;
-
-
-		cout << "nb = " << nb << endl;
-		cout << nb * n * r1 << endl;
-
-		cout << m - nb << endl;
-		cout << (m - nb) * n << endl;
-		cout << (m - nb) * n * r2 << endl;
 
 		nnz = nb * n * r1 + (m - nb) * n * r2;
 
