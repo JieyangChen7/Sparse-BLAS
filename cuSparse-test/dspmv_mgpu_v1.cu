@@ -10,6 +10,8 @@
 //#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
 
+using namespace std;
+
 
 int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
