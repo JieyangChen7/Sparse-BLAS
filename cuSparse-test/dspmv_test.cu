@@ -153,9 +153,9 @@ int main(int argc, char *argv[]) {
     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
-    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+    //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
-    cout << matrix_data_space << endl;
+    //cout << matrix_data_space << endl;
 
 
     cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
@@ -281,15 +281,15 @@ int main(int argc, char *argv[]) {
 
 		cout << "=============Baseline[start]============" <<endl;
 
-		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y1,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post);
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y1,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post);
 		cout << "=============Baseline[done]============" <<endl;
 
 		
@@ -309,16 +309,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1[start]============" <<endl;
 
-		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y2,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post,
-		// 			 kernel_version);
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y2,
+					 ngpu,
+					 &time_parse,
+					 &time_comm,
+					 &time_comp,
+					 &time_post,
+					 kernel_version);
 
 		cout << "=============Version 1[done]============" <<endl;
 		
