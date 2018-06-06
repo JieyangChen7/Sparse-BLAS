@@ -118,7 +118,9 @@ int main(int argc, char *argv[]) {
 
 		int p = 0;
 
+		cout << "Start generating data ..." << endl;
 		for (int i = 0; i < m; i += nb) {
+			cout << ((double)p / nnz) * 100 << "%" << endl;
 			if (i == 0) {
 				r = r1;
 			} else {
@@ -137,7 +139,7 @@ int main(int argc, char *argv[]) {
 
 
 		}
-
+		cout << "Done generating data." << endl;
 
 
 	}
