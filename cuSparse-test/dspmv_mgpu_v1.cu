@@ -68,8 +68,21 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		// Calculate the start and end index
 		for (int i = 0; i < ngpu; i++) {
-			start_idx[i]   = floor((i)     * nnz / ngpu);
-			end_idx[i]     = floor((i + 1) * nnz / ngpu) - 1;
+
+			long long tmp1 = i * (long long)nnz;
+			long long tmp2 = (i + 1) * (long long)nnz;
+
+			double tmp3 = (double)(tmp1 / ngpu);
+			double tmp4 = (double)(tmp2 / ngpu);
+
+			cout << "tmp1 = " << tmp1 << endl;
+			cout << "tmp2 = " << tmp2 << endl;
+
+			cout << "tmp3 = " << tmp3 << endl;
+			cout << "tmp4 = " << tmp4 << endl;
+
+			start_idx[i]   = floor((double)tmp1 / ngpu);
+			end_idx[i]     = floor((double)tmp2 / ngpu) - 1;
 			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
 		}
 
