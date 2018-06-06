@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	int ret_code;
     MM_typecode matcode;
     FILE *f;
-    long long m, n, nnz;   
+    int m, n, nnz;   
     int * cooRowIndex;
     int * cooColIndex;
     double * cooVal;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 		double r1 = 1.0;
 		double r2 = 0.001;
 
-		nnz = nb * n * r1 + (m - nb) * n * r2;
+		nnz = nb * n * r1 + (m - nb) * (n * r2);
 
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
 					//if (p > nnz) { cout << "error" << endl; break;}
 					//else {
 
-					// cooRowIndex[p] = ii;
-					// cooColIndex[p] = j;
-					// cooVal[p] = ((double) rand() / (RAND_MAX));
+					cooRowIndex[p] = ii;
+					cooColIndex[p] = j;
+					cooVal[p] = ((double) rand() / (RAND_MAX));
 					p++;
 					//}
 
