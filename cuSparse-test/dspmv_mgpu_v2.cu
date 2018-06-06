@@ -169,7 +169,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	gather_results(spmv_task_completed, y, beta);
 
-	for (int t = 0; t < spmv_task_completed.size(); t++) {
+	for (int t = 0; t < (*spmv_task_completed).size(); t++) {
 		cudaFreeHost((*spmv_task_completed)[t]->host_csrRowPtr);
 		cudaFreeHost((*spmv_task_completed)[t]->local_result_y);
 		cudaFreeHost((*spmv_task_completed)[t]->alpha);
