@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <pthread.h>
-#include "spmv_task.h"
+#include "spmv_task_gpu.h"
 #include "spmv_kernel.h"
 #include <omp.h>
 //#include "anonymouslib_cuda.h"
@@ -13,24 +13,24 @@ using namespace std;
 
 void * spmv_worker(void * arg);
 
-void generate_tasks(int m, int n, int nnz, double * alpha,
+void generate_tasks_gpu(int m, int n, int nnz, double * alpha,
 				    double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  	double * x, double * beta,
 				  	double * y,
 				  	int nb,
-				  	vector<spmv_task *> * spmv_task_pool_ptr);
+				  	vector<spmv_task_gpu *> * spmv_task_pool_ptr);
 
-void assign_task(spmv_task * t, int dev_id, cudaStream_t stream);
+void assign_task_gpu(spmv_task_gpu * t, int dev_id, cudaStream_t stream);
 
-void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
+void run_task_gpu(spmv_task_gpu * t, int dev_id, cusparseHandle_t handle, int kernel);
 
-void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream);
+void finalize_task_gpu(spmv_task_gpu * t, int dev_id, cudaStream_t stream);
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta);
+void gather_results_gpu(vector<spmv_task_gpu *> * spmv_task_completed, double * y, double * beta);
 
-void print_task_info(spmv_task * t);
+void print_task_info_gpu(spmv_task_gpu * t);
 
-int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v3(int m, int n, int nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
@@ -47,13 +47,17 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
-	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
+	vector<spmv_task_gpu *> * spmv_task_pool = new vector<spmv_task_gpu *>();
+	vector<spmv_task_gpu *> * spmv_task_completed = new vector<spmv_task_gpu *>();
 
-	generate_tasks(m, n, nnz, alpha,
-				  csrVal, csrRowPtr, csrColIndex, 
-				  x, beta, y, nb,
-				  spmv_task_pool);
+	cudaSetDevice(dev_id);
+
+	double * master
+
+	generate_tasks_gpu( m, n, nnz, alpha,
+				  	    csrVal, csrRowPtr, csrColIndex, 
+				  		x, beta, y, nb,
+				  		spmv_task_pool);
 
 	(*spmv_task_completed).reserve((*spmv_task_pool).size());
 
@@ -112,7 +116,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
     
 		while (true) {
 
-			spmv_task * curr_spmv_task;
+			spmv_task_gpu * curr_spmv_task;
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
@@ -173,7 +177,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 				  	double * x, double * beta,
 				  	double * y,
 				  	int nb,
-				  	vector<spmv_task *> * spmv_task_pool_ptr) {
+				  	vector<spmv_task_gpu *> * spmv_task_pool_ptr) {
 
 	int num_of_tasks = (nnz + nb - 1) / nb;
 	//cout << "num_of_tasks = " << num_of_tasks << endl;
@@ -182,7 +186,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 	int t;
 	int d;
 
-	spmv_task * spmv_task_pool = new spmv_task[num_of_tasks];
+	spmv_task_gpu * spmv_task_pool = new spmv_task[num_of_tasks];
 
 	// Calculate the start and end index
 	for (t = 0; t < num_of_tasks; t++) {
@@ -301,7 +305,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 }
 
-void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
+void assign_task(spmv_task_gpu * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
 	//cudaSetDevice(dev_id);
 
@@ -321,7 +325,7 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 				   (size_t)(t->dev_n * sizeof(double)),  cudaMemcpyHostToDevice, stream); 
 }
 
-void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
+void run_task(spmv_task_gpu * t, int dev_id, cusparseHandle_t handle, int kernel){
 	//cudaSetDevice(dev_id);
 
 	//cudaStream_t stream;
@@ -405,7 +409,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 
 }
 
-void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
+void finalize_task(spmv_task_gpu * t, int dev_id, cudaStream_t stream) {
 	//cudaSetDevice(dev_id);
 
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
@@ -417,7 +421,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 	// cudaFree(t->dev_x);
 }
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
+void gather_results(vector<spmv_task_gpu *> * spmv_task_completed, double * y, double * beta) {
 	
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
@@ -438,7 +442,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 	}
 }
 
-void print_task_info(spmv_task * t) {
+void print_task_info(spmv_task_gpu * t) {
 	cout << "start_idx = " << t->start_idx << endl;
 	cout << "end_idx = " << t->end_idx << endl;
 }
