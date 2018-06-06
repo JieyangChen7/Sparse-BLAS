@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 		double r1 = 1.0;
 		double r2 = 0.001;
 
-		int nnz = nb * m * r1 + (n - nb) * m * r2;
+		nnz = nb * m * r1 + (n - nb) * m * r2;
 
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
