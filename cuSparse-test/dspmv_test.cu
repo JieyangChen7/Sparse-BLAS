@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
 
 		m = n;
 		int nb = m / 8;
+		double r;
 		double r1 = 1.0;
 		double r2 = 0.001;
 
@@ -119,9 +120,9 @@ int main(int argc, char *argv[]) {
 
 		for (int i = 0; i < m; i += nb) {
 			if (i == 0) {
-				r = 1.0;
+				r = r1;
 			} else {
-				r = 0.001;
+				r = r2;
 			}
 
 			for (int ii = i; ii < i + nb; ii++) {
