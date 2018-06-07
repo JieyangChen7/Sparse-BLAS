@@ -50,12 +50,16 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
 	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
 
+
+
 	generate_tasks(m, n, nnz, alpha,
 				  csrVal, csrRowPtr, csrColIndex, 
 				  x, beta, y, nb,
 				  spmv_task_pool);
 
-	(*spmv_task_completed).reserve((*spmv_task_pool).size());
+	int num_of_tasks = (*spmv_task_pool).size();
+
+	(*spmv_task_completed).reserve(num_of_tasks);
 
 	*time_parse = get_time() - curr_time;
 
@@ -65,7 +69,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	omp_set_num_threads(ngpu);
 	//cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
 	//cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-	#pragma omp parallel// default (shared)
+	#pragma omp parallel default (shared)
 	{
 		// cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
 		// cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
@@ -118,6 +122,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
     	
     	cout << "GPU " << dev_id << " entering loop" << endl;
 
+
+    int num_of_assigned_task = 0;
 		while (true) {
 
 			spmv_task * curr_spmv_task;
@@ -127,10 +133,13 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
-					if((*spmv_task_pool).size() > 0) {
+
+					if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
+						 (*spmv_task_pool).size() > 0) {
 						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
+						num_of_assigned_task++;
 						//cout << "GPU " << dev_id << " got one task" << endl;
 					} else {
 						curr_spmv_task = NULL;
