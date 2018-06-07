@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
 	double avg_time_comp3 = 0.0;
 	double avg_time_post3 = 0.0;
 
-	int warm_up_iter = 1;
+	int warm_up_iter = 0;
 
 	cudaProfilerStart();
 
