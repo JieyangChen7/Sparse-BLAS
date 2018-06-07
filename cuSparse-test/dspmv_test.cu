@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
 
 	int warm_up_iter = 0;
 
-	cudaProfilerStart();
+	//cudaProfilerStart();
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
@@ -374,7 +374,7 @@ int main(int argc, char *argv[]) {
 	
 	}
 
-	cudaProfilerStop();
+	//cudaProfilerStop();
 
 	
 
