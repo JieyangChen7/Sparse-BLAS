@@ -75,7 +75,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// int c;
 		unsigned int dev_id = omp_get_thread_num();
 		cout << "thread " << dev_id << "started" << endl;
-		// cudaSetDevice(dev_id);
+		cudaSetDevice(dev_id);
 		
 		// cusparseStatus_t status[copy_of_workspace];
 		// cudaStream_t stream[copy_of_workspace];
