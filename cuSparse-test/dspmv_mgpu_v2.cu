@@ -77,17 +77,17 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cout << "thread " << dev_id << "started" << endl;
 		cudaSetDevice(dev_id);
 		
-		// cusparseStatus_t status[copy_of_workspace];
-		// cudaStream_t stream[copy_of_workspace];
-		// cusparseHandle_t handle[copy_of_workspace];
+		cusparseStatus_t status[copy_of_workspace];
+		cudaStream_t stream[copy_of_workspace];
+		cusparseHandle_t handle[copy_of_workspace];
 
 
 
-		// double ** dev_csrVal = new double * [copy_of_workspace];
-		// int ** dev_csrRowPtr = new int    * [copy_of_workspace];
-		// int ** dev_csrColIndex = new int  * [copy_of_workspace];
-		// double ** dev_x = new double      * [copy_of_workspace];
-		// double ** dev_y = new double      * [copy_of_workspace];
+		double ** dev_csrVal = new double * [copy_of_workspace];
+		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
+		int ** dev_csrColIndex = new int  * [copy_of_workspace];
+		double ** dev_x = new double      * [copy_of_workspace];
+		double ** dev_y = new double      * [copy_of_workspace];
 
 		// for (c = 0; c < copy_of_workspace; c++) {
 		// 	cudaStreamCreate(&(stream[c]));
