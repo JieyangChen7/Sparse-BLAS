@@ -91,18 +91,18 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 		for (c = 0; c < copy_of_workspace; c++) {
 			cudaStreamCreate(&(stream[c]));
-			status[c] = cusparseCreate(&(handle[c])); 
-			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			{ 
-				printf("CUSPARSE Library initialization failed");
-				//return 1; 
-			} 
-			status[c] = cusparseSetStream(handle[c], stream[c]);
-			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			{ 
-				printf("Stream bindind failed");
-				//return 1;
-			} 
+			// status[c] = cusparseCreate(&(handle[c])); 
+			// if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			// { 
+			// 	printf("CUSPARSE Library initialization failed");
+			// 	//return 1; 
+			// } 
+			// status[c] = cusparseSetStream(handle[c], stream[c]);
+			// if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			// { 
+			// 	printf("Stream bindind failed");
+			// 	//return 1;
+			// } 
 
 		// 	cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
 		// 	cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
