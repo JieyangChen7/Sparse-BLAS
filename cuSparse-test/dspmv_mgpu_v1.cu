@@ -235,7 +235,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// tmp = get_time();
 
 		
-		curr_time = get_time();
+		//curr_time = get_time();
 			
 		for (int d = 0; d < ngpu; d++) {
 
@@ -264,7 +264,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO);
 		}
 
-		cout << "aaa: " << get_time() - curr_time << endl;
+		//cout << "aaa: " << get_time() - curr_time << endl;
 
 		//cout << "test7" << endl;
 

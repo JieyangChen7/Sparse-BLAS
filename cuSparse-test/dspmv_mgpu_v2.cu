@@ -65,24 +65,6 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-
-
-	cudaStream_t stream[ngpu][copy_of_workspace];
-	cusparseHandle_t handle[ngpu][copy_of_workspace];
-
-	for (int d = 0; d < ngpu; d++) {
-		cudaSetDevice(d);
-		for (int k = 0; k < copy_of_workspace; k++) {
-				cudaStreamCreate(&(stream[d][k]));
-				cusparseCreate(&(handle[d][k])); 
-				cusparseSetStream(handle[d][k], stream[d][k]);
-		}
-	}
-
-	cout << "aaa: " << get_time() - curr_time <<endl;
-
-	curr_time = get_time();
-
 	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
 	//cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
@@ -90,14 +72,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	#pragma omp parallel default (shared)
 	{
 		
-		int c;
+		// int c;
 		unsigned int dev_id = omp_get_thread_num();
-		cout << "thread " << dev_id << "started" << endl;
+		//cout << "thread " << dev_id << "started" << endl;
 		cudaSetDevice(dev_id);
 		
-		cusparseStatus_t status;
-		//cudaStream_t stream[copy_of_workspace];
-		//cusparseHandle_t handle[copy_of_workspace];
+		cusparseStatus_t status[copy_of_workspace];
+		cudaStream_t stream[copy_of_workspace];
+		cusparseHandle_t handle[copy_of_workspace];
 
 
 
@@ -108,19 +90,19 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		double ** dev_y = new double      * [copy_of_workspace];
 
 		for (c = 0; c < copy_of_workspace; c++) {
-			//cudaStreamCreate(&(stream[c]));
-			// status[c] = cusparseCreate(&(handle[c])); 
-			// if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			// { 
-			// 	printf("CUSPARSE Library initialization failed");
-			// 	//return 1; 
-			// } 
-			// status[c] = cusparseSetStream(handle[c], stream[c]);
-			// if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			// { 
-			// 	printf("Stream bindind failed");
-			// 	//return 1;
-			// } 
+			cudaStreamCreate(&(stream[c]));
+			status[c] = cusparseCreate(&(handle[c])); 
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("CUSPARSE Library initialization failed");
+				//return 1; 
+			} 
+			status[c] = cusparseSetStream(handle[c], stream[c]);
+			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+			{ 
+				printf("Stream bindind failed");
+				//return 1;
+			} 
 
 			cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
 			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
@@ -128,11 +110,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
 	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
 
-     	}
+    	}
 
-    	c = 0; 
+   		c = 0; 
     	
-  //   	cout << "GPU " << dev_id << " entering loop" << endl;
+    	//cout << "GPU " << dev_id << " entering loop" << endl;
 
 
     	int num_of_assigned_task = 0;
@@ -142,7 +124,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
-				cout << "GPU " << dev_id << " try to get one task" << endl;
+				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
 
@@ -165,9 +147,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
 					curr_spmv_task->dev_x = dev_x[c];
 					curr_spmv_task->dev_y = dev_y[c];
-					assign_task(curr_spmv_task, dev_id, stream[dev_id][c]);
-					run_task(curr_spmv_task, dev_id, handle[dev_id][c], kernel);
-					finalize_task(curr_spmv_task, dev_id, stream[dev_id][c]);
+					assign_task(curr_spmv_task, dev_id, stream[c]);
+					run_task(curr_spmv_task, dev_id, handle[c], kernel);
+					finalize_task(curr_spmv_task, dev_id, stream[c]);
 				}
 			}
 			if (!curr_spmv_task) {
@@ -184,8 +166,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			cudaFree(dev_csrColIndex[c]);
 			cudaFree(dev_x[c]);
 			cudaFree(dev_y[c]);
-			cusparseDestroy(handle[dev_id][c]);
-			cudaStreamDestroy(stream[dev_id][c]);
+			cusparseDestroy(handle[c]);
+			cudaStreamDestroy(stream[c]);
 		}
 
 		
