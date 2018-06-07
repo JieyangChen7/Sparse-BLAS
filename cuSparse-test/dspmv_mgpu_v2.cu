@@ -66,11 +66,11 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	{
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
-		//cout << "get dev_id = " << dev_id << endl;
+		cout << "get dev_id = " << dev_id << endl;
 		cudaSetDevice(dev_id);
-		//cout << "set dev_id = " << dev_id << endl;
+		cout << "set dev_id = " << dev_id << endl;
 		
-
+		cout << "GPU " << dev_id << " start" << endl;
 		//int copy_of_workspace = 2;
 
 		cusparseStatus_t status[copy_of_workspace];
@@ -109,7 +109,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
     	}
 
    	c = 0; 
-    
+    	
+    	cout << "GPU " << dev_id << " entering loop" << endl;
+
 		while (true) {
 
 			spmv_task * curr_spmv_task;
