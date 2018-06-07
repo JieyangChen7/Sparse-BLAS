@@ -132,35 +132,35 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				//#pragma omp critical
-				{
+				// {
 
-					if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
-						 (*spmv_task_pool).size() > 0) {
-						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
-						(*spmv_task_pool).pop_back();
-						(*spmv_task_completed).push_back(curr_spmv_task);
-						num_of_assigned_task++;
-						//cout << "GPU " << dev_id << " got one task" << endl;
-					} else {
-						curr_spmv_task = NULL;
-					}
-				}
+				// 	if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
+				// 		 (*spmv_task_pool).size() > 0) {
+				// 		curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
+				// 		(*spmv_task_pool).pop_back();
+				// 		(*spmv_task_completed).push_back(curr_spmv_task);
+				// 		num_of_assigned_task++;
+				// 		//cout << "GPU " << dev_id << " got one task" << endl;
+				// 	} else {
+				// 		curr_spmv_task = NULL;
+				// 	}
+				// }
 
-				if (curr_spmv_task) {
+				// if (curr_spmv_task) {
 
-					curr_spmv_task->dev_csrVal = dev_csrVal[c];
-					curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
-					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
-					curr_spmv_task->dev_x = dev_x[c];
-					curr_spmv_task->dev_y = dev_y[c];
-					assign_task(curr_spmv_task, dev_id, stream[c]);
-					run_task(curr_spmv_task, dev_id, handle[c], kernel);
-					finalize_task(curr_spmv_task, dev_id, stream[c]);
-				}
+				// 	curr_spmv_task->dev_csrVal = dev_csrVal[c];
+				// 	curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+				// 	curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+				// 	curr_spmv_task->dev_x = dev_x[c];
+				// 	curr_spmv_task->dev_y = dev_y[c];
+				// 	assign_task(curr_spmv_task, dev_id, stream[c]);
+				// 	run_task(curr_spmv_task, dev_id, handle[c], kernel);
+				// 	finalize_task(curr_spmv_task, dev_id, stream[c]);
+				// }
 			}
-			if (!curr_spmv_task) {
-				break;
-			}
+			// if (!curr_spmv_task) {
+			// 	break;
+			// }
 		}
 
 		cudaDeviceSynchronize();
