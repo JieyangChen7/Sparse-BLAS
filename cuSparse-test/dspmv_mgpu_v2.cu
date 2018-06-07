@@ -72,6 +72,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	int c;
 	for (c = 0; c < copy_of_workspace*ngpu; c++) {
 			cudaStreamCreate(&(stream[c]));
+		}
 
 
 	//cout << "starting " << ngpu << " GPUs." << endl;
