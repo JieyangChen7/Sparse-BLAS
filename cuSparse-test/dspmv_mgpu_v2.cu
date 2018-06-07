@@ -79,6 +79,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		}
 	}
 
+	cout << "aaa: " << get_time() - curr_time <<endl;
+
+	curr_time = get_time();
 
 	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
