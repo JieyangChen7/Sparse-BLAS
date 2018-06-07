@@ -67,12 +67,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 
-	cudaStream_t stream[ngpu][copy_of_workspacengpu];
+	cudaStream_t stream[ngpu][copy_of_workspace];
 	cusparseHandle_t handle[ngpu][copy_of_workspace];
 
 	for (int d = 0; d < ngpu; d++) {
 		cudaSetDevice(d);
-		for (int k = 0; k < copy_of_workspace*ngpu; k++) {
+		for (int k = 0; k < copy_of_workspace; k++) {
 				cudaStreamCreate(&(stream[d][k]));
 				cusparseCreate(&(handle[d][k])); 
 				cusparseSetStream(handle[d][k], stream[d][k]);
