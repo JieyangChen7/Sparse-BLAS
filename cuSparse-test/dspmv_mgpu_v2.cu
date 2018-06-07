@@ -66,6 +66,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	#pragma omp parallel default (shared)
 	{
 		cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
+		cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
 		cout << "get dev_id = " << dev_id << endl;
