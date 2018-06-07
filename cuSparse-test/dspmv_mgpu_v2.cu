@@ -65,6 +65,15 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
+
+
+	cudaStream_t stream[copy_of_workspace * ngpu];
+
+	int c;
+	for (c = 0; c < copy_of_workspace*ngpu; c++) {
+			cudaStreamCreate(&(stream[c]));
+
+
 	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
 	//cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
@@ -90,7 +99,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		double ** dev_y = new double      * [copy_of_workspace];
 
 		for (c = 0; c < copy_of_workspace; c++) {
-			cudaStreamCreate(&(stream[c]));
+			//cudaStreamCreate(&(stream[c]));
 			// status[c] = cusparseCreate(&(handle[c])); 
 			// if (status[c] != CUSPARSE_STATUS_SUCCESS) 
 			// { 
