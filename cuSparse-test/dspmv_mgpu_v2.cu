@@ -65,7 +65,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	omp_set_num_threads(ngpu);
 	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
 	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-	#pragma omp parallel default (shared)
+	#pragma omp parallel// default (shared)
 	{
 		cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
 		cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
