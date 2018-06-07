@@ -119,8 +119,8 @@ int main(int argc, char *argv[]) {
 		m = n;
 		int nb = m / 8;
 		double r;
-		double r1 = 0.8;
-		double r2 = 0.1;
+		double r1 = 0.9;
+		double r2 = 0.01;
 
 		nnz = nb * n * r1 + (m - nb) * (n * r2);
 
