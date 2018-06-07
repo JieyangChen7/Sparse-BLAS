@@ -8,6 +8,7 @@
 #include <cmath>
 #include "mmio.h"
 #include <float.h>
+#include <omp.h>
 //#include "anonymouslib_cuda.h"
 #include <cuda_profiler_api.h>
 #include "spmv_kernel.h"
@@ -32,6 +33,20 @@ void print_error(cusparseStatus_t status) {
 
 
 int main(int argc, char *argv[]) {
+
+
+	omp_set_num_threads(8);
+	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+	#pragma omp parallel// default (shared)
+	{
+		cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
+		cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+		cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+
+
+	}
+
 	if (argc < 6) {
 		cout << "Incorrect number of arguments!" << endl;
 		cout << "Usage ./spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]"  << endl;
@@ -290,15 +305,15 @@ int main(int argc, char *argv[]) {
 
 		cout << "=============Baseline[start]============" <<endl;
 
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y1,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post);
 		cout << "=============Baseline[done]============" <<endl;
 
 		
@@ -318,16 +333,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1[start]============" <<endl;
 
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post,
+		// 			 kernel_version);
 
 		cout << "=============Version 1[done]============" <<endl;
 		
