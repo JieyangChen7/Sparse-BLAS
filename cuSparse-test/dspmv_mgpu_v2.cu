@@ -67,12 +67,17 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 
-	cudaStream_t stream[copy_of_workspace * ngpu];
+	cudaStream_t stream[ngpu][copy_of_workspacengpu];
+	cusparseHandle_t handle[ngpu][copy_of_workspace];
 
-	int c;
-	for (c = 0; c < copy_of_workspace*ngpu; c++) {
-			cudaStreamCreate(&(stream[c]));
+	for (int d = 0; d < ngpu; d++) {
+		cudaSetDevice(d);
+		for (int k = 0; k < copy_of_workspace*ngpu; k++) {
+				cudaStreamCreate(&(stream[d][k]));
+				cusparseCreate(&(handle[d][k])); 
+				cusparseSetStream(handle[d][k], stream[d][k]);
 		}
+	}
 
 
 	//cout << "starting " << ngpu << " GPUs." << endl;
@@ -87,9 +92,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		cout << "thread " << dev_id << "started" << endl;
 		cudaSetDevice(dev_id);
 		
-		cusparseStatus_t status[copy_of_workspace];
-		cudaStream_t stream[copy_of_workspace];
-		cusparseHandle_t handle[copy_of_workspace];
+		cusparseStatus_t status;
+		//cudaStream_t stream[copy_of_workspace];
+		//cusparseHandle_t handle[copy_of_workspace];
 
 
 
@@ -114,71 +119,71 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			// 	//return 1;
 			// } 
 
-		// 	cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
-		// 	cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
-		// 	cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
-		// 	cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
-	 //    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
+			cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
+			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
+			cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
+			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
+	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
 
      	}
 
-  //  		c = 0; 
+    	c = 0; 
     	
   //   	cout << "GPU " << dev_id << " entering loop" << endl;
 
 
-  //   	int num_of_assigned_task = 0;
-		// while (true) {
+    	int num_of_assigned_task = 0;
+		while (true) {
 
-		// 	spmv_task * curr_spmv_task;
+			spmv_task * curr_spmv_task;
 
-		// 	for (c = 0; c < copy_of_workspace; c++) {
+			for (c = 0; c < copy_of_workspace; c++) {
 
-		// 		cout << "GPU " << dev_id << " try to get one task" << endl;
-		// 		#pragma omp critical
-		// 		{
+				cout << "GPU " << dev_id << " try to get one task" << endl;
+				#pragma omp critical
+				{
 
-		// 			if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
-		// 				 (*spmv_task_pool).size() > 0) {
-		// 				curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
-		// 				(*spmv_task_pool).pop_back();
-		// 				(*spmv_task_completed).push_back(curr_spmv_task);
-		// 				num_of_assigned_task++;
-		// 				//cout << "GPU " << dev_id << " got one task" << endl;
-		// 			} else {
-		// 				curr_spmv_task = NULL;
-		// 			}
-		// 		}
+					if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
+						 (*spmv_task_pool).size() > 0) {
+						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
+						(*spmv_task_pool).pop_back();
+						(*spmv_task_completed).push_back(curr_spmv_task);
+						num_of_assigned_task++;
+						//cout << "GPU " << dev_id << " got one task" << endl;
+					} else {
+						curr_spmv_task = NULL;
+					}
+				}
 
-		// 		if (curr_spmv_task) {
+				if (curr_spmv_task) {
 
-		// 			curr_spmv_task->dev_csrVal = dev_csrVal[c];
-		// 			curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
-		// 			curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
-		// 			curr_spmv_task->dev_x = dev_x[c];
-		// 			curr_spmv_task->dev_y = dev_y[c];
-		// 			assign_task(curr_spmv_task, dev_id, stream[c]);
-		// 			run_task(curr_spmv_task, dev_id, handle[c], kernel);
-		// 			finalize_task(curr_spmv_task, dev_id, stream[c]);
-		// 		}
-		// 	}
-		// 	if (!curr_spmv_task) {
-		// 		break;
-		// 	}
-		// }
+					curr_spmv_task->dev_csrVal = dev_csrVal[c];
+					curr_spmv_task->dev_csrRowPtr = dev_csrRowPtr[c];
+					curr_spmv_task->dev_csrColIndex = dev_csrColIndex[c];
+					curr_spmv_task->dev_x = dev_x[c];
+					curr_spmv_task->dev_y = dev_y[c];
+					assign_task(curr_spmv_task, dev_id, stream[dev_id][c]);
+					run_task(curr_spmv_task, dev_id, handle[dev_id][c], kernel);
+					finalize_task(curr_spmv_task, dev_id, stream[dev_id][c]);
+				}
+			}
+			if (!curr_spmv_task) {
+				break;
+			}
+		}
 
-		// cudaDeviceSynchronize();
+		cudaDeviceSynchronize();
 
-		// for (c = 0; c < copy_of_workspace; c++) {
+		for (c = 0; c < copy_of_workspace; c++) {
 
-		// 	cudaFree(dev_csrVal[c]);
-		// 	cudaFree(dev_csrRowPtr[c]);
-		// 	cudaFree(dev_csrColIndex[c]);
-		// 	cudaFree(dev_x[c]);
-		// 	cudaFree(dev_y[c]);
-		// 	cusparseDestroy(handle[c]);
-		// 	cudaStreamDestroy(stream[c]);
-		// }
+			cudaFree(dev_csrVal[c]);
+			cudaFree(dev_csrRowPtr[c]);
+			cudaFree(dev_csrColIndex[c]);
+			cudaFree(dev_x[c]);
+			cudaFree(dev_y[c]);
+			cusparseDestroy(handle[dev_id][c]);
+			cudaStreamDestroy(stream[dev_id][c]);
+		}
 
 		
 
