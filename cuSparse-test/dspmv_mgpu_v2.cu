@@ -61,6 +61,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
+	cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
 	#pragma omp parallel default (shared)
 	{
