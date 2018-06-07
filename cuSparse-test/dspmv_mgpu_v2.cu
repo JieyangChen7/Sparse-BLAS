@@ -71,52 +71,45 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	//cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 	#pragma omp parallel default (shared)
 	{
-		// cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
-		// cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-		// cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-		int c;
-		unsigned int dev_id = omp_get_thread_num();
-		//cout << "get dev_id = " << dev_id << endl;
-		cudaSetDevice(dev_id);
-		//cout << "set dev_id = " << dev_id << endl;
 		
-		//cout << "GPU " << dev_id << " start" << endl;
-		//int copy_of_workspace = 2;
+		// int c;
+		// unsigned int dev_id = omp_get_thread_num();
+		// cudaSetDevice(dev_id);
+		
+		// cusparseStatus_t status[copy_of_workspace];
+		// cudaStream_t stream[copy_of_workspace];
+		// cusparseHandle_t handle[copy_of_workspace];
 
-		cusparseStatus_t status[copy_of_workspace];
-		cudaStream_t stream[copy_of_workspace];
-		cusparseHandle_t handle[copy_of_workspace];
 
 
+		// double ** dev_csrVal = new double * [copy_of_workspace];
+		// int ** dev_csrRowPtr = new int    * [copy_of_workspace];
+		// int ** dev_csrColIndex = new int  * [copy_of_workspace];
+		// double ** dev_x = new double      * [copy_of_workspace];
+		// double ** dev_y = new double      * [copy_of_workspace];
 
-		double ** dev_csrVal = new double * [copy_of_workspace];
-		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
-		int ** dev_csrColIndex = new int  * [copy_of_workspace];
-		double ** dev_x = new double      * [copy_of_workspace];
-		double ** dev_y = new double      * [copy_of_workspace];
+		// for (c = 0; c < copy_of_workspace; c++) {
+		// 	cudaStreamCreate(&(stream[c]));
+		// 	status[c] = cusparseCreate(&(handle[c])); 
+		// 	if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+		// 	{ 
+		// 		printf("CUSPARSE Library initialization failed");
+		// 		//return 1; 
+		// 	} 
+		// 	status[c] = cusparseSetStream(handle[c], stream[c]);
+		// 	if (status[c] != CUSPARSE_STATUS_SUCCESS) 
+		// 	{ 
+		// 		printf("Stream bindind failed");
+		// 		//return 1;
+		// 	} 
 
-		for (c = 0; c < copy_of_workspace; c++) {
-			cudaStreamCreate(&(stream[c]));
-			status[c] = cusparseCreate(&(handle[c])); 
-			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			{ 
-				printf("CUSPARSE Library initialization failed");
-				//return 1; 
-			} 
-			status[c] = cusparseSetStream(handle[c], stream[c]);
-			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
-			{ 
-				printf("Stream bindind failed");
-				//return 1;
-			} 
+		// 	cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
+		// 	cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
+		// 	cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
+		// 	cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
+	 //    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
 
-			cudaMalloc((void**)&(dev_csrVal[c]),      nb      * sizeof(double));
-			cudaMalloc((void**)&(dev_csrRowPtr[c]),   (m + 1) * sizeof(int)   );
-			cudaMalloc((void**)&(dev_csrColIndex[c]), nb      * sizeof(int)   );
-			cudaMalloc((void**)&(dev_x[c]),           n       * sizeof(double));
-	    	cudaMalloc((void**)&(dev_y[c]),           m       * sizeof(double));
-
-    	}
+  //   	}
 
   //  		c = 0; 
     	
@@ -163,18 +156,18 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		// 	}
 		// }
 
-		cudaDeviceSynchronize();
+		// cudaDeviceSynchronize();
 
-		for (c = 0; c < copy_of_workspace; c++) {
+		// for (c = 0; c < copy_of_workspace; c++) {
 
-			cudaFree(dev_csrVal[c]);
-			cudaFree(dev_csrRowPtr[c]);
-			cudaFree(dev_csrColIndex[c]);
-			cudaFree(dev_x[c]);
-			cudaFree(dev_y[c]);
-			cusparseDestroy(handle[c]);
-			cudaStreamDestroy(stream[c]);
-		}
+		// 	cudaFree(dev_csrVal[c]);
+		// 	cudaFree(dev_csrRowPtr[c]);
+		// 	cudaFree(dev_csrColIndex[c]);
+		// 	cudaFree(dev_x[c]);
+		// 	cudaFree(dev_y[c]);
+		// 	cusparseDestroy(handle[c]);
+		// 	cudaStreamDestroy(stream[c]);
+		// }
 
 		
 
