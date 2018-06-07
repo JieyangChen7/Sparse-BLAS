@@ -72,7 +72,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	#pragma omp parallel default (shared)
 	{
 		
-		// int c;
+		int c;
 		unsigned int dev_id = omp_get_thread_num();
 		//cout << "thread " << dev_id << "started" << endl;
 		cudaSetDevice(dev_id);
