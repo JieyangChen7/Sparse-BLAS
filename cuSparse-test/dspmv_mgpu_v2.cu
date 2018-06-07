@@ -116,13 +116,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
-
+				cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
 					if((*spmv_task_pool).size() > 0) {
 						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
+						cout << "GPU " << dev_id << " got one task" << endl;
 					} else {
 						curr_spmv_task = NULL;
 					}
