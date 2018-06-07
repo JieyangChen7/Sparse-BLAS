@@ -131,7 +131,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 			for (c = 0; c < copy_of_workspace; c++) {
 
 				//cout << "GPU " << dev_id << " try to get one task" << endl;
-				#pragma omp critical
+				//#pragma omp critical
 				{
 
 					if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
