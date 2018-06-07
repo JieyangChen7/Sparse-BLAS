@@ -61,22 +61,22 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-	cout << "starting " << ngpu << " GPUs." << endl;
+	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
-	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+	//cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+	//cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 	#pragma omp parallel// default (shared)
 	{
-		cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
-		cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-		cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+		// cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
+		// cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+		// cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
-		cout << "get dev_id = " << dev_id << endl;
+		//cout << "get dev_id = " << dev_id << endl;
 		cudaSetDevice(dev_id);
-		cout << "set dev_id = " << dev_id << endl;
+		//cout << "set dev_id = " << dev_id << endl;
 		
-		cout << "GPU " << dev_id << " start" << endl;
+		//cout << "GPU " << dev_id << " start" << endl;
 		//int copy_of_workspace = 2;
 
 		cusparseStatus_t status[copy_of_workspace];
@@ -116,7 +116,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
    	c = 0; 
     	
-    	cout << "GPU " << dev_id << " entering loop" << endl;
+    	//cout << "GPU " << dev_id << " entering loop" << endl;
 
 		while (true) {
 
@@ -124,14 +124,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
-				cout << "GPU " << dev_id << " try to get one task" << endl;
+				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
 					if((*spmv_task_pool).size() > 0) {
 						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
-						cout << "GPU " << dev_id << " got one task" << endl;
+						//cout << "GPU " << dev_id << " got one task" << endl;
 					} else {
 						curr_spmv_task = NULL;
 					}

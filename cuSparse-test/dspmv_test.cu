@@ -35,17 +35,17 @@ void print_error(cusparseStatus_t status) {
 int main(int argc, char *argv[]) {
 
 
-	omp_set_num_threads(8);
-	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-	#pragma omp parallel// default (shared)
-	{
-		cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
-		cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-		cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+	// omp_set_num_threads(8);
+	// cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+	// cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+	// #pragma omp parallel// default (shared)
+	// {
+	// 	cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
+	// 	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+	// 	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 
 
-	}
+	// }
 
 	if (argc < 6) {
 		cout << "Incorrect number of arguments!" << endl;
