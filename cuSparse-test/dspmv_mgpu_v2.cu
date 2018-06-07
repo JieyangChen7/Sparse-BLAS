@@ -116,7 +116,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
    	c = 0; 
     	
-    	//cout << "GPU " << dev_id << " entering loop" << endl;
+    	cout << "GPU " << dev_id << " entering loop" << endl;
 
 		while (true) {
 
