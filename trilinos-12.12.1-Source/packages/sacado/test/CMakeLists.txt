@@ -1,8 +1,0 @@
-
-IF (TPL_ENABLE_CppUnit)
-  ADD_SUBDIRECTORY(TestSuite)
-ENDIF()
-
-ADD_SUBDIRECTORY(UnitTests)
-ADD_SUBDIRECTORY(tradoptest)
-ADD_SUBDIRECTORY(performance)

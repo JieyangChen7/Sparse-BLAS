@@ -1,7 +1,0 @@
-#ifndef MOERTEL_CONFIG_H
-#define MOERTEL_CONFIG_H
-
-/* Define if we have Exodus in Seacas */
-#cmakedefine MOERTEL_HAVE_EXODUS
-
-#endif
