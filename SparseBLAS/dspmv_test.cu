@@ -404,8 +404,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	cout << "Check: " <<correct ? "Pass" : "No pass" << endl;
-
+	if (correct) cout << "Pass" << endl;
+	else cout << "No pass" << endl;
+	
 	
 	avg_time_parse1/=repeat_test;
 	avg_time_comm1/=repeat_test;
