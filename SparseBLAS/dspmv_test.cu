@@ -356,7 +356,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		cout << setw(8) << time_baseline;
-		cout << setw(33) << time_v1;
+		cout << setw(20) << time_v1;
 		cout << setw(20) << time_v2;
 		if (correct) cout << setw(15) <<"Pass" << endl;
 		else cout << setw(15) << "No pass" << endl;
@@ -392,7 +392,7 @@ int main(int argc, char *argv[]) {
 
 
 	cout << setw(8) << avg_time_baseline;
-	cout << setw(33) << avg_time_v1;
+	cout << setw(20) << avg_time_v1;
 	cout << setw(20) << avg_time_v2;
 	cout << endl;
 	
