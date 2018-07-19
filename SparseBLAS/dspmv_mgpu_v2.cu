@@ -11,6 +11,7 @@
 //#include "anonymouslib_cuda.h"
 
 using namespace std;
+using std::setw;
 
 void * spmv_worker(void * arg);
 
