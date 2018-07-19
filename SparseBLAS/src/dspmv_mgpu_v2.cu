@@ -118,6 +118,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
     	int num_of_assigned_task = 0;
+    	int num_of_to_be_assigned_task = num_of_tasks * (dev_id + 1) /  omp_get_num_threads() - 
+    									 num_of_tasks * (dev_id) /  omp_get_num_threads();
+
 		while (true) {
 
 			spmv_task * curr_spmv_task;
@@ -128,7 +131,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				#pragma omp critical
 				{
 
-					if(num_of_assigned_task < num_of_tasks / omp_get_num_threads() &&
+					if(num_of_assigned_task < num_of_to_be_assigned_task &&
 						 (*spmv_task_pool).size() > 0) {
 						curr_spmv_task = (*spmv_task_pool)[(*spmv_task_pool).size() - 1];
 						(*spmv_task_pool).pop_back();
