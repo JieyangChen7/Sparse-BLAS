@@ -193,33 +193,33 @@ int main(int argc, char *argv[]) {
 
 
 
-// 	// Convert COO to CSR
-//     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
-//     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+	// Convert COO to CSR
+    //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
+    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
-//     //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
-//     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
-//     //cout << matrix_data_space << endl;
+    //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+    long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
+    //cout << matrix_data_space << endl;
 
 
-//     cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
+    cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
 
-//     int * counter = new int[m];
-//     for (int i = 0; i < m; i++) {
-//     	counter[i] = 0;
-//     }
-// 	for (int i = 0; i < nnz; i++) {
-// 		counter[cooRowIndex[i]]++;
-// 	}
-// 	//cout << "nnz: " << nnz << endl;
-// 	//cout << "counter: ";
-// 	int t = 0;
-// 	for (int i = 0; i < m; i++) {
-// 		//cout << counter[i] << ", ";
-// 		t += counter[i];
-// 	}
-// 	//cout << t << endl;
-// 	//cout << endl;
+    int * counter = new int[m];
+    for (int i = 0; i < m; i++) {
+    	counter[i] = 0;
+    }
+	for (int i = 0; i < nnz; i++) {
+		counter[cooRowIndex[i]]++;
+	}
+	//cout << "nnz: " << nnz << endl;
+	//cout << "counter: ";
+	int t = 0;
+	for (int i = 0; i < m; i++) {
+		//cout << counter[i] << ", ";
+		t += counter[i];
+	}
+	//cout << t << endl;
+	//cout << endl;
 
 
 // 	csrRowPtr[0] = 0;
