@@ -275,29 +275,22 @@ int main(int argc, char *argv[]) {
 	double ALPHA = 1.0;
 	double BETA = 0.0;
 
-	double time_parse = 0.0;
-	double time_comm = 0.0;
-	double time_comp = 0.0;
-	double time_post = 0.0;
+	double time_baseline = 0.0;
+	double time_v1 = 0.0;
+	double time_v2 = 0.0;
 
-	double avg_time_parse1 = 0.0;
-	double avg_time_comm1 = 0.0;
-	double avg_time_comp1 = 0.0;
-	double avg_time_post1 = 0.0;
+	double avg_time_baseline = 0.0;
+	double avg_time_v1 = 0.0;
+	double avg_time_v2 = 0.0;
 
-	double avg_time_parse2 =  0.0;
-	double avg_time_comm2 = 0.0;
-	double avg_time_comp2 = 0.0;
-	double avg_time_post2 = 0.0;
-
-	double avg_time_parse3 =  0.0;
-	double avg_time_comm3= 0.0;
-	double avg_time_comp3 = 0.0;
-	double avg_time_post3 = 0.0;
+	double curr_time = 0.0;
 
 	int warm_up_iter = 1;
 
 	//cudaProfilerStart();
+
+	cout << "Baseline            Version1            Version2          Check" << endl;
+	cout << "===============================================================" << endl;
 
 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
 		if (i == 0) {
@@ -313,73 +306,27 @@ int main(int argc, char *argv[]) {
 			y3[i] = 0.0;
 		}
 
-		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
-
-		cout << "=============Baseline[start]============" <<endl;
-
+		curr_time = get_time();
 		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
-		cout << "=============Baseline[done]============" <<endl;
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
+		time_baseline = get_time() - curr_time;	
 
-		
-	
-		
-		if (i >= warm_up_iter) {
-			avg_time_parse1 += time_parse;
-			avg_time_comm1  += time_comm;
-			avg_time_comp1  += time_comp;
-			avg_time_post1  += time_post;
-		}
-		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
-		
-		cout << "=============Version 1[start]============" <<endl;
 
+		curr_time = get_time();
 		spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y2,
 					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
 					 kernel_version);
-
-		cout << "=============Version 1[done]============" <<endl;
+		time_v1 = get_time() - curr_time;	
 		
-		if (i >= warm_up_iter) {
-			avg_time_parse2 += time_parse;
-			avg_time_comm2  += time_comm;
-			avg_time_comp2  += time_comp;
-			avg_time_post2  += time_post;
-		}
-
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
-
-		cout << "=============Version 2[start]============" <<endl;
-
-
 		//cudaProfilerStart();
 
-
+		curr_time = get_time();
 		spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
@@ -387,19 +334,32 @@ int main(int argc, char *argv[]) {
 					 ngpu,
 					 kernel_version,
 					 ceil(nnz/divide),
-					 copy_of_workspace,
-					 &time_parse,
-					 &time_comp,
-					 &time_post);
+					 copy_of_workspace);
+		time_v2 = get_time() - curr_time;	
 
-		//
-		cout << "=============Version 2[done]============" <<endl;
 		
 		if (i >= warm_up_iter) {
-			avg_time_parse3 += time_parse;
-			avg_time_comm3  += time_comm;
-			avg_time_comp3  += time_comp;
-			avg_time_post3  += time_post;
+			avg_time_baseline += time_baseline;
+			avg_time_v1  += time_v1;
+			avg_time_v2  += time_v2;
+
+			bool correct = true;
+			for(int i = 0; i < m; i++) {
+				//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
+				if (abs(y1[i] - y2[i]) > 1e-3 || abs(y1[i] - y3[i]) > 1e-3) {
+					//cout << y1[i] << " - " << y3[i] << endl;
+					correct = false;
+				}
+			}
+
+			
+			
+			cout << setw(8) << time_baseline;
+			cout << setw(33) << time_v1;
+			cout << setw(20) << time_v2;
+			if (correct) cout << setw(15) <<"Pass" << endl;
+			else cout << setw(15) << "No pass" << endl;
+			cout << endl;
 		}
 
 	
@@ -410,58 +370,30 @@ int main(int argc, char *argv[]) {
 	
 
 
-	//cout << "y = [";
-	bool correct = true;
-	for(int i = 0; i < m; i++) {
-		cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
-		if (abs(y1[i] - y3[i]) > 1e-3 ) {
-			//cout << y1[i] << " - " << y3[i] << endl;
-			correct = false;
-		}
-	}
+	// //cout << "y = [";
+	// bool correct = true;
+	// for(int i = 0; i < m; i++) {
+	// 	//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
+	// 	if (abs(y1[i] - y3[i]) > 1e-3 ) {
+	// 		//cout << y1[i] << " - " << y3[i] << endl;
+	// 		correct = false;
+	// 	}
+	// }
 
-	if (correct) cout << "Pass" << endl;
-	else cout << "No pass" << endl;
+	// if (correct) cout << "Pass" << endl;
+	// else cout << "No pass" << endl;
 	
 	
-	avg_time_parse1/=repeat_test;
-	avg_time_comm1/=repeat_test;
-	avg_time_comp1/=repeat_test;
-	avg_time_post1/=repeat_test;
+	avg_time_baseline/=repeat_test;
+	avg_time_v1/=repeat_test;
+	avg_time_v2/=repeat_test;
 
-	avg_time_parse2/=repeat_test;
-	avg_time_comm2/=repeat_test;
-	avg_time_comp2/=repeat_test;
-	avg_time_post2/=repeat_test;
+	cout << "==============================Average==========================" << endl;
 
-	avg_time_parse3/=repeat_test;
-	avg_time_comm3/=repeat_test;
-	avg_time_comp3/=repeat_test;
-	avg_time_post3/=repeat_test;
 
-	cout << "[BASELINE]" << endl;
-    cout << "avg_time_parse = " << avg_time_parse1 << endl;
-	cout << "avg_time_comm = "  << avg_time_comm1 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp1 << endl;
-	cout << "avg_time_post = "  << avg_time_post1 << endl;
-	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
-
+	cout << setw(8) << avg_time_baseline;
+	cout << setw(33) << avg_time_v1;
+	cout << setw(20) << avg_time_v2;
 	cout << endl;
-
-	cout << "[Version 1]" << endl;
-	cout << "avg_time_parse = " << avg_time_parse2 << endl;
-	cout << "avg_time_comm = "  << avg_time_comm2 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp2 << endl;
-	cout << "avg_time_post = "  << avg_time_post2 << endl;
-	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
-
-	cout << endl;
-
-	cout << "[Version2]" << endl;
-	cout << "avg_time_parse = " << avg_time_parse3 << endl;
-//	cout << "avg_time_comm = "  << avg_time_comm3 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp3 << endl;
-	cout << "avg_time_post = "  << avg_time_post3 << endl;
-	cout << "total_time = " << avg_time_parse3+avg_time_comp3+avg_time_post3 << endl;
-
+	
 }

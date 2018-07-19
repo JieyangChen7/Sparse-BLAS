@@ -18,18 +18,14 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  double * x, double * beta,
 				  double * y,
 				  int ngpu, 
-				  double * time_parse,
-				  double * time_comm,
-				  double * time_comp,
-				  double * time_post,
 				  int kernel){
 
-		double curr_time = 0.0;
+		//double curr_time = 0.0;
 
 		//double tmp = 0.0;
 		// tmp = get_time();
 
-		curr_time = get_time();
+		//curr_time = get_time();
 
 
 		//tmp = get_time();
@@ -278,9 +274,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 
 
-		*time_parse = get_time() - curr_time;
+		//*time_parse = get_time() - curr_time;
 
-		curr_time = get_time();
+		//curr_time = get_time();
 
 		//cout << "test8" << endl;
 
@@ -311,102 +307,40 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cudaSetDevice(d);
 			cudaDeviceSynchronize();
 		}
-		*time_comm = get_time() - curr_time;
+		//*time_comm = get_time() - curr_time;
 
 		//cout << "test9" << endl;
 
-		curr_time = get_time();
+		//curr_time = get_time();
 
 
-		int repeat_test = 1;
-		for (int i = 0; i < repeat_test; i++) 
+		for (int d = 0; d < ngpu; ++d) 
 		{
-			for (int d = 0; d < ngpu; ++d) 
-			{
-				// tmp = get_time();
-				cudaSetDevice(d);
-				if (kernel == 1) {
-					status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-												dev_m[d], dev_n[d], dev_nnz[d], 
-												alpha, descr[d], dev_csrVal[d], 
-												dev_csrRowPtr[d], dev_csrColIndex[d], 
-												dev_x[d],  beta, dev_y[d]); 
-				} else if (kernel == 2) {
-					status[d] = cusparseDcsrmv_mp(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
-												dev_m[d], dev_n[d], dev_nnz[d], 
-												alpha, descr[d], dev_csrVal[d], 
-												dev_csrRowPtr[d], dev_csrColIndex[d], 
-												dev_x[d],  beta, dev_y[d]); 
-				} else if (kernel == 3) {
-					csr5_kernel(dev_m[d], dev_n[d], dev_nnz[d], 
-								alpha, dev_csrVal[d], 
-								dev_csrRowPtr[d], dev_csrColIndex[d], 
-								dev_x[d],  beta, dev_y[d]); 
-
-					//int err = 0;
-					// cout << "before CSR5" << endl;
-					// cout << "dev_m[d] = " << dev_m[d] << endl;
-					// cout << "dev_n[d] = " << dev_n[d] << endl;
-					// cudaMemcpyAsync(host_csrRowPtr[d], dev_csrRowPtr[d], (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream[d]);
-					// cudaMemcpyAsync(&csrColIndex[start_idx[d]], dev_csrColIndex[d],  (size_t)(dev_nnz[d] * sizeof(int)),     cudaMemcpyDeviceToHost, stream[d]); 
-					// cudaMemcpyAsync(&csrVal[start_idx[d]], dev_csrVal[d],            (size_t)(dev_nnz[d] * sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-
-					// cudaMemcpyAsync(&y[start_row[d]], dev_y[d],  (size_t)(dev_m[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-					// cudaMemcpyAsync(x, dev_x[d],                (size_t)(dev_n[d]*sizeof(double)),  cudaMemcpyDeviceToHost, stream[d]); 
-
-					// cudaDeviceSynchronize();
-
-					// cout << "dev_csrRowPtr = [";
-					// for (int i = 0; i < dev_m[d] + 1; i++) {
-					// 	cout << host_csrRowPtr[d][i] << ", ";
-					// }
-					// cout << "]" << endl;
-					// cout << "csrColIndex = [";
-					// for (int i = 0; i < dev_nnz[d]; i++) {
-					// 	cout << csrColIndex[start_idx[d]+i] << ", ";
-					// }
-					// cout << "]" << endl;
-					// cout << "csrVal[start_idx[d]] = [";
-					// for (int i = 0; i < dev_nnz[d]; i++) {
-					// 	cout << csrVal[start_idx[d]+i] << ", ";
-					// }
-					// cout << "]" << endl;
-					// cout << "y[start_row[d]] = [";
-					// for (int i = 0; i < dev_m[d]; i++) {
-					// 	cout << y[start_row[d]+i] << ", ";
-					// }
-					// cout << "]" << endl;
-					// cout << "dev_x[d] = [";
-					// for (int i = 0; i < dev_n[d]; i++) {
-					// 	cout << x[i] << ", ";
-					// }
-					// cout << "]" << endl;
-
-					// anonymouslibHandle<int, unsigned int, double> A(dev_m[d], dev_n[d]);
-					// err = A.inputCSR(
-					// 	dev_nnz[d], 
-					// 	dev_csrRowPtr[d], 
-					// 	dev_csrColIndex[d], 
-					// 	dev_csrVal[d]);
-					// //cout << "inputCSR err = " << err << endl;
-					// err = A.setX(dev_x[d]);
-					// //cout << "setX err = " << err << endl;
-					// A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-					// A.warmup();
-					// err = A.asCSR5();
-					// //cout << "asCSR5 err = " << err << endl;
-					// err = A.spmv(*alpha, dev_y[d]);
-					// //cout << "spmv err = " << err << endl;
-
-					
-
-				}
-				// cudaDeviceSynchronize();
-				// cout << "computation " << d << " : " << get_time()-tmp << endl;
-
-				// print_error(status[d]);
-				
+			// tmp = get_time();
+			cudaSetDevice(d);
+			if (kernel == 1) {
+				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+											dev_m[d], dev_n[d], dev_nnz[d], 
+											alpha, descr[d], dev_csrVal[d], 
+											dev_csrRowPtr[d], dev_csrColIndex[d], 
+											dev_x[d],  beta, dev_y[d]); 
+			} else if (kernel == 2) {
+				status[d] = cusparseDcsrmv_mp(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
+											dev_m[d], dev_n[d], dev_nnz[d], 
+											alpha, descr[d], dev_csrVal[d], 
+											dev_csrRowPtr[d], dev_csrColIndex[d], 
+											dev_x[d],  beta, dev_y[d]); 
+			} else if (kernel == 3) {
+				csr5_kernel(dev_m[d], dev_n[d], dev_nnz[d], 
+							alpha, dev_csrVal[d], 
+							dev_csrRowPtr[d], dev_csrColIndex[d], 
+							dev_x[d],  beta, dev_y[d]); 
 			}
+			// cudaDeviceSynchronize();
+			// cout << "computation " << d << " : " << get_time()-tmp << endl;
+
+			// print_error(status[d]);
+				
 			for (int d = 0; d < ngpu; ++d) 
 			{
 				cudaSetDevice(d);
@@ -478,16 +412,18 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		}
 
-		*time_post = get_time() - curr_time;
+		//*time_post = get_time() - curr_time;
 
-		// delete[] dev_csrVal;
-		// delete[] dev_csrRowPtr;
-		// delete[] dev_csrColIndex;
-		// delete[] dev_x;
-		// delete[] dev_y;
-		// delete[] host_csrRowPtr;
-		// delete[] start_row;
-		// delete[] end_row;
+		delete[] dev_csrVal;
+		delete[] dev_csrRowPtr;
+		delete[] dev_csrColIndex;
+		delete[] dev_x;
+		delete[] dev_y;
+		delete[] host_csrRowPtr;
+		delete[] start_row;
+		delete[] end_row;
+		delete[] host_y;
+		delete[] host_csrRowPtr;
 
 
 

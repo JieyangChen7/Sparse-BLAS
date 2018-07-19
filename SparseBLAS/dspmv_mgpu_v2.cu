@@ -37,15 +37,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int ngpu, 
 				  int kernel,
 				  int nb,
-				  int copy_of_workspace,
-				  double * time_parse,
-				  double * time_comm_comp,
-				  double * time_post)
+				  int copy_of_workspace)
 {
 
-	double curr_time = 0.0;
+	//double curr_time = 0.0;
 
-	curr_time = get_time();
+	//curr_time = get_time();
 
 	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
 	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
@@ -175,9 +172,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	}
 
-	*time_comm_comp = get_time() - curr_time;
+	//*time_comm_comp = get_time() - curr_time;
 
-	curr_time = get_time();
+	//curr_time = get_time();
 
 	gather_results(spmv_task_completed, y, beta);
 
@@ -189,7 +186,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	}
 
-	*time_post = get_time() - curr_time;
+	//*time_post = get_time() - curr_time;
 }
 
 
