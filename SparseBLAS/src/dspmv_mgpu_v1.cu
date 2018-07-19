@@ -422,8 +422,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		delete[] host_csrRowPtr;
 		delete[] start_row;
 		delete[] end_row;
-		delete[] host_y;
-		delete[] host_csrRowPtr;
+		//delete[] host_y;
+		//delete[] host_csrRowPtr;
 
 
 
