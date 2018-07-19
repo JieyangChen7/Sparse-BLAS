@@ -202,7 +202,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 				  	vector<spmv_task *> * spmv_task_pool_ptr) {
 
 	int num_of_tasks = (nnz + nb - 1) / nb;
-	//cout << "num_of_tasks = " << num_of_tasks << endl;
+	cout << "num_of_tasks = " << num_of_tasks << endl;
 
 	int curr_row;
 	int t;
@@ -499,6 +499,12 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 	//cout << "test14" << endl;
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
+		cout << "Task " << t << endl;
+		for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
+			cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
+		}
+		cout << endl;
+
 		double tmp = 0.0;
 		
 		if ((*spmv_task_completed)[t]->start_flag) {
