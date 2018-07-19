@@ -277,7 +277,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 	time_post = get_time() - curr_time;
 		
-	cout << "time_parse = " << time_parse << ", time_comm = " << time_comm << ", time_comp = "<< time_comp <<", time_post = " << time_post << endl;
+	//cout << "time_parse = " << time_parse << ", time_comm = " << time_comm << ", time_comp = "<< time_comp <<", time_post = " << time_post << endl;
 
 	
 

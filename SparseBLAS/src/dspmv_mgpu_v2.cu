@@ -65,16 +65,16 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	curr_time = get_time();
 
-	cout << "starting " << ngpu << " GPUs." << endl;
+	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
-	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
+	//cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
+	//cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
 	#pragma omp parallel default (shared)
 	{
 		
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
-		cout << "thread " << dev_id <<"/" << omp_get_num_threads() << "started" << endl;
+		//cout << "thread " << dev_id <<"/" << omp_get_num_threads() << "started" << endl;
 		cudaSetDevice(dev_id);
 		
 		cusparseStatus_t status[copy_of_workspace];
@@ -114,7 +114,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
    		c = 0; 
     	
-    	cout << "GPU " << dev_id << " entering loop" << endl;
+    	//cout << "GPU " << dev_id << " entering loop" << endl;
 
 
     	int num_of_assigned_task = 0;
@@ -124,7 +124,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
-				cout << "GPU " << dev_id << " try to get one task" << endl;
+				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
 
@@ -134,8 +134,8 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
 						num_of_assigned_task++;
-						cout << "GPU " << dev_id << " got one task" << endl;
-						cout << "Number of task left: " << (*spmv_task_pool).size() << "/" << num_of_tasks << endl;
+						//cout << "GPU " << dev_id << " got one task" << endl;
+						//cout << "Number of task left: " << (*spmv_task_pool).size() << "/" << num_of_tasks << endl;
 					} else {
 						curr_spmv_task = NULL;
 					}
@@ -192,7 +192,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	time_post = get_time() - curr_time;
 
-	cout << "time_parse = " << time_parse << ", time_comm_comp = " << time_comm_comp << ", time_post = " << time_post << endl;
+	//cout << "time_parse = " << time_parse << ", time_comm_comp = " << time_comm_comp << ", time_post = " << time_post << endl;
 }
 
 
