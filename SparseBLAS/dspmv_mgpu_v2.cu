@@ -392,51 +392,51 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
-	//cudaSetDevice(dev_id);
+	cudaSetDevice(dev_id);
 
-	//cudaStream_t stream;
+	cudaStream_t stream;
 
-	//cusparseGetStream(handle, &stream);
+	cusparseGetStream(handle, &stream);
 
-	// cout << "dev_m[d] = " << t->dev_m << endl;
-	// cout << "dev_n[d] = " << t->dev_n << endl;
-	// cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
-	// cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
-	// cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	cout << "dev_m[d] = " << t->dev_m << endl;
+	cout << "dev_n[d] = " << t->dev_n << endl;
+	cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
+	cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
+	cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
 
-	// cudaMemcpyAsync(&(t->host_y[t->start_row]),  t->dev_y,  (size_t)( t->dev_m*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
-	// cudaMemcpyAsync(t->host_x, t->dev_x,                (size_t)(t->dev_n*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	cudaMemcpyAsync(&(t->host_y[t->start_row]),  t->dev_y,  (size_t)( t->dev_m*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
+	cudaMemcpyAsync(t->host_x, t->dev_x,                (size_t)(t->dev_n*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
 
-	// cudaDeviceSynchronize();
+	cudaDeviceSynchronize();
 
-	// cout << "dev_csrRowPtr = [";
-	// for (int i = 0; i < t->dev_m + 1; i++) {
-	// 	cout << t->host_csrRowPtr[i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "csrColIndex = [";
-	// for (int i = 0; i < t->dev_nnz; i++) {
-	// 	cout << t->host_csrColIndex[t->start_idx+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "csrVal[start_idx[d]] = [";
-	// for (int i = 0; i < t->dev_nnz; i++) {
-	// 	cout << t->host_csrVal[t->start_idx+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "y[start_row[d]] = [";
-	// for (int i = 0; i < t->dev_m; i++) {
-	// 	cout << t->host_y[t->start_row+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "dev_x[d] = [";
-	// for (int i = 0; i < t->dev_n; i++) {
-	// 	cout << t->host_x[i] << ", ";
-	// }
-	// cout << "]" << endl;
+	cout << "dev_csrRowPtr = [";
+	for (int i = 0; i < t->dev_m + 1; i++) {
+		cout << t->host_csrRowPtr[i] << ", ";
+	}
+	cout << "]" << endl;
+	cout << "csrColIndex = [";
+	for (int i = 0; i < t->dev_nnz; i++) {
+		cout << t->host_csrColIndex[t->start_idx+i] << ", ";
+	}
+	cout << "]" << endl;
+	cout << "csrVal[start_idx[d]] = [";
+	for (int i = 0; i < t->dev_nnz; i++) {
+		cout << t->host_csrVal[t->start_idx+i] << ", ";
+	}
+	cout << "]" << endl;
+	cout << "y[start_row[d]] = [";
+	for (int i = 0; i < t->dev_m; i++) {
+		cout << t->host_y[t->start_row+i] << ", ";
+	}
+	cout << "]" << endl;
+	cout << "dev_x[d] = [";
+	for (int i = 0; i < t->dev_n; i++) {
+		cout << t->host_x[i] << ", ";
+	}
+	cout << "]" << endl;
 
-	// cout << "t->alpha = " << *(t->alpha) << endl;
-	// cout << "t->beta = " << *(t->beta) << endl;
+	cout << "t->alpha = " << *(t->alpha) << endl;
+	cout << "t->beta = " << *(t->beta) << endl;
 
 	//cout << "test10" << endl;
 
@@ -500,7 +500,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		cout << "Task " << t << endl;
-		cout << "flag = " << (*spmv_task_completed)[t]->start_flag << endl;
+		cout << "flag = " << (*spmv_task_completed)[t]->start_flag <<" " <<   (*spmv_task_completed)[t]->end_flag << endl;
 		for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
 			cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
 		}
