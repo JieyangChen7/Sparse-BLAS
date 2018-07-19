@@ -505,11 +505,11 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 	//cout << "test14" << endl;
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
-		 cout << "Task " << t << endl;
-		 cout << "flag = " << (*spmv_task_completed)[t]->start_flag <<" " <<   (*spmv_task_completed)[t]->end_flag << endl;
-		 for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
-		 	cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
-		 }
+		 //cout << "Task " << t << endl;
+		 //cout << "flag = " << (*spmv_task_completed)[t]->start_flag <<" " <<   (*spmv_task_completed)[t]->end_flag << endl;
+		 //for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
+		 //	cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
+		 //}
 		 cout << endl;
 
 		double tmp = 0.0;
