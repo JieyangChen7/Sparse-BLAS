@@ -365,7 +365,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 ceil(nnz/divide),
+					 nnz/divide,
 					 copy_of_workspace);
 		time_v2 = get_time() - curr_time;	
 
