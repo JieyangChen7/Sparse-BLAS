@@ -500,6 +500,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 	int t = 0;
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		cout << "Task " << t << endl;
+		cout << "flag = " << (*spmv_task_completed)[t]->start_flag << endl;
 		for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
 			cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
 		}
