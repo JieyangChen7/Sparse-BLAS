@@ -507,13 +507,21 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 		cout << endl;
 
 		double tmp = 0.0;
+
+		if ((*spmv_task_completed)[t]->dev_m == 1 && 
+			((*spmv_task_completed)[t]->start_flag) && 
+			((*spmv_task_completed)[t]->end_flag)) {
+			tmp = y[(*spmv_task_completed)[t]->start_row];
+			(*spmv_task_completed)[t]->local_result_y[0] += tmp;
+
+		}
 		
-		if ((*spmv_task_completed)[t]->start_flag) {
+		else if ((*spmv_task_completed)[t]->start_flag) {
 			tmp = y[(*spmv_task_completed)[t]->start_row];
 			(*spmv_task_completed)[t]->local_result_y[0] += tmp;
 		}
 
-		if ((*spmv_task_completed)[t]->end_flag) {
+		else if ((*spmv_task_completed)[t]->end_flag) {
 			tmp = y[(*spmv_task_completed)[t]->end_row];
 			(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp;
 		}
