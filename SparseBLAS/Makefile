@@ -21,7 +21,7 @@ all: lib test
 
 lib: dspmv_mgpu_v2.o dspmv_mgpu_v1.o dspmv_mgpu_baseline.o csr5_kernel.o spmv_helper.o
 
-test: lib ./test/dspmv_test.o
+test: lib dspmv_test.o
 	(cd test && nvcc $(NVCC_FLAGS) ../src/csr5_kernel.o ../src/spmv_helper.o dspmv_test.o ../src/dspmv_mgpu_baseline.o ../src/dspmv_mgpu_v1.o ../src/dspmv_mgpu_v2.o -o spmv $(INC) $(CUDA_INCLUDES) $(CUDA_LIBS) -D VALUE_TYPE=$(VALUE_TYPE) -D NUM_RUN=$(NUM_RUN)
 
 dspmv_mgpu_v2.o: ./src/dspmv_mgpu_v2.cu 
