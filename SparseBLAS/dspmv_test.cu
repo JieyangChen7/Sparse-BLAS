@@ -388,7 +388,7 @@ int main(int argc, char *argv[]) {
 	avg_time_v1/=repeat_test;
 	avg_time_v2/=repeat_test;
 
-	cout << "================================Average===============================" << endl;
+	cout << "................................Average..............................." << endl;
 
 
 	cout << setw(11) << avg_time_baseline;
