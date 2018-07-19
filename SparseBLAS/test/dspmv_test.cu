@@ -317,11 +317,11 @@ int main(int argc, char *argv[]) {
 
 	cout << "Warming up GPU(s)..." << endl;
 	for (int i = 0; i < warm_up_iter; i++) {
-		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 					 cooVal, csrRowPtr, cooColIndex, 
-		// 					 x, &BETA,
-		// 					 y1,
-		// 					 ngpu);
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
 	}
 	cout << "Starting tests..." << endl;
 
@@ -359,14 +359,14 @@ int main(int argc, char *argv[]) {
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		spMV_mgpu_v2(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y3,
-					 ngpu,
-					 kernel_version,
-					 ceil(nnz/divide),
-					 copy_of_workspace);
+		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y3,
+		// 			 ngpu,
+		// 			 kernel_version,
+		// 			 ceil(nnz/divide),
+		// 			 copy_of_workspace);
 		time_v2 = get_time() - curr_time;	
 
 		
