@@ -222,10 +222,10 @@ int main(int argc, char *argv[]) {
 	//cout << endl;
 
 
-	// csrRowPtr[0] = 0;
-	// for (int i = 1; i <= m; i++) {
-	// 	csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
-	// }
+	csrRowPtr[0] = 0;
+	for (int i = 1; i <= m; i++) {
+		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
+	}
 
 	// cout << "csrRowPtr: ";
 	// for (int i = 0; i <= m; i++) {
