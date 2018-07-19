@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
 		cout << "Start generating data ..." << endl;
 		for (int i = 0; i < m; i += nb) {
 			cout << ((double)p / nnz) * 100 << "%" << endl;
-			cout << p << endl;
+			//cout << p << endl;
 			if (i == 0) {
 				r = r1;
 			} else {
@@ -166,13 +166,13 @@ int main(int argc, char *argv[]) {
 
 					cooRowIndex[p] = ii;
 					cooColIndex[p] = j;
-					cooVal[p] = ((double) rand() / (RAND_MAX));
+					cooVal[p] = 1;//((double) rand() / (RAND_MAX));
 					p++;
 					//cout << 1 << " ";
 					//}
 
 				}
-				cout << endl;
+				//cout << endl;
 			}
 
 
