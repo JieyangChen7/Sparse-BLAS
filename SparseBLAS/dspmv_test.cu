@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				r = r2;
 			}
-
+			cout << "Matrix:" << endl;
 			for (int ii = i; ii < i + nb; ii++) {
 				for (int j = 0; j < n * r; j++) {
 					//if (p > nnz) { cout << "error" << endl; break;}
@@ -150,11 +150,13 @@ int main(int argc, char *argv[]) {
 
 					cooRowIndex[p] = ii;
 					cooColIndex[p] = j;
-					cooVal[p] = ((double) rand() / (RAND_MAX));
+					cooVal[p] = 1;//((double) rand() / (RAND_MAX));
 					p++;
+					cout << 1 << " ";
 					//}
 
 				}
+				cout << endl;
 			}
 
 
@@ -370,7 +372,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 ngpu,
 					 kernel_version,
-					 nnz/divide,
+					 ceil(nnz/divide),
 					 copy_of_workspace,
 					 &time_parse,
 					 &time_comp,
