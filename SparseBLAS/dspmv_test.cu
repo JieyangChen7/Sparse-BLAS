@@ -358,8 +358,8 @@ int main(int argc, char *argv[]) {
 		cout << setw(11) << time_baseline;
 		cout << setw(20) << time_v1;
 		cout << setw(20) << time_v2;
-		if (correct) cout << setw(15) <<"Pass" << endl;
-		else cout << setw(15) << "No pass" << endl;
+		if (correct) cout << setw(15) <<"Pass";
+		else cout << setw(15) << "No pass";
 		cout << endl;
 
 	
