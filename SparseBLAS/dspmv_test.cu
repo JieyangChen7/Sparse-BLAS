@@ -120,11 +120,11 @@ int main(int argc, char *argv[]) {
 		int nb = m / 8;
 		double r;
 		double r1 = 0.9;
-		double r2 = 0.01;
+		double r2 = 0.1;
 
 		nnz = nb * n * r1 + (m - nb) * (n * r2);
 
-		
+		cout << "nnz = " << nnz << endl;
 
 		cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
