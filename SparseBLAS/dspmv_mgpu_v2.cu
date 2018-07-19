@@ -2,7 +2,6 @@
 #include "cusparse.h"
 #include <vector>
 #include <iostream>
-#include <iomanip>
 #include <cstdio>
 #include <pthread.h>
 #include "spmv_task.h"
@@ -11,7 +10,6 @@
 //#include "anonymouslib_cuda.h"
 
 using namespace std;
-using std::setw;
 
 void * spmv_worker(void * arg);
 

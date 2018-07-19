@@ -5,6 +5,7 @@
 #include <cuda_runtime.h>
 #include "cusparse.h"
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include "mmio.h"
 #include <float.h>
