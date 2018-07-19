@@ -300,8 +300,8 @@ int main(int argc, char *argv[]) {
 
 	//cudaProfilerStart();
 
-	cout << "Baseline            Version1            Version2          Check" << endl;
-	cout << "===============================================================" << endl;
+	cout << "   Baseline            Version1            Version2          Check" << endl;
+	cout << "=====================================================================" << endl;
 
 	for (int i = 0; i < repeat_test; i++) {
 		for (int i = 0; i < m; i++)
@@ -355,7 +355,7 @@ int main(int argc, char *argv[]) {
 				correct = false;
 			}
 		}
-		cout << setw(8) << time_baseline;
+		cout << setw(11) << time_baseline;
 		cout << setw(20) << time_v1;
 		cout << setw(20) << time_v2;
 		if (correct) cout << setw(15) <<"Pass" << endl;
@@ -388,10 +388,10 @@ int main(int argc, char *argv[]) {
 	avg_time_v1/=repeat_test;
 	avg_time_v2/=repeat_test;
 
-	cout << "==============================Average==========================" << endl;
+	cout << "================================Average===============================" << endl;
 
 
-	cout << setw(8) << avg_time_baseline;
+	cout << setw(11) << avg_time_baseline;
 	cout << setw(20) << avg_time_v1;
 	cout << setw(20) << avg_time_v2;
 	cout << endl;
