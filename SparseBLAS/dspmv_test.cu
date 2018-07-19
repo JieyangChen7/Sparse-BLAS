@@ -140,6 +140,8 @@ int main(int argc, char *argv[]) {
 
 		nnz = p;
 
+		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+
 		cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
@@ -176,7 +178,7 @@ int main(int argc, char *argv[]) {
 
 		}
 
-		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+		cout << "m: " << m << " n: " << n << " nnz: " << p << endl;
 
 
 		cout << "Done generating data." << endl;
