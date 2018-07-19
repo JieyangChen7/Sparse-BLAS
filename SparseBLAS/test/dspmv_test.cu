@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
 
 					cooRowIndex[p] = ii;
 					cooColIndex[p] = j;
-					cooVal[p] = ((double) rand() / (RAND_MAX));
+					cooVal[p] = 1;//((double) rand() / (RAND_MAX));
 					p++;
 
 					//cout << 1 << " ";
