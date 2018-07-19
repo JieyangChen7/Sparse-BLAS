@@ -10,16 +10,16 @@ CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse -Xcompiler="-lpthre
 INC = -I ./include
 
 dspmv_mgpu_v2.o: dspmv_mgpu_v2.cu 
-	nvcc -c $(NVCC_FLAGS) ./src/dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_v1.o: dspmv_mgpu_v1.cu 
-	nvcc -c $(NVCC_FLAGS) ./src/dspmv_mgpu_v1.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_v1.cu $(INC) $(CUDA_INCLUDES)
 
 dspmv_mgpu_baseline.o: dspmv_mgpu_baseline.cu 
-	nvcc -c $(NVCC_FLAGS) ./src/dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_baseline.cu $(INC) $(CUDA_INCLUDES)
 
 csr5_kernel.o: csr5_kernel.cu 
-	nvcc -c $(NVCC_FLAGS) ./src/csr5_kernel.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) csr5_kernel.cu $(INC) $(CUDA_INCLUDES)
 
 spmv_helper.o: spmv_helper.cu 
-	nvcc -c $(NVCC_FLAGS) ./src/spmv_helper.cu $(INC) $(CUDA_INCLUDES)
+	nvcc -c $(NVCC_FLAGS) spmv_helper.cu $(INC) $(CUDA_INCLUDES)
