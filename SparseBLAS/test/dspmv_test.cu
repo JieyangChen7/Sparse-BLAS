@@ -74,9 +74,52 @@ int main(int argc, char *argv[]) {
     double * cooVal;
     int * csrRowPtr;
 
+
+    int deviceCount;
+	cudaGetDeviceCount(&deviceCount);
+	if (deviceCount < ngpu) {
+		cout << "Error: Not enough number of GPUs. Only " << deviceCount << "available." << endl;
+		return -1;
+	}
+	if (ngpu <= 0) {
+		cout << "Error: Number of GPU(s) needs to be greater than 0." << endl;
+		return -1;
+	}
+
+	if (kernel_version != 1 || kernel_version != 2 || kernel_version != 3) {
+		cout << "Error: The kernel version can only be: 1, 2, or 3." << endl;
+		return -1;
+	}
+
+	if (divide <= 0) {
+		cout << "Error: Number of tasks needs to be greater than 0." << endl;
+		return -1;
+	}
+
+	if (copy_of_workspace <= 0) {
+		cout << "Error: Number of Hyper-Q needs to be greater than 0." << endl;
+		return -1;
+	}
+
+
+
+	cout << "Using " << ngpu << " GPU(s)." << endl; 
+	cout << "Kernel #" << kernel_version << " is selected." << endl;
+	cout << divide <<  "total task(s) will be generated for version 2 with "<< copy_of_workspace << " Hyper-Q(s) on each GPU." << endl;
+
+	// int device;
+	// for (device = 0; device < deviceCount; ++device) 
+	// {
+	//     cudaDeviceProp deviceProp;
+	//     cudaGetDeviceProperties(&deviceProp, device);
+	//     printf("Device %d has compute capability %d.%d.\n",
+	//            device, deviceProp.major, deviceProp.minor);
+	// }
+
+
     if (input_type == 'f') {
 
-	    cout << "loading input matrix from " << filename << endl;
+	    cout << "Loading input matrix from " << filename << endl;
 	    if ((f = fopen(filename, "r")) == NULL) {
 	        exit(1);
 	    }
@@ -142,6 +185,7 @@ int main(int argc, char *argv[]) {
 		nnz = p;
 
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+		
 
 		cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
@@ -150,10 +194,9 @@ int main(int argc, char *argv[]) {
 	    p = 0;
 		
 
-		cout << "Start generating data ..." << endl;
+		cout << "Start generating data ";
 		for (int i = 0; i < m; i += nb) {
-			cout << ((double)p / nnz) * 100 << "%" << endl;
-			//cout << p << endl;
+			cout << ".";
 			if (i == 0) {
 				r = r1;
 			} else {
@@ -169,15 +212,14 @@ int main(int argc, char *argv[]) {
 					cooColIndex[p] = j;
 					cooVal[p] = ((double) rand() / (RAND_MAX));
 					p++;
+
 					//cout << 1 << " ";
 					//}
-
 				}
 				//cout << endl;
 			}
-
-
 		}
+		cout << endl;
 
 		//cout << "m: " << m << " n: " << n << " nnz: " << p << endl;
 
@@ -257,21 +299,6 @@ int main(int argc, char *argv[]) {
 		y2[i] = 0.0;
 		y3[i] = 0.0;
 	}
-
-
-
-	int deviceCount;
-	cudaGetDeviceCount(&deviceCount);
-	int device;
-	for (device = 0; device < deviceCount; ++device) 
-	{
-	    cudaDeviceProp deviceProp;
-	    cudaGetDeviceProperties(&deviceProp, device);
-	    printf("Device %d has compute capability %d.%d.\n",
-	           device, deviceProp.major, deviceProp.minor);
-	}
-
-	cout << "Using " << ngpu << " GPU(s)." << endl; 
 
 	double ALPHA = 1.0;
 	double BETA = 0.0;
