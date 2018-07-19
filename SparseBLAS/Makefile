@@ -12,7 +12,7 @@ CUDA_SAMPLES_PATH = /home/chen838/cuda-9.0/samples
 #CUDA_PARAMETERS
 NVCC_FLAGS = -O3  -w -m64 -gencode=arch=compute_60,code=compute_60 --default-stream per-thread
 CUDA_INCLUDES = -I$(CUDA_INSTALL_PATH)/include -I$(CUDA_SAMPLES_PATH)/common/inc
-CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse -Xcompiler="-lpthread -fopenmp" 
+CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse -Xcompiler -fopenmp 
 INC = -I ../include
 
 .PHONY: all lib test clean
