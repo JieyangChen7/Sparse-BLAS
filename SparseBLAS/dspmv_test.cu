@@ -325,15 +325,15 @@ int main(int argc, char *argv[]) {
 
 		cout << "=============Baseline[start]============" <<endl;
 
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y1,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post);
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y1,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post);
 		cout << "=============Baseline[done]============" <<endl;
 
 		
