@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
 		int nb = m / 8;
 		double r;
 		double r1 = 0.9;
-		double r2 = 0.1;
+		double r2 = 0.01;
 
 		int p = 0;
 
