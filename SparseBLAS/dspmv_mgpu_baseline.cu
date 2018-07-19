@@ -59,19 +59,19 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 		cudaSetDevice(d);
 
-		cout << "GPU " << d << ":" << endl;
+		//cout << "GPU " << d << ":" << endl;
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
-		cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
+		//cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
 
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
 
-		cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
+		// cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
-		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		// cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -79,21 +79,21 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 			   (void *)&csrRowPtr[start_row[d]], 
 			   (dev_m[d] + 1) * sizeof(int));
 
-		cout << "csrRowPtr (before): ";
-		for (int i = 0; i <= dev_m[d]; i++) {
-			cout << host_csrRowPtr[d][i] << ", ";
-		}
-		cout << endl;
+		// cout << "csrRowPtr (before): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
 		for (int i = 0; i < dev_m[d] + 1; i++) {
 			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
 		}
 
-		cout << "csrRowPtr (after): ";
-		for (int i = 0; i <= dev_m[d]; i++) {
-			cout << host_csrRowPtr[d][i] << ", ";
-		}
-		cout << endl;
+		// cout << "csrRowPtr (after): ";
+		// for (int i = 0; i <= dev_m[d]; i++) {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		// cout << endl;
 
 	}
 
@@ -128,7 +128,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
 		cudaStat1[d] = cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int));
-		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d],100 * sizeof(int)); 
+		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d] * sizeof(int)); 
 		cudaStat3[d] = cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d] * sizeof(double)); 
 
 		cudaStat4[d] = cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
@@ -149,32 +149,32 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
 		if (cudaStat1[d] != cudaSuccess) cout << "error 1" << endl;
 		cout << "host_csrRowPtr[d] = ";
-		for (int i = 0; i < dev_m[d] + 1; ++i)
-		{
-			cout << host_csrRowPtr[d][i] << ", ";
-		}
-		cout << endl;
+		// for (int i = 0; i < dev_m[d] + 1; ++i)
+		// {
+		// 	cout << host_csrRowPtr[d][i] << ", ";
+		// }
+		//cout << endl;
 		//cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
 		for (int i = 0 ; i<dev_nnz[d]; i+=1) {
 			cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], i*sizeof(int),   cudaMemcpyHostToDevice); 
 			
 			if (cudaStat2[d] != cudaSuccess) cout << "i=" << i <<" error 2 " << cudaStat2[d] <<  endl;
 		}
-		cout << "csrColIndex[d] = ";
-		for (int i = 0; i < dev_nnz[d]; ++i)
-		{
-			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
-		}
-		cout << endl;
+		//cout << "csrColIndex[d] = ";
+		// for (int i = 0; i < dev_nnz[d]; ++i)
+		// {
+		// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
+		// }
+		// cout << endl;
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice);
 		if (cudaStat3[d] != cudaSuccess) cout << "error 3 " << cudaStat3[d] <<  endl; 
 
-		cout << "csrVal[d] = ";
-		for (int i = 0; i < dev_nnz[d]; ++i)
-		{
-			cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
-		}
-		cout << endl;
+		//cout << "csrVal[d] = ";
+		// for (int i = 0; i < dev_nnz[d]; ++i)
+		// {
+		// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
+		// }
+		// cout << endl;
 
 
 		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
