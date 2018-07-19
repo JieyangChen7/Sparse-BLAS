@@ -510,16 +510,22 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 		
 		if ((*spmv_task_completed)[t]->start_flag) {
 			tmp = y[(*spmv_task_completed)[t]->start_row];
+			(*spmv_task_completed)[t]->local_result_y[0] += tmp
+		}
+
+		if ((*spmv_task_completed)[t]->end_flag) {
+			tmp = y[(*spmv_task_completed)[t]->end_row];
+			(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp
 		}
 
 		memcpy(&y[(*spmv_task_completed)[t]->start_row], 
 			   (*spmv_task_completed)[t]->local_result_y, 
 			  ((*spmv_task_completed)[t]->dev_m * sizeof(double))); 
 
-		if ((*spmv_task_completed)[t]->start_flag) {
-			y[(*spmv_task_completed)[t]->start_row] += tmp;
-			y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
-		}
+		// if ((*spmv_task_completed)[t]->start_flag) {
+		// 	y[(*spmv_task_completed)[t]->start_row] += tmp;
+		// 	y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
+		// }
 	}
 
 	//cout << "test15" << endl;
