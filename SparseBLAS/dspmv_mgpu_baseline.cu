@@ -147,6 +147,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 		cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
+		if (cudaStat1[d] != cudaSuccess) cout << "error 1" << endl;
 		cout << "host_csrRowPtr[d] = ";
 		for (int i = 0; i < dev_m[d] + 1; ++i)
 		{
@@ -154,13 +155,16 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		}
 		cout << endl;
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
+		if (cudaStat2[d] != cudaSuccess) cout << "error 2" << endl;
 		cout << "csrColIndex[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
 			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
 		}
 		cout << endl;
-		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
+		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice);
+		if (cudaStat3[d] != cudaSuccess) cout << "error 3" << endl; 
+
 		cout << "csrVal[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
 		{
@@ -170,8 +174,10 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 
 		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
+		if (cudaStat4[d] != cudaSuccess) cout << "error 4" << endl;
 
 		cudaStat5[d] = cudaMemcpy(dev_x[d], x,                (size_t)(dev_n[d]*sizeof(double)), cudaMemcpyHostToDevice); 
+		if (cudaStat5[d] != cudaSuccess) cout << "error 5" << endl;
 
 		// cout << "x = ";
 		// for (int i = 0; i < dev_n[d]; ++i)
