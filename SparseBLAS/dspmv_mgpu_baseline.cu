@@ -128,7 +128,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cusparseSetMatIndexBase(descr[d],CUSPARSE_INDEX_BASE_ZERO); 
 
 		cudaStat1[d] = cudaMalloc((void**)&dev_csrRowPtr[d],   (dev_m[d] + 1) * sizeof(int));
-		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d], dev_nnz[d] * sizeof(int)); 
+		cudaStat2[d] = cudaMalloc((void**)&dev_csrColIndex[d],100 * sizeof(int)); 
 		cudaStat3[d] = cudaMalloc((void**)&dev_csrVal[d],      dev_nnz[d] * sizeof(double)); 
 
 		cudaStat4[d] = cudaMalloc((void**)&dev_x[d],           dev_n[d] * sizeof(double)); 
@@ -156,8 +156,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cout << endl;
 		//cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
 		for (int i = 0 ; i<dev_nnz[d]; i+=1) {
-			cout << "csrRowPtr[start_row[d]] = " << csrRowPtr[start_row[d]] << endl;
-			cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[0], i*sizeof(int),   cudaMemcpyHostToDevice); 
+			cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], i*sizeof(int),   cudaMemcpyHostToDevice); 
 			
 			if (cudaStat2[d] != cudaSuccess) cout << "i=" << i <<" error 2 " << cudaStat2[d] <<  endl;
 		}
