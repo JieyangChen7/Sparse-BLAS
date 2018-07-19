@@ -17,10 +17,15 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 				 double * y,
 				 int ngpu){
 
-	//double curr_time = 0.0;
+	double curr_time = 0.0;
+	double time_parse = 0.0;
+	double time_comm = 0.0;
+	double time_comp = 0.0;
+	double time_post = 0.0;
+
 	//double tmp = 0.0;
 
-	//curr_time = get_time();
+	curr_time = get_time();
 
 
 	cudaStream_t * stream = new cudaStream_t [ngpu];
@@ -94,8 +99,8 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 	}
 
 
-	//*time_parse = get_time() - curr_time;
-	//curr_time = get_time();
+	time_parse = get_time() - curr_time;
+	curr_time = get_time();
 
 	for (int d = 0; d < ngpu; d++){
 		cudaSetDevice(d);
@@ -200,8 +205,8 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 	}
 
-	// *time_comm = get_time() - curr_time;
-	// curr_time = get_time();
+	time_comm = get_time() - curr_time;
+	curr_time = get_time();
 
 
 	// << "Start computation ... " << endl;
@@ -229,8 +234,8 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 	
 
-	//*time_comp = get_time() - curr_time;
-	//curr_time = get_time();
+	time_comp = get_time() - curr_time;
+	curr_time = get_time();
 
 	for (int d = 0; d < ngpu; d++)
 	{
@@ -260,7 +265,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		cudaFree(dev_y[d]);
 	}
 
-	//*time_post = get_time() - curr_time;
+	
 	delete[] dev_csrVal;
 	delete[] dev_csrRowPtr;
 	delete[] dev_csrColIndex;
@@ -269,7 +274,11 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 	delete[] host_csrRowPtr;
 	delete[] start_row;
 	delete[] end_row;
+
+	time_post = get_time() - curr_time;
 		
+	cout << "time_parse = " << time_parse << ", time_comm = " << time_comm << ", time_comp = "<< time_comp <<", time_post = " << time_post << endl;
+
 	
 
 }

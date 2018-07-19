@@ -40,9 +40,12 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 				  int copy_of_workspace)
 {
 
-	//double curr_time = 0.0;
+	double curr_time = 0.0;
+	double time_parse = 0.0;
+	double time_comm_comp = 0.0;
+	double time_post = 0.0；
 
-	//curr_time = get_time();
+	curr_time = get_time();
 
 	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
 	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
@@ -58,9 +61,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	(*spmv_task_completed).reserve(num_of_tasks);
 
-	// *time_parse = get_time() - curr_time;
+	time_parse = get_time() - curr_time;
 
-	// curr_time = get_time();
+	curr_time = get_time();
 
 	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
@@ -172,9 +175,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	}
 
-	//*time_comm_comp = get_time() - curr_time;
+	time_comm_comp = get_time() - curr_time;
 
-	//curr_time = get_time();
+	curr_time = get_time();
 
 	gather_results(spmv_task_completed, y, beta);
 
@@ -186,7 +189,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	}
 
-	//*time_post = get_time() - curr_time;
+	time_post = get_time() - curr_time;
+
+	cout << "time_parse = " << time_parse << ", time_comm_comp = " << time_comm_comp << ", time_post = " << time_post << endl;
 }
 
 

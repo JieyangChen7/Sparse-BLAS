@@ -20,15 +20,14 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 				  int ngpu, 
 				  int kernel){
 
-		//double curr_time = 0.0;
+		double curr_time = 0.0;
+		double time_parse = 0.0;
+		double time_comm = 0.0;
+		double time_comp = 0.0;
+		double time_post = 0.0;
 
-		//double tmp = 0.0;
-		// tmp = get_time();
 
-		//curr_time = get_time();
-
-
-		//tmp = get_time();
+		curr_time = get_time();
 
 
 		int  * start_idx  = new int[ngpu];
@@ -274,9 +273,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		}
 
 
-		//*time_parse = get_time() - curr_time;
+		time_parse = get_time() - curr_time;
 
-		//curr_time = get_time();
+		curr_time = get_time();
 
 		//cout << "test8" << endl;
 
@@ -307,11 +306,11 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			cudaSetDevice(d);
 			cudaDeviceSynchronize();
 		}
-		//*time_comm = get_time() - curr_time;
+		time_comm = get_time() - curr_time;
 
 		//cout << "test9" << endl;
 
-		//curr_time = get_time();
+		curr_time = get_time();
 
 
 		for (int d = 0; d < ngpu; ++d) 
@@ -348,9 +347,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		// *time_comp = get_time() - curr_time;
+		time_comp = get_time() - curr_time;
 
-		// curr_time = get_time();
+		curr_time = get_time();
 
 
 		//cout << "test10" << endl;
@@ -412,7 +411,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 
 		}
 
-		//*time_post = get_time() - curr_time;
+		
 
 		delete[] dev_csrVal;
 		delete[] dev_csrRowPtr;
@@ -424,6 +423,10 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		delete[] end_row;
 		//delete[] host_y;
 		//delete[] host_csrRowPtr;
+
+		time_post = get_time() - curr_time;
+
+		cout << "time_parse = " << time_parse << ", time_comm = " << time_comm << ", time_comp = "<< time_comp <<", time_post = " << time_post << endl;
 
 
 
