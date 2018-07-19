@@ -510,7 +510,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 		 //for (int i = 0; i < (*spmv_task_completed)[t]->dev_m; i++) {
 		 //	cout << (*spmv_task_completed)[t]->local_result_y[i] << " ";
 		 //}
-		 cout << endl;
+		 //cout << endl;
 
 		double tmp = 0.0;
 
