@@ -222,9 +222,11 @@ int main(int argc, char *argv[]) {
 	//cout << endl;
 
 
+	cout << "csrRowPtr: ";
 	csrRowPtr[0] = 0;
 	for (int i = 1; i <= m; i++) {
 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
+		cout << "csrRowPtr[" << i <<"] = "<<csrRowPtr[i] << endl;
 	}
 
 	// cout << "csrRowPtr: ";
