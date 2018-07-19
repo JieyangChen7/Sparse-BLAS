@@ -9,7 +9,9 @@ CUDA_INCLUDES = -I$(CUDA_INSTALL_PATH)/include -I$(CUDA_SAMPLES_PATH)/common/inc
 CUDA_LIBS = -L$(CUDA_INSTALL_PATH)/lib64 -lcudart -lcusparse -Xcompiler="-lpthread -fopenmp" 
 INC = -I ../include
 
-.DEFAULT_GOAL := dspmv_mgpu_v2.o dspmv_mgpu_v1.o dspmv_mgpu_baseline.o csr5_kernel.o spmv_helper.o
+.DEFAULT_GOAL := all
+
+all: dspmv_mgpu_v2.o dspmv_mgpu_v1.o dspmv_mgpu_baseline.o csr5_kernel.o spmv_helper.o
 
 dspmv_mgpu_v2.o: dspmv_mgpu_v2.cu 
 	nvcc -c $(NVCC_FLAGS) dspmv_mgpu_v2.cu $(INC) $(CUDA_INCLUDES)
