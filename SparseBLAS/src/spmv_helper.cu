@@ -42,6 +42,6 @@ double get_time()
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
 	double ms = (double)tp.tv_sec * 1000 + (double)tp.tv_usec / 1000; //get current timestamp in milliseconds
-	return 0.00001;
-	//return ms / 1000;
+	//return 0.00001;
+	return ms / 1000;
 }

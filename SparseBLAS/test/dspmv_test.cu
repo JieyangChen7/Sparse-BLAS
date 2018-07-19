@@ -339,34 +339,34 @@ int main(int argc, char *argv[]) {
 		}
 
 		curr_time = get_time();
-		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 					 cooVal, csrRowPtr, cooColIndex, 
-		// 					 x, &BETA,
-		// 					 y1,
-		// 					 ngpu);
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
 		time_baseline = get_time() - curr_time;	
 
 
 		curr_time = get_time();
-		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y2,
-		// 			 ngpu,
-		// 			 kernel_version);
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y2,
+					 ngpu,
+					 kernel_version);
 		time_v1 = get_time() - curr_time;	
 		
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y3,
-		// 			 ngpu,
-		// 			 kernel_version,
-		// 			 ceil(nnz/divide),
-		// 			 copy_of_workspace);
+		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y3,
+					 ngpu,
+					 kernel_version,
+					 ceil(nnz/divide),
+					 copy_of_workspace);
 		time_v2 = get_time() - curr_time;	
 
 		
