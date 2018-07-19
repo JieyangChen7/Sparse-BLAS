@@ -235,15 +235,15 @@ int main(int argc, char *argv[]) {
 	// }
 	// cout << endl;
 
-	double * x;
-	double * y1;
-	double * y2;
-	double * y3;
+	// double * x;
+	// double * y1;
+	// double * y2;
+	// double * y3;
 
-	//x = (double *)malloc(n * sizeof(double)); 
-	//y1 = (double *)malloc(m * sizeof(double)); 
-	y2 = (double *)malloc(m * sizeof(double)); 
-	//y3 = (double *)malloc(m * sizeof(double)); 
+	// //x = (double *)malloc(n * sizeof(double)); 
+	// //y1 = (double *)malloc(m * sizeof(double)); 
+	// y2 = (double *)malloc(m * sizeof(double)); 
+	// //y3 = (double *)malloc(m * sizeof(double)); 
 
 // 	cudaMallocHost((void **)&x, n * sizeof(double));
 // 	cudaMallocHost((void **)&y1, m * sizeof(double));
