@@ -134,7 +134,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 						(*spmv_task_pool).pop_back();
 						(*spmv_task_completed).push_back(curr_spmv_task);
 						num_of_assigned_task++;
-						//cout << "GPU " << dev_id << " got one task" << endl;
+						cout << "GPU " << dev_id << " got one task" << endl;
 					} else {
 						curr_spmv_task = NULL;
 					}
