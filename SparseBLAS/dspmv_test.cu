@@ -222,10 +222,10 @@ int main(int argc, char *argv[]) {
 	//cout << endl;
 
 
-	csrRowPtr[0] = 0;
-	for (int i = 1; i <= m; i++) {
-		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
-	}
+	// csrRowPtr[0] = 0;
+	// for (int i = 1; i <= m; i++) {
+	// 	csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
+	// }
 
 	// cout << "csrRowPtr: ";
 	// for (int i = 0; i <= m; i++) {
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 
 	//x = (double *)malloc(n * sizeof(double)); 
 	//y1 = (double *)malloc(m * sizeof(double)); 
-	//y2 = (double *)malloc(m * sizeof(double)); 
+	y2 = (double *)malloc(m * sizeof(double)); 
 	//y3 = (double *)malloc(m * sizeof(double)); 
 
 // 	cudaMallocHost((void **)&x, n * sizeof(double));
