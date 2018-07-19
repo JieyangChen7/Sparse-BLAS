@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	if (kernel_version != 1 || kernel_version != 2 || kernel_version != 3) {
+	if (kernel_version != 1 && kernel_version != 2 && kernel_version != 3) {
 		cout << "Error: The kernel version can only be: 1, 2, or 3." << endl;
 		return -1;
 	}
