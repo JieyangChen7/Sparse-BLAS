@@ -193,279 +193,279 @@ int main(int argc, char *argv[]) {
 
 
 
-	// Convert COO to CSR
-    //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
-    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+// 	// Convert COO to CSR
+//     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
+//     cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
 
-    //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
-    long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
-    //cout << matrix_data_space << endl;
-
-
-    cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
-
-    int * counter = new int[m];
-    for (int i = 0; i < m; i++) {
-    	counter[i] = 0;
-    }
-	for (int i = 0; i < nnz; i++) {
-		counter[cooRowIndex[i]]++;
-	}
-	//cout << "nnz: " << nnz << endl;
-	//cout << "counter: ";
-	int t = 0;
-	for (int i = 0; i < m; i++) {
-		//cout << counter[i] << ", ";
-		t += counter[i];
-	}
-	//cout << t << endl;
-	//cout << endl;
+//     //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
+//     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
+//     //cout << matrix_data_space << endl;
 
 
-	csrRowPtr[0] = 0;
-	for (int i = 1; i <= m; i++) {
-		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
-	}
+//     cout << "Matrix space size: " << (double)matrix_data_space / 1e9 << " GB." << endl;
 
-	// cout << "csrRowPtr: ";
-	// for (int i = 0; i <= m; i++) {
-	// 	cout << csrRowPtr[i] << ", ";
-	// }
-	// cout << endl;
-
-	double * x;
-	double * y1;
-	double * y2;
-	double * y3;
-
-	//x = (double *)malloc(n * sizeof(double)); 
-	//y1 = (double *)malloc(m * sizeof(double)); 
-	y2 = (double *)malloc(m * sizeof(double)); 
-	//y3 = (double *)malloc(m * sizeof(double)); 
-
-	cudaMallocHost((void **)&x, n * sizeof(double));
-	cudaMallocHost((void **)&y1, m * sizeof(double));
-	//cudaMallocHost((void **)&y2, m * sizeof(double));
-	cudaMallocHost((void **)&y3, m * sizeof(double));
-
-	for (int i = 0; i < n; i++)
-	{
-		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
-	}
+//     int * counter = new int[m];
+//     for (int i = 0; i < m; i++) {
+//     	counter[i] = 0;
+//     }
+// 	for (int i = 0; i < nnz; i++) {
+// 		counter[cooRowIndex[i]]++;
+// 	}
+// 	//cout << "nnz: " << nnz << endl;
+// 	//cout << "counter: ";
+// 	int t = 0;
+// 	for (int i = 0; i < m; i++) {
+// 		//cout << counter[i] << ", ";
+// 		t += counter[i];
+// 	}
+// 	//cout << t << endl;
+// 	//cout << endl;
 
 
-	for (int i = 0; i < m; i++)
-	{
-		y1[i] = 0.0;
-		y2[i] = 0.0;
-		y3[i] = 0.0;
-	}
+// 	csrRowPtr[0] = 0;
+// 	for (int i = 1; i <= m; i++) {
+// 		csrRowPtr[i] = csrRowPtr[i - 1] + counter[i - 1];
+// 	}
+
+// 	// cout << "csrRowPtr: ";
+// 	// for (int i = 0; i <= m; i++) {
+// 	// 	cout << csrRowPtr[i] << ", ";
+// 	// }
+// 	// cout << endl;
+
+// 	double * x;
+// 	double * y1;
+// 	double * y2;
+// 	double * y3;
+
+// 	//x = (double *)malloc(n * sizeof(double)); 
+// 	//y1 = (double *)malloc(m * sizeof(double)); 
+// 	y2 = (double *)malloc(m * sizeof(double)); 
+// 	//y3 = (double *)malloc(m * sizeof(double)); 
+
+// 	cudaMallocHost((void **)&x, n * sizeof(double));
+// 	cudaMallocHost((void **)&y1, m * sizeof(double));
+// 	//cudaMallocHost((void **)&y2, m * sizeof(double));
+// 	cudaMallocHost((void **)&y3, m * sizeof(double));
+
+// 	for (int i = 0; i < n; i++)
+// 	{
+// 		x[i] = 1.0;//((double) rand() / (RAND_MAX)); 
+// 	}
+
+
+// 	for (int i = 0; i < m; i++)
+// 	{
+// 		y1[i] = 0.0;
+// 		y2[i] = 0.0;
+// 		y3[i] = 0.0;
+// 	}
 
 
 
-	int deviceCount;
-	cudaGetDeviceCount(&deviceCount);
-	int device;
-	for (device = 0; device < deviceCount; ++device) 
-	{
-	    cudaDeviceProp deviceProp;
-	    cudaGetDeviceProperties(&deviceProp, device);
-	    printf("Device %d has compute capability %d.%d.\n",
-	           device, deviceProp.major, deviceProp.minor);
-	}
+// 	int deviceCount;
+// 	cudaGetDeviceCount(&deviceCount);
+// 	int device;
+// 	for (device = 0; device < deviceCount; ++device) 
+// 	{
+// 	    cudaDeviceProp deviceProp;
+// 	    cudaGetDeviceProperties(&deviceProp, device);
+// 	    printf("Device %d has compute capability %d.%d.\n",
+// 	           device, deviceProp.major, deviceProp.minor);
+// 	}
 
-	cout << "Using " << ngpu << " GPU(s)." << endl; 
+// 	cout << "Using " << ngpu << " GPU(s)." << endl; 
 
-	double ALPHA = 1.0;
-	double BETA = 0.0;
+// 	double ALPHA = 1.0;
+// 	double BETA = 0.0;
 
-	double time_parse = 0.0;
-	double time_comm = 0.0;
-	double time_comp = 0.0;
-	double time_post = 0.0;
+// 	double time_parse = 0.0;
+// 	double time_comm = 0.0;
+// 	double time_comp = 0.0;
+// 	double time_post = 0.0;
 
-	double avg_time_parse1 = 0.0;
-	double avg_time_comm1 = 0.0;
-	double avg_time_comp1 = 0.0;
-	double avg_time_post1 = 0.0;
+// 	double avg_time_parse1 = 0.0;
+// 	double avg_time_comm1 = 0.0;
+// 	double avg_time_comp1 = 0.0;
+// 	double avg_time_post1 = 0.0;
 
-	double avg_time_parse2 =  0.0;
-	double avg_time_comm2 = 0.0;
-	double avg_time_comp2 = 0.0;
-	double avg_time_post2 = 0.0;
+// 	double avg_time_parse2 =  0.0;
+// 	double avg_time_comm2 = 0.0;
+// 	double avg_time_comp2 = 0.0;
+// 	double avg_time_post2 = 0.0;
 
-	double avg_time_parse3 =  0.0;
-	double avg_time_comm3= 0.0;
-	double avg_time_comp3 = 0.0;
-	double avg_time_post3 = 0.0;
+// 	double avg_time_parse3 =  0.0;
+// 	double avg_time_comm3= 0.0;
+// 	double avg_time_comp3 = 0.0;
+// 	double avg_time_post3 = 0.0;
 
-	int warm_up_iter = 1;
+// 	int warm_up_iter = 1;
 
-	//cudaProfilerStart();
+// 	//cudaProfilerStart();
 
-	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
-		if (i == 0) {
-			cout << "Warming up GPU(s)..." << endl;
-		}
-		if (i == warm_up_iter) {
-			cout << "Starting tests..." << endl;
-		}
-		for (int i = 0; i < m; i++)
-		{
-			y1[i] = 0.0;
-			y2[i] = 0.0;
-			y3[i] = 0.0;
-		}
+// 	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
+// 		if (i == 0) {
+// 			cout << "Warming up GPU(s)..." << endl;
+// 		}
+// 		if (i == warm_up_iter) {
+// 			cout << "Starting tests..." << endl;
+// 		}
+// 		for (int i = 0; i < m; i++)
+// 		{
+// 			y1[i] = 0.0;
+// 			y2[i] = 0.0;
+// 			y3[i] = 0.0;
+// 		}
 
 		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
+// 		time_parse = 0.0;
+// 		time_comm = 0.0;
+// 		time_comp = 0.0;
+// 		time_post = 0.0;
 
-		cout << "=============Baseline[start]============" <<endl;
+// 		cout << "=============Baseline[start]============" <<endl;
 
-		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y1,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post);
-		cout << "=============Baseline[done]============" <<endl;
+// 		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+// 		// 			 cooVal, csrRowPtr, cooColIndex, 
+// 		// 			 x, &BETA,
+// 		// 			 y1,
+// 		// 			 ngpu,
+// 		// 			 &time_parse,
+// 		// 			 &time_comm,
+// 		// 			 &time_comp,
+// 		// 			 &time_post);
+// 		cout << "=============Baseline[done]============" <<endl;
 
 		
 	
 		
-		if (i >= warm_up_iter) {
-			avg_time_parse1 += time_parse;
-			avg_time_comm1  += time_comm;
-			avg_time_comp1  += time_comp;
-			avg_time_post1  += time_post;
-		}
+// 		if (i >= warm_up_iter) {
+// 			avg_time_parse1 += time_parse;
+// 			avg_time_comm1  += time_comm;
+// 			avg_time_comp1  += time_comp;
+// 			avg_time_post1  += time_post;
+// 		}
 		
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
+// 		time_parse = 0.0;
+// 		time_comm = 0.0;
+// 		time_comp = 0.0;
+// 		time_post = 0.0;
 		
-		cout << "=============Version 1[start]============" <<endl;
+// 		cout << "=============Version 1[start]============" <<endl;
 
-		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y2,
-		// 			 ngpu,
-		// 			 &time_parse,
-		// 			 &time_comm,
-		// 			 &time_comp,
-		// 			 &time_post,
-		// 			 kernel_version);
+// 		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+// 		// 			 cooVal, csrRowPtr, cooColIndex, 
+// 		// 			 x, &BETA,
+// 		// 			 y2,
+// 		// 			 ngpu,
+// 		// 			 &time_parse,
+// 		// 			 &time_comm,
+// 		// 			 &time_comp,
+// 		// 			 &time_post,
+// 		// 			 kernel_version);
 
-		cout << "=============Version 1[done]============" <<endl;
+// 		cout << "=============Version 1[done]============" <<endl;
 		
-		if (i >= warm_up_iter) {
-			avg_time_parse2 += time_parse;
-			avg_time_comm2  += time_comm;
-			avg_time_comp2  += time_comp;
-			avg_time_post2  += time_post;
-		}
+// 		if (i >= warm_up_iter) {
+// 			avg_time_parse2 += time_parse;
+// 			avg_time_comm2  += time_comm;
+// 			avg_time_comp2  += time_comp;
+// 			avg_time_post2  += time_post;
+// 		}
 
-		time_parse = 0.0;
-		time_comm = 0.0;
-		time_comp = 0.0;
-		time_post = 0.0;
+// 		time_parse = 0.0;
+// 		time_comm = 0.0;
+// 		time_comp = 0.0;
+// 		time_post = 0.0;
 
-		cout << "=============Version 2[start]============" <<endl;
-
-
-		//cudaProfilerStart();
+// 		cout << "=============Version 2[start]============" <<endl;
 
 
-		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y3,
-		// 			 ngpu,
-		// 			 kernel_version,
-		// 			 ceil(nnz/divide),
-		// 			 copy_of_workspace,
-		// 			 &time_parse,
-		// 			 &time_comp,
-		// 			 &time_post);
+// 		//cudaProfilerStart();
 
-		//
-		cout << "=============Version 2[done]============" <<endl;
+
+// 		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
+// 		// 			 cooVal, csrRowPtr, cooColIndex, 
+// 		// 			 x, &BETA,
+// 		// 			 y3,
+// 		// 			 ngpu,
+// 		// 			 kernel_version,
+// 		// 			 ceil(nnz/divide),
+// 		// 			 copy_of_workspace,
+// 		// 			 &time_parse,
+// 		// 			 &time_comp,
+// 		// 			 &time_post);
+
+// 		//
+// 		cout << "=============Version 2[done]============" <<endl;
 		
-		if (i >= warm_up_iter) {
-			avg_time_parse3 += time_parse;
-			avg_time_comm3  += time_comm;
-			avg_time_comp3  += time_comp;
-			avg_time_post3  += time_post;
-		}
+// 		if (i >= warm_up_iter) {
+// 			avg_time_parse3 += time_parse;
+// 			avg_time_comm3  += time_comm;
+// 			avg_time_comp3  += time_comp;
+// 			avg_time_post3  += time_post;
+// 		}
 
 	
-	}
+// 	}
 
-	//cudaProfilerStop();
+// 	//cudaProfilerStop();
 
 	
 
 
-	//cout << "y = [";
-	bool correct = true;
-	for(int i = 0; i < m; i++) {
-		cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
-		if (abs(y1[i] - y3[i]) > 1e-3 ) {
-			//cout << y1[i] << " - " << y3[i] << endl;
-			correct = false;
-		}
-	}
+// 	//cout << "y = [";
+// 	bool correct = true;
+// 	for(int i = 0; i < m; i++) {
+// 		cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
+// 		if (abs(y1[i] - y3[i]) > 1e-3 ) {
+// 			//cout << y1[i] << " - " << y3[i] << endl;
+// 			correct = false;
+// 		}
+// 	}
 
-	if (correct) cout << "Pass" << endl;
-	else cout << "No pass" << endl;
+// 	if (correct) cout << "Pass" << endl;
+// 	else cout << "No pass" << endl;
 	
 	
-	avg_time_parse1/=repeat_test;
-	avg_time_comm1/=repeat_test;
-	avg_time_comp1/=repeat_test;
-	avg_time_post1/=repeat_test;
+// 	avg_time_parse1/=repeat_test;
+// 	avg_time_comm1/=repeat_test;
+// 	avg_time_comp1/=repeat_test;
+// 	avg_time_post1/=repeat_test;
 
-	avg_time_parse2/=repeat_test;
-	avg_time_comm2/=repeat_test;
-	avg_time_comp2/=repeat_test;
-	avg_time_post2/=repeat_test;
+// 	avg_time_parse2/=repeat_test;
+// 	avg_time_comm2/=repeat_test;
+// 	avg_time_comp2/=repeat_test;
+// 	avg_time_post2/=repeat_test;
 
-	avg_time_parse3/=repeat_test;
-	avg_time_comm3/=repeat_test;
-	avg_time_comp3/=repeat_test;
-	avg_time_post3/=repeat_test;
+// 	avg_time_parse3/=repeat_test;
+// 	avg_time_comm3/=repeat_test;
+// 	avg_time_comp3/=repeat_test;
+// 	avg_time_post3/=repeat_test;
 
-	cout << "[BASELINE]" << endl;
-    cout << "avg_time_parse = " << avg_time_parse1 << endl;
-	cout << "avg_time_comm = "  << avg_time_comm1 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp1 << endl;
-	cout << "avg_time_post = "  << avg_time_post1 << endl;
-	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
+// 	cout << "[BASELINE]" << endl;
+//     cout << "avg_time_parse = " << avg_time_parse1 << endl;
+// 	cout << "avg_time_comm = "  << avg_time_comm1 << endl;
+// 	cout << "avg_time_comp = "  << avg_time_comp1 << endl;
+// 	cout << "avg_time_post = "  << avg_time_post1 << endl;
+// 	cout << "total_time = " << avg_time_parse1+avg_time_comm1+avg_time_comp1+avg_time_post1 << endl;
 
-	cout << endl;
+// 	cout << endl;
 
-	cout << "[Version 1]" << endl;
-	cout << "avg_time_parse = " << avg_time_parse2 << endl;
-	cout << "avg_time_comm = "  << avg_time_comm2 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp2 << endl;
-	cout << "avg_time_post = "  << avg_time_post2 << endl;
-	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
+// 	cout << "[Version 1]" << endl;
+// 	cout << "avg_time_parse = " << avg_time_parse2 << endl;
+// 	cout << "avg_time_comm = "  << avg_time_comm2 << endl;
+// 	cout << "avg_time_comp = "  << avg_time_comp2 << endl;
+// 	cout << "avg_time_post = "  << avg_time_post2 << endl;
+// 	cout << "total_time = " << avg_time_parse2+avg_time_comm2+avg_time_comp2+avg_time_post2 << endl;
 
-	cout << endl;
+// 	cout << endl;
 
-	cout << "[Version2]" << endl;
-	cout << "avg_time_parse = " << avg_time_parse3 << endl;
-//	cout << "avg_time_comm = "  << avg_time_comm3 << endl;
-	cout << "avg_time_comp = "  << avg_time_comp3 << endl;
-	cout << "avg_time_post = "  << avg_time_post3 << endl;
-	cout << "total_time = " << avg_time_parse3+avg_time_comp3+avg_time_post3 << endl;
+// 	cout << "[Version2]" << endl;
+// 	cout << "avg_time_parse = " << avg_time_parse3 << endl;
+// //	cout << "avg_time_comm = "  << avg_time_comm3 << endl;
+// 	cout << "avg_time_comp = "  << avg_time_comp3 << endl;
+// 	cout << "avg_time_post = "  << avg_time_post3 << endl;
+// 	cout << "total_time = " << avg_time_parse3+avg_time_comp3+avg_time_post3 << endl;
 
 }
