@@ -122,6 +122,8 @@ int main(int argc, char *argv[]) {
 		double r1 = 0.9;
 		double r2 = 0.1;
 
+		int p = 0;
+
 		for (int i = 0; i < m; i += nb) {
 			if (i == 0) {
 				r = r1;
@@ -142,8 +144,8 @@ int main(int argc, char *argv[]) {
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
 
-
-		int p = 0;
+	    p = 0;
+		
 
 		cout << "Start generating data ..." << endl;
 		for (int i = 0; i < m; i += nb) {
