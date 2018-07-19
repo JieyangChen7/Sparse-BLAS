@@ -338,16 +338,16 @@ int main(int argc, char *argv[]) {
 		
 		cout << "=============Version 1[start]============" <<endl;
 
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 &time_parse,
-					 &time_comm,
-					 &time_comp,
-					 &time_post,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 &time_parse,
+		// 			 &time_comm,
+		// 			 &time_comp,
+		// 			 &time_post,
+		// 			 kernel_version);
 
 		cout << "=============Version 1[done]============" <<endl;
 		
@@ -369,17 +369,17 @@ int main(int argc, char *argv[]) {
 		//cudaProfilerStart();
 
 
-		spMV_mgpu_v2(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y3,
-					 ngpu,
-					 kernel_version,
-					 ceil(nnz/divide),
-					 copy_of_workspace,
-					 &time_parse,
-					 &time_comp,
-					 &time_post);
+		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y3,
+		// 			 ngpu,
+		// 			 kernel_version,
+		// 			 ceil(nnz/divide),
+		// 			 copy_of_workspace,
+		// 			 &time_parse,
+		// 			 &time_comp,
+		// 			 &time_post);
 
 		//
 		cout << "=============Version 2[done]============" <<endl;

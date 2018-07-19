@@ -57,19 +57,19 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 		cudaSetDevice(d);
 
-		//cout << "GPU " << d << ":" << endl;
+		cout << "GPU " << d << ":" << endl;
 		start_row[d] = floor((d)     * m / ngpu);
 		end_row[d]   = floor((d + 1) * m / ngpu) - 1;
 
-		//cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
+		cout << "start_row: " << start_row[d] << ", " << "end_row: "<< end_row[d] << endl;
 
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
 		dev_nnz[d] = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
 
-		//cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
+		cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
-		//cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
+		cout << "dev_m[d]: " << dev_m[d] << ", dev_n[d]: " << dev_n[d] << ", dev_nnz[d]: " << dev_nnz[d] << endl;
 
 		host_csrRowPtr[d] = new int[dev_m[d] + 1];
 
@@ -77,21 +77,21 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 			   (void *)&csrRowPtr[start_row[d]], 
 			   (dev_m[d] + 1) * sizeof(int));
 
-		// cout << "csrRowPtr (before): ";
-		// for (int i = 0; i <= dev_m[d]; i++) {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
+		cout << "csrRowPtr (before): ";
+		for (int i = 0; i <= dev_m[d]; i++) {
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
 
 		for (int i = 0; i < dev_m[d] + 1; i++) {
 			host_csrRowPtr[d][i] -= csrRowPtr[start_row[d]];
 		}
 
-		// cout << "csrRowPtr (after): ";
-		// for (int i = 0; i <= dev_m[d]; i++) {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
+		cout << "csrRowPtr (after): ";
+		for (int i = 0; i <= dev_m[d]; i++) {
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
 
 	}
 
@@ -143,28 +143,28 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 			return 1; 
 		} 
 
-		//cout << "Start copy to GPUs...";
+		cout << "Start copy to GPUs...";
 		cudaStat1[d] = cudaMemcpy(dev_csrRowPtr[d],   host_csrRowPtr[d],                  (size_t)((dev_m[d] + 1) * sizeof(int)), cudaMemcpyHostToDevice);
-		// cout << "host_csrRowPtr[d] = ";
-		// for (int i = 0; i < dev_m[d] + 1; ++i)
-		// {
-		// 	cout << host_csrRowPtr[d][i] << ", ";
-		// }
-		// cout << endl;
+		cout << "host_csrRowPtr[d] = ";
+		for (int i = 0; i < dev_m[d] + 1; ++i)
+		{
+			cout << host_csrRowPtr[d][i] << ", ";
+		}
+		cout << endl;
 		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
-		// cout << "csrColIndex[d] = ";
-		// for (int i = 0; i < dev_nnz[d]; ++i)
-		// {
-		// 	cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
-		// }
-		// cout << endl;
+		cout << "csrColIndex[d] = ";
+		for (int i = 0; i < dev_nnz[d]; ++i)
+		{
+			cout << csrColIndex[csrRowPtr[start_row[d]]+i] << ", ";
+		}
+		cout << endl;
 		cudaStat3[d] = cudaMemcpy(dev_csrVal[d],      &csrVal[csrRowPtr[start_row[d]]],      (size_t)(dev_nnz[d] * sizeof(double)), cudaMemcpyHostToDevice); 
-		// cout << "csrVal[d] = ";
-		// for (int i = 0; i < dev_nnz[d]; ++i)
-		// {
-		// 	cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
-		// }
-		// cout << endl;
+		cout << "csrVal[d] = ";
+		for (int i = 0; i < dev_nnz[d]; ++i)
+		{
+			cout << csrVal[csrRowPtr[start_row[d]]+i] << ", ";
+		}
+		cout << endl;
 
 
 		cudaStat4[d] = cudaMemcpy(dev_y[d], &y[start_row[d]], (size_t)(dev_m[d]*sizeof(double)), cudaMemcpyHostToDevice); 
@@ -201,7 +201,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 	curr_time = get_time();
 
 
-	//cout << "Start computation ... " << endl;
+	cout << "Start computation ... " << endl;
 	 int repeat_test = 1;
 	 double start = get_time();
 	 for (int i = 0; i < repeat_test; i++) 
