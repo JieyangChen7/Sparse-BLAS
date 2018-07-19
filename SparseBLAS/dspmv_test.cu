@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 
 	//x = (double *)malloc(n * sizeof(double)); 
 	//y1 = (double *)malloc(m * sizeof(double)); 
-	y2 = (double *)malloc(m * sizeof(double)); 
+	//y2 = (double *)malloc(m * sizeof(double)); 
 	//y3 = (double *)malloc(m * sizeof(double)); 
 
 // 	cudaMallocHost((void **)&x, n * sizeof(double));
