@@ -359,14 +359,14 @@ int main(int argc, char *argv[]) {
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y3,
-		// 			 ngpu,
-		// 			 kernel_version,
-		// 			 ceil(nnz/divide),
-		// 			 copy_of_workspace);
+		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y3,
+					 ngpu,
+					 kernel_version,
+					 ceil(nnz/divide),
+					 copy_of_workspace);
 		time_v2 = get_time() - curr_time;	
 
 		
