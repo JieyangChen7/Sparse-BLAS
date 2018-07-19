@@ -200,7 +200,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		    (cudaStat5[d] != cudaSuccess)) 
 		{ 
 			printf("Memcpy from Host to Device failed"); 
-			return 1; 
+			//return 1; 
 		} 
 
 	}
