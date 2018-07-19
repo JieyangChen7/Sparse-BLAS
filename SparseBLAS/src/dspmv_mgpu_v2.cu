@@ -74,7 +74,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 		
 		int c;
 		unsigned int dev_id = omp_get_thread_num();
-		//cout << "thread " << dev_id << "started" << endl;
+		cout << "thread " << dev_id << "started" << endl;
 		cudaSetDevice(dev_id);
 		
 		cusparseStatus_t status[copy_of_workspace];
@@ -114,7 +114,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
    		c = 0; 
     	
-    	//cout << "GPU " << dev_id << " entering loop" << endl;
+    	cout << "GPU " << dev_id << " entering loop" << endl;
 
 
     	int num_of_assigned_task = 0;
@@ -124,7 +124,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 			for (c = 0; c < copy_of_workspace; c++) {
 
-				//cout << "GPU " << dev_id << " try to get one task" << endl;
+				cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
 				{
 
@@ -135,6 +135,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 						(*spmv_task_completed).push_back(curr_spmv_task);
 						num_of_assigned_task++;
 						cout << "GPU " << dev_id << " got one task" << endl;
+						cout << "Number of task left: " << (*spmv_task_pool).size() << "/" << num_of_tasks << endl;
 					} else {
 						curr_spmv_task = NULL;
 					}
