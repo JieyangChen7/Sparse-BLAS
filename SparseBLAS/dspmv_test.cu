@@ -290,11 +290,11 @@ int main(int argc, char *argv[]) {
 
 	cout << "Warming up GPU(s)..." << endl;
 	for (int i = 0; i < warm_up_iter; i++) {
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-							 cooVal, csrRowPtr, cooColIndex, 
-							 x, &BETA,
-							 y1,
-							 ngpu);
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 					 cooVal, csrRowPtr, cooColIndex, 
+		// 					 x, &BETA,
+		// 					 y1,
+		// 					 ngpu);
 	}
 	cout << "Starting tests..." << endl;
 
