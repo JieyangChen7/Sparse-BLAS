@@ -200,8 +200,8 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 
 	}
 
-	*time_comm = get_time() - curr_time;
-	curr_time = get_time();
+	// *time_comm = get_time() - curr_time;
+	// curr_time = get_time();
 
 
 	// << "Start computation ... " << endl;
