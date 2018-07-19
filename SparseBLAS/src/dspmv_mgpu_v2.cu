@@ -43,7 +43,7 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 	double curr_time = 0.0;
 	double time_parse = 0.0;
 	double time_comm_comp = 0.0;
-	double time_post = 0.0；
+	double time_post = 0.0;
 
 	curr_time = get_time();
 
