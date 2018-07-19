@@ -5,8 +5,8 @@ VALUE_TYPE = double
 #NUM_RUN = 1000
 
 #ENVIRONMENT_PARAMETERS
-CUDA_INSTALL_PATH = /home/chen838/cuda-9.0
-CUDA_SAMPLES_PATH = /home/chen838/cuda-9.0/samples
+CUDA_INSTALL_PATH = /home/chen838/cuda-8.0
+CUDA_SAMPLES_PATH = /home/chen838/cuda-8.0/samples
 
 
 #CUDA_PARAMETERS
