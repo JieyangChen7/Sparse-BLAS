@@ -122,9 +122,21 @@ int main(int argc, char *argv[]) {
 		double r1 = 0.9;
 		double r2 = 0.1;
 
-		nnz = nb * n * r1 + (m - nb) * (n * r2);
+		for (int i = 0; i < m; i += nb) {
+			if (i == 0) {
+				r = r1;
+			} else {
+				r = r2;
+			}
+			for (int ii = i; ii < i + nb; ii++) {
+				for (int j = 0; j < n * r; j++) {
+					p++;
+				}
+			}
+		}
 
-		cout << "nnz = " << nnz << endl;
+
+		nnz = p;
 
 		cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
@@ -162,7 +174,6 @@ int main(int argc, char *argv[]) {
 
 		}
 
-		nnz = p;
 		cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
 
