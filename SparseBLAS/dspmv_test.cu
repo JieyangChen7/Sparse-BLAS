@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				r = r2;
 			}
-			cout << "Matrix:" << endl;
+			//cout << "Matrix:" << endl;
 			for (int ii = i; ii < i + nb; ii++) {
 				for (int j = 0; j < n * r; j++) {
 					//if (p > nnz) { cout << "error" << endl; break;}
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
 
 		}
 
-		cout << "m: " << m << " n: " << n << " nnz: " << p << endl;
+		//cout << "m: " << m << " n: " << n << " nnz: " << p << endl;
 
 
 		cout << "Done generating data." << endl;
@@ -288,18 +288,22 @@ int main(int argc, char *argv[]) {
 
 	int warm_up_iter = 1;
 
+	cout << "Warming up GPU(s)..." << endl;
+	for (int i = 0; i < warm_up_iter; i++) {
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
+	}
+	cout << "Starting tests..." << endl;
+
 	//cudaProfilerStart();
 
 	cout << "Baseline            Version1            Version2          Check" << endl;
 	cout << "===============================================================" << endl;
 
-	for (int i = 0; i < repeat_test + warm_up_iter; i++) {
-		if (i == 0) {
-			cout << "Warming up GPU(s)..." << endl;
-		}
-		if (i == warm_up_iter) {
-			cout << "Starting tests..." << endl;
-		}
+	for (int i = 0; i < repeat_test; i++) {
 		for (int i = 0; i < m; i++)
 		{
 			y1[i] = 0.0;
@@ -308,60 +312,55 @@ int main(int argc, char *argv[]) {
 		}
 
 		curr_time = get_time();
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-							 cooVal, csrRowPtr, cooColIndex, 
-							 x, &BETA,
-							 y1,
-							 ngpu);
+		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		// 					 cooVal, csrRowPtr, cooColIndex, 
+		// 					 x, &BETA,
+		// 					 y1,
+		// 					 ngpu);
 		time_baseline = get_time() - curr_time;	
 
 
 		curr_time = get_time();
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 kernel_version);
 		time_v1 = get_time() - curr_time;	
 		
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		spMV_mgpu_v2(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y3,
-					 ngpu,
-					 kernel_version,
-					 ceil(nnz/divide),
-					 copy_of_workspace);
+		// spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y3,
+		// 			 ngpu,
+		// 			 kernel_version,
+		// 			 ceil(nnz/divide),
+		// 			 copy_of_workspace);
 		time_v2 = get_time() - curr_time;	
 
 		
-		if (i >= warm_up_iter) {
-			avg_time_baseline += time_baseline;
-			avg_time_v1  += time_v1;
-			avg_time_v2  += time_v2;
+		avg_time_baseline += time_baseline;
+		avg_time_v1  += time_v1;
+		avg_time_v2  += time_v2;
 
-			bool correct = true;
-			for(int i = 0; i < m; i++) {
-				//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
-				if (abs(y1[i] - y2[i]) > 1e-3 || abs(y1[i] - y3[i]) > 1e-3) {
-					//cout << y1[i] << " - " << y3[i] << endl;
-					correct = false;
-				}
+		bool correct = true;
+		for(int i = 0; i < m; i++) {
+			//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
+			if (abs(y1[i] - y2[i]) > 1e-3 || abs(y1[i] - y3[i]) > 1e-3) {
+				//cout << y1[i] << " - " << y3[i] << endl;
+				correct = false;
 			}
-
-			
-			
-			cout << setw(8) << time_baseline;
-			cout << setw(33) << time_v1;
-			cout << setw(20) << time_v2;
-			if (correct) cout << setw(15) <<"Pass" << endl;
-			else cout << setw(15) << "No pass" << endl;
-			cout << endl;
 		}
+		cout << setw(8) << time_baseline;
+		cout << setw(33) << time_v1;
+		cout << setw(20) << time_v2;
+		if (correct) cout << setw(15) <<"Pass" << endl;
+		else cout << setw(15) << "No pass" << endl;
+		cout << endl;
 
 	
 	}
