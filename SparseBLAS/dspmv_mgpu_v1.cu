@@ -348,9 +348,9 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			}
 		}
 
-		*time_comp = get_time() - curr_time;
+		// *time_comp = get_time() - curr_time;
 
-		curr_time = get_time();
+		// curr_time = get_time();
 
 
 		//cout << "test10" << endl;

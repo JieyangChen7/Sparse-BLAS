@@ -58,9 +58,9 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 	(*spmv_task_completed).reserve(num_of_tasks);
 
-	*time_parse = get_time() - curr_time;
+	// *time_parse = get_time() - curr_time;
 
-	curr_time = get_time();
+	// curr_time = get_time();
 
 	//cout << "starting " << ngpu << " GPUs." << endl;
 	omp_set_num_threads(ngpu);
