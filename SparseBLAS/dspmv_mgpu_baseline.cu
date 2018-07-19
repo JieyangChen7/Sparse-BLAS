@@ -155,7 +155,7 @@ int spMV_mgpu_baseline(int m, int n, int nnz, double * alpha,
 		}
 		cout << endl;
 		//cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], (size_t)(dev_nnz[d] * sizeof(int)),   cudaMemcpyHostToDevice); 
-		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], 17*sizeof(int),   cudaMemcpyHostToDevice); 
+		cudaStat2[d] = cudaMemcpy(dev_csrColIndex[d], &csrColIndex[csrRowPtr[start_row[d]]], 10*sizeof(int),   cudaMemcpyHostToDevice); 
 		if (cudaStat2[d] != cudaSuccess) cout << "error 2 " << cudaStat2[d] <<  endl;
 		cout << "csrColIndex[d] = ";
 		for (int i = 0; i < dev_nnz[d]; ++i)
