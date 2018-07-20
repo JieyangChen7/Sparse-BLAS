@@ -441,7 +441,7 @@ int main(int argc, char *argv[]) {
 			cout << setw(13) << "Failed.";
 		}
 
-		if (ret1 == 0) {
+		if (ret2 == 0) {
 			if (correct1) cout << setw(10) <<"Passed";
 			else cout << setw(10) << "Not passed";
 		} else {
@@ -454,7 +454,7 @@ int main(int argc, char *argv[]) {
 			cout << setw(13) << "Failed.";
 		}		
 
-		if (ret1 == 0) {
+		if (ret3 == 0) {
 			if (correct2) cout << setw(10) <<"Passed";
 			else cout << setw(10) << "No passed";
 			cout << endl;
