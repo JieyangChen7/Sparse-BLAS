@@ -339,6 +339,9 @@ int main(int argc, char *argv[]) {
 				min_profile_time = profile_time;
 				best_dev_count = d;
 				best_copy = c;
+				cout << "min_profile_time = " << min_profile_time <<endl;
+				cout << "best_dev_count = " << best_dev_count <<endl;
+				cout << "best_copy = " << best_copy << endl;
 			}
 		}
 	}
