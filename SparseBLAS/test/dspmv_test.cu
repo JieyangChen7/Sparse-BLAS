@@ -361,6 +361,10 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+
+	int ret1 = 0;
+	int ret2 = 0;
+	int ret3 = 0;
 	
 	cout << "Starting tests..." << endl;
 
@@ -378,7 +382,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		curr_time = get_time();
-		int ret1 = spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+		ret1 = spMV_mgpu_baseline(m, n, nnz, &ALPHA,
 							 cooVal, csrRowPtr, cooColIndex, 
 							 x, &BETA,
 							 y1,
@@ -387,18 +391,18 @@ int main(int argc, char *argv[]) {
 
 
 		curr_time = get_time();
-		int ret2 = spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 kernel_version);
+		// ret2 = spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 kernel_version);
 		time_v1 = get_time() - curr_time;	
 		
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		int ret3 = spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		ret3 = spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y3,
