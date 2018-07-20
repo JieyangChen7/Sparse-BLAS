@@ -368,7 +368,7 @@ int main(int argc, char *argv[]) {
 	
 	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem() * 0.8))); d <= deviceCount; d*=2) {
 		for (int c = 1; c <= 32; c*=2) {
-			//cout << "d = " << d << ", c = " << c << endl;
+			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
 			spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -383,9 +383,9 @@ int main(int argc, char *argv[]) {
 				min_profile_time = profile_time;
 				best_dev_count = d;
 				best_copy = c;
-				//cout << "min_profile_time = " << min_profile_time <<endl;
-				//cout << "best_dev_count = " << best_dev_count <<endl;
-				//cout << "best_copy = " << best_copy << endl;
+				cout << "min_profile_time = " << min_profile_time;
+				cout << ", best_dev_count = " << best_dev_count;
+				cout << ", best_copy = " << best_copy << endl;
 			}
 		}
 	}
