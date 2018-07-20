@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
 	int repeat_test = atoi(argv[4]);
 	int kernel_version = atoi(argv[5]);
 	char data_type = argv[6][0];
-	int divide = atoi(argv[7]);
-	int copy_of_workspace = atoi(argv[8]);
+	//int divide = atoi(argv[7]);
+	//int copy_of_workspace = atoi(argv[8]);
 
 	int ret_code;
     MM_typecode matcode;
@@ -94,21 +94,21 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	if (divide <= 0) {
-		cout << "Error: Number of tasks needs to be greater than 0." << endl;
-		return -1;
-	}
+	// if (divide <= 0) {
+	// 	cout << "Error: Number of tasks needs to be greater than 0." << endl;
+	// 	return -1;
+	// }
 
-	if (copy_of_workspace <= 0) {
-		cout << "Error: Number of Hyper-Q needs to be greater than 0." << endl;
-		return -1;
-	}
+	// if (copy_of_workspace <= 0) {
+	// 	cout << "Error: Number of Hyper-Q needs to be greater than 0." << endl;
+	// 	return -1;
+	// }
 
 
 
 	cout << "Using " << ngpu << " GPU(s)." << endl; 
 	cout << "Kernel #" << kernel_version << " is selected." << endl;
-	cout << divide <<  "total task(s) will be generated for version 2 with "<< copy_of_workspace << " Hyper-Q(s) on each GPU." << endl;
+	//cout << divide <<  "total task(s) will be generated for version 2 with "<< copy_of_workspace << " Hyper-Q(s) on each GPU." << endl;
 
 	// int device;
 	// for (device = 0; device < deviceCount; ++device) 
@@ -488,7 +488,7 @@ int main(int argc, char *argv[]) {
 	avg_time_v1/=repeat_test;
 	avg_time_v2/=repeat_test;
 
-	cout << "......................................................................" << endl;
+	cout << "......................................................................." << endl;
 
 	cout << setw(10) << "Average";
 	cout << setw(11) << avg_time_baseline;
