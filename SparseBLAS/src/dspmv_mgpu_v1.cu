@@ -168,11 +168,13 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
+		for (int i = 0; i < ngpu; i++) {
 
-		long long matrix_data_space = dev_nnz[i] * sizeof(double) + dev_nnz[i] * sizeof(int) + (dev_m[i]+1) * sizeof(int);
-		double matrix_size_in_gb = (double)matrix_data_space / 1e9;
-		if (matrix_size_in_gb > 0.9 * get_gpu_availble_mem(ngpu)) {
-			return -1;
+			long long matrix_data_space = dev_nnz[i] * sizeof(double) + dev_nnz[i] * sizeof(int) + (dev_m[i]+1) * sizeof(int);
+			double matrix_size_in_gb = (double)matrix_data_space / 1e9;
+			if (matrix_size_in_gb > 0.9 * get_gpu_availble_mem(ngpu)) {
+				return -1;
+			}
 		}
 
 		//cout << "test5" << endl;
