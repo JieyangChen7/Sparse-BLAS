@@ -81,7 +81,6 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 
 			start_idx[i] = floor((double)tmp1 / ngpu);
 			end_idx[i]   = floor((double)tmp2 / ngpu) - 1;
-			dev_nnz[i]   = (int)(end_idx[i] - start_idx[i] + 1);
 		}
 
 		// tmp = get_time() - tmp;
@@ -168,19 +167,23 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		for (int d = 0; d < ngpu; d++) {
-
-			long long matrix_data_space = (long long)dev_nnz[d] * sizeof(double) + 
-										(long long)dev_nnz[d] * sizeof(int) + 
+		for (int i = 0; i < ngpul i++) {
+			long long nnz_ll = end_idx[i] - start_idx[i] + 1;
+			long long matrix_data_space = nzz_ll * sizeof(double) + 
+										nzz_ll * sizeof(int) + 
 										(long long)(dev_m[d]+1) * sizeof(int) + 
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
 			double matrix_size_in_gb = (double)matrix_data_space / 1e9;
 			//cout << matrix_size_in_gb << " - " << get_gpu_availble_mem(ngpu) << endl;
-			if (dev_nnz[d] < 0 || matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
+			if ( matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
 				return -1;
 			}
+
+
+			dev_nnz[i]   = (int)(end_idx[i] - start_idx[i] + 1);
 		}
+
 
 		//cout << "test5" << endl;
 		// tmp = get_time() - tmp;
