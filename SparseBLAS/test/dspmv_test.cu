@@ -391,12 +391,12 @@ int main(int argc, char *argv[]) {
 
 
 		curr_time = get_time();
-		ret2 = spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 kernel_version);
+		// ret2 = spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 kernel_version);
 		time_v1 = get_time() - curr_time;	
 		
 		//cudaProfilerStart();
