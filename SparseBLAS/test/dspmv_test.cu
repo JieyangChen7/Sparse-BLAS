@@ -342,12 +342,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-						 cooVal, csrRowPtr, cooColIndex, 
-						 x, &BETA,
-						 y1,
-						 ngpu);
-	}
 	cout << "Starting tests..." << endl;
 
 	//cudaProfilerStart();
