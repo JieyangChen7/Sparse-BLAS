@@ -34,8 +34,8 @@ void print_error(cusparseStatus_t status) {
 }
 
 double get_gpu_availble_mem() {
-	unsigned int uCurAvailMemoryInBytes;
-	unsigned int uTotalMemoryInBytes;
+	size_t uCurAvailMemoryInBytes;
+	size_t uTotalMemoryInBytes;
 	
 
 	double min_mem = numeric_limits<double>::max();
