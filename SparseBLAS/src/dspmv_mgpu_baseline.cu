@@ -78,6 +78,7 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 										(long long)(dev_m[d]+1) * sizeof(int) + 
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
+		cout << matrix_data_space << endl;
 		double matrix_size_in_gb = (double)matrix_data_space / 1e9;
 		cout << matrix_size_in_gb << " - " << get_gpu_availble_mem(ngpu) << endl;
 		if (matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
