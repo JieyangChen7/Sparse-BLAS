@@ -323,9 +323,17 @@ int main(int argc, char *argv[]) {
 	double best_copy = 0.0;
 
 	cout << "Warming up GPU(s)..." << endl;
+
+	for (int i = 0; i < warm_up_iter; i++) {
+		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
+	}
 	for (int d = 1; d <= deviceCount; d*=2) {
 		for (int c = 1; c <= 32; c*=2) {
-			cout << "d = " << d << ", c = " << c << endl;
+			//cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
 			spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
