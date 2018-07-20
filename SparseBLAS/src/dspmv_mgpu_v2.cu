@@ -45,7 +45,10 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 	// cout << get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int)) << endl;
 	// cout << (int)(0.9*get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int))) << endl;
 
+	cout << "nb before = " << nb << endl;
 	nb = min(nb, (int)(0.9*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int))) ); 
+	cout << "nb after = " << nb << endl;
+
 
 	double curr_time = 0.0;
 	double time_parse = 0.0;
