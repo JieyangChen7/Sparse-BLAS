@@ -158,9 +158,11 @@ int main(int argc, char *argv[]) {
 	        printf("Could not process Matrix Market banner.\n");
 	        exit(1);
 	    }
-	    if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz)) !=0) {
+	    int nnz_int;
+	    if ((ret_code = mm_read_mtx_crd_size(f, &m, &n, &nnz_int)) !=0) {
 	        exit(1);
 	    }
+	    nnz = nnz_int;
 	    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
 
 	    //cooRowIndex = (int *) malloc(nnz * sizeof(int));
