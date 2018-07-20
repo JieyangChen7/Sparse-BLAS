@@ -13,6 +13,7 @@
 //#include "anonymouslib_cuda.h"
 #include <cuda_profiler_api.h>
 #include "spmv_kernel.h"
+#include <limits>
 using namespace std;
 
 
@@ -315,13 +316,37 @@ int main(int argc, char *argv[]) {
 
 	int warm_up_iter = 1;
 
+	double profile_time = 0.0;
+	double min_profile_time = numeric_limits<double>::max();
+
+	double best_dev_count = 0.0;
+	double best_copy = 0.0;
+
 	cout << "Warming up GPU(s)..." << endl;
-	for (int i = 0; i < warm_up_iter; i++) {
-		spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-							 cooVal, csrRowPtr, cooColIndex, 
-							 x, &BETA,
-							 y1,
-							 ngpu);
+	for (int d = 0; d < deviceCount; d++) {
+		for (int c = 0; c < 32; c++) {
+			curr_time = get_time();
+			spMV_mgpu_v2(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y3,
+					 ngpu,
+					 kernel_version,
+					 nnz/divide,
+					 copy_of_workspace);
+			profile_time = get_time() - curr_time;	
+			if (profile_time < min_profile_time) {
+				min_profile_time = profile_time;
+				best_dev_count = d;
+				best_copy = c;
+			}
+		}
+	}
+	spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+						 cooVal, csrRowPtr, cooColIndex, 
+						 x, &BETA,
+						 y1,
+						 ngpu);
 	}
 	cout << "Starting tests..." << endl;
 
@@ -363,10 +388,10 @@ int main(int argc, char *argv[]) {
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y3,
-					 ngpu,
+					 best_dev_count,
 					 kernel_version,
-					 nnz/divide,
-					 copy_of_workspace);
+					 best_dev_count * best_copy,
+					 best_copy);
 		time_v2 = get_time() - curr_time;	
 
 		
