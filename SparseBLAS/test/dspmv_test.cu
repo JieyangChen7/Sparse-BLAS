@@ -325,6 +325,7 @@ int main(int argc, char *argv[]) {
 	cout << "Warming up GPU(s)..." << endl;
 	for (int d = 1; d <= deviceCount; d*=2) {
 		for (int c = 1; c <= 32; c*=2) {
+			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
 			spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
