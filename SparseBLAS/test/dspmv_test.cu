@@ -382,11 +382,11 @@ int main(int argc, char *argv[]) {
 		}
 
 		curr_time = get_time();
-		// ret1 = spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 					 cooVal, csrRowPtr, cooColIndex, 
-		// 					 x, &BETA,
-		// 					 y1,
-		// 					 ngpu);
+		ret1 = spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
 		time_baseline = get_time() - curr_time;	
 
 
