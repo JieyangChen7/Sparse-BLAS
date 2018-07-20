@@ -11,7 +11,7 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 				 double * x, double * beta,
 				 double * y,
 				 int ngpu);
-int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,

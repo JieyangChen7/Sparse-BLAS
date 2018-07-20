@@ -13,7 +13,7 @@
 using namespace std;
 
 
-int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
+int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
@@ -30,8 +30,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		curr_time = get_time();
 
 
-		int  * start_idx  = new int[ngpu];
-		int  * end_idx    = new int[ngpu];
+		long long  * start_idx  = new int[ngpu];
+		long long  * end_idx    = new int[ngpu];
 		int  * start_row  = new int[ngpu];
 		int  * end_row    = new int[ngpu];
 		bool * start_flag = new bool[ngpu];
@@ -66,8 +66,8 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 		// Calculate the start and end index
 		for (int i = 0; i < ngpu; i++) {
 
-			long long tmp1 = i * (long long)nnz;
-			long long tmp2 = (i + 1) * (long long)nnz;
+			long long tmp1 = i * nnz;
+			long long tmp2 = (i + 1) * nnz;
 
 			double tmp3 = (double)(tmp1 / ngpu);
 			double tmp4 = (double)(tmp2 / ngpu);
@@ -212,7 +212,7 @@ int spMV_mgpu_v1(int m, int n, int nnz, double * alpha,
 			// cout << endl;
 
 			for (int j = 1; j < dev_m[i]; j++) {
-				host_csrRowPtr[i][j] -= start_idx[i];
+				host_csrRowPtr[i][j] = (int)((long long)host_csrRowPtr[i][j] - start_idx[i]);
 			}
 
 			// cout << "host_csrRowPtr: ";
