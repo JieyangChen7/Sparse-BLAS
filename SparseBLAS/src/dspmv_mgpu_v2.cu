@@ -225,7 +225,7 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 				  	long long nb,
 				  	vector<spmv_task *> * spmv_task_pool_ptr) {
 
-	int num_of_tasks = (int)((double)(nnz + nb - 1) / nb);
+	int num_of_tasks = (int)((nnz + nb - 1) / nb);
 	//cout << "num_of_tasks = " << num_of_tasks << endl;
 
 	int curr_row;
