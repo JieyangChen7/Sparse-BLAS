@@ -428,7 +428,7 @@ int main(int argc, char *argv[]) {
 		if (ret1 == 0) {
 			cout << setw(11) << time_baseline;
 		} else {
-			cout << setw(11) << "Failed."
+			cout << setw(11) << "Failed.";
 		}
 		
 		if (ret2 == 0) {
@@ -442,7 +442,7 @@ int main(int argc, char *argv[]) {
 		} else {
 			cout << setw(20) << "Failed.";
 		}		
-		
+
 		if (correct1) cout << setw(15) <<"Pass1 ";
 		else cout << setw(15) << "No pass1 ";
 		if (correct2) cout << setw(15) <<"Pass2";
