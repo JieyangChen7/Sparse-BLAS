@@ -98,8 +98,7 @@ int main(int argc, char *argv[]) {
 	int ret_code;
     MM_typecode matcode;
     FILE *f;
-    int m, n
-    long long nnz;   
+    int m, n, nnz;   
     int * cooRowIndex;
     int * cooColIndex;
     double * cooVal;
@@ -197,7 +196,7 @@ int main(int argc, char *argv[]) {
 		double r1 = 0.9;
 		double r2 = 0.01;
 
-		long long p = 0;
+		int p = 0;
 
 		for (int i = 0; i < m; i += nb) {
 			if (i == 0) {
@@ -361,8 +360,6 @@ int main(int argc, char *argv[]) {
 							 y1,
 							 ngpu);
 	}
-
-	/*
 	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem() * 0.8))); d <= deviceCount; d*=2) {
 		for (int c = 1; c <= 32; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
@@ -485,5 +482,5 @@ int main(int argc, char *argv[]) {
 	cout << setw(20) << avg_time_v1;
 	cout << setw(20) << avg_time_v2;
 	cout << endl;
-	*/
+	
 }
