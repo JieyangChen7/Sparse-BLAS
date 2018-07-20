@@ -176,7 +176,7 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
 			double matrix_size_in_gb = (double)matrix_data_space / 1e9;
-			cout << matrix_size_in_gb << " - " << get_gpu_availble_mem(ngpu) << endl;
+			//cout << matrix_size_in_gb << " - " << get_gpu_availble_mem(ngpu) << endl;
 			if (dev_nnz[d] < 0 || matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
 				return -1;
 			}
