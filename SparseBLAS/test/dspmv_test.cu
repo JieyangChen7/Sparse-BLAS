@@ -329,12 +329,12 @@ int main(int argc, char *argv[]) {
 	cout << "Warming up GPU(s)..." << endl;
 
 	for (int i = 0; i < warm_up_iter; i++) {
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 kernel_version);
 	}
 
 	
