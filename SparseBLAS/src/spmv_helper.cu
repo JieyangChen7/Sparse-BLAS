@@ -9,6 +9,7 @@
 #include <float.h>
 //#include "anonymouslib_cuda.h"
 #include "spmv_kernel.h"
+#include <limits>
 
 using namespace std;
 
