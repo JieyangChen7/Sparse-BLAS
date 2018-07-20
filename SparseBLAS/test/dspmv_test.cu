@@ -445,7 +445,7 @@ int main(int argc, char *argv[]) {
 			if (correct1) cout << setw(10) <<"Y";
 			else cout << setw(10) << "N";
 		} else {
-			if (correct1) cout << setw(10) <<"N/A ";
+			cout << setw(10) <<"N/A";
 		}
 
 		if (ret3 == 0) {
@@ -457,10 +457,10 @@ int main(int argc, char *argv[]) {
 		if (ret1 == 0) {
 			if (correct2) cout << setw(10) <<"Y";
 			else cout << setw(10) << "N";
-			cout << endl;
 		} else {
-			if (correct1) cout << setw(10) <<"N/A ";
+			cout << setw(10) <<"N/A";
 		}
+		cout << endl;
 
 	
 	}
