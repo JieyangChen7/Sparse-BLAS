@@ -366,7 +366,7 @@ int main(int argc, char *argv[]) {
 
 	//cudaProfilerStart();
 
-	cout << "  Test No.   Baseline     Version1     Check     Version2     Check" << endl;
+	cout << "  Test No.   Baseline     Version1     Pass      Version2     Pass" << endl;
 	cout << "=======================================================================" << endl;
 
 	for (int i = 0; i < repeat_test; i++) {
@@ -441,9 +441,9 @@ int main(int argc, char *argv[]) {
 			cout << setw(13) << "Failed.";
 		}
 
-		if (ret2 == 0) {
-			if (correct1) cout << setw(10) <<"Passed";
-			else cout << setw(10) << "Not passed";
+		if (ret1 == 0) {
+			if (correct1) cout << setw(10) <<"Y";
+			else cout << setw(10) << "N";
 		} else {
 			if (correct1) cout << setw(10) <<"N/A ";
 		}
@@ -454,9 +454,9 @@ int main(int argc, char *argv[]) {
 			cout << setw(13) << "Failed.";
 		}		
 
-		if (ret3 == 0) {
-			if (correct2) cout << setw(10) <<"Passed";
-			else cout << setw(10) << "No passed";
+		if (ret1 == 0) {
+			if (correct2) cout << setw(10) <<"Y";
+			else cout << setw(10) << "N";
 			cout << endl;
 		} else {
 			if (correct1) cout << setw(10) <<"N/A ";
