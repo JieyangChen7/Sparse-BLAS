@@ -33,34 +33,6 @@ void print_error(cusparseStatus_t status) {
 		cout << "CUSPARSE_STATUS_MATRIX_TYPE_NOT_SUPPORTED" << endl;
 }
 
-double get_gpu_availble_mem() {
-	size_t uCurAvailMemoryInBytes;
-	size_t uTotalMemoryInBytes;
-	
-
-	double min_mem = numeric_limits<double>::max();
-
-	int deviceCount;
-	cudaGetDeviceCount(&deviceCount);
-	int device;
-	for (device = 0; device < deviceCount; ++device) 
-	{
-		cudaSetDevice(device);
-		cudaMemGetInfo(&uCurAvailMemoryInBytes, &uTotalMemoryInBytes);
-		double aval_mem = (double)uCurAvailMemoryInBytes/1e9;
-		//cout << aval_mem << endl;
-		if (aval_mem < min_mem) {
-			min_mem = aval_mem;
-		}
-	    // cudaDeviceProp deviceProp;
-	    // cudaGetDeviceProperties(&deviceProp, device);
-	    // printf("Device %d has compute capability %d.%d.\n",
-	    //        device, deviceProp.major, deviceProp.minor);
-	}
-
-
-	return min_mem;
-}
 
 
 int main(int argc, char *argv[]) {
@@ -357,16 +329,16 @@ int main(int argc, char *argv[]) {
 	cout << "Warming up GPU(s)..." << endl;
 
 	for (int i = 0; i < warm_up_iter; i++) {
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
-					 cooVal, csrRowPtr, cooColIndex, 
-					 x, &BETA,
-					 y2,
-					 ngpu,
-					 kernel_version);
+		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		// 			 cooVal, csrRowPtr, cooColIndex, 
+		// 			 x, &BETA,
+		// 			 y2,
+		// 			 ngpu,
+		// 			 kernel_version);
 	}
 
 	
-	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem() * 0.8))); d <= deviceCount; d++) {
+	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem(ngpu) * 0.8))); d <= deviceCount; d++) {
 		for (int c = 1; c <= 32; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
@@ -406,16 +378,16 @@ int main(int argc, char *argv[]) {
 		}
 
 		curr_time = get_time();
-		// spMV_mgpu_baseline(m, n, nnz, &ALPHA,
-		// 					 cooVal, csrRowPtr, cooColIndex, 
-		// 					 x, &BETA,
-		// 					 y1,
-		// 					 ngpu);
+		int ret1 = spMV_mgpu_baseline(m, n, nnz, &ALPHA,
+							 cooVal, csrRowPtr, cooColIndex, 
+							 x, &BETA,
+							 y1,
+							 ngpu);
 		time_baseline = get_time() - curr_time;	
 
 
 		curr_time = get_time();
-		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+		int ret2 = spMV_mgpu_v1(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y2,
@@ -426,7 +398,7 @@ int main(int argc, char *argv[]) {
 		//cudaProfilerStart();
 
 		curr_time = get_time();
-		spMV_mgpu_v2(m, n, nnz, &ALPHA,
+		int ret3 = spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y3,
@@ -453,9 +425,24 @@ int main(int argc, char *argv[]) {
 				correct2 = false;
 			}
 		}
-		cout << setw(11) << time_baseline;
-		cout << setw(20) << time_v1;
-		cout << setw(20) << time_v2;
+		if (ret1 == 0) {
+			cout << setw(11) << time_baseline;
+		} else {
+			cout << setw(11) << "Failed."
+		}
+		
+		if (ret2 == 0) {
+			cout << setw(20) << time_v1;
+		} else {
+			cout << setw(20) << "Failed.";
+		}
+
+		if (ret3 == 0) {
+			cout << setw(20) << time_v2;
+		} else {
+			cout << setw(20) << "Failed.";
+		}		
+		
 		if (correct1) cout << setw(15) <<"Pass1 ";
 		else cout << setw(15) << "No pass1 ";
 		if (correct2) cout << setw(15) <<"Pass2";

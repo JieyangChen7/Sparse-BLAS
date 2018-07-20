@@ -45,3 +45,30 @@ double get_time()
 	//return 0.00001;
 	return ms / 1000;
 }
+
+
+double get_gpu_availble_mem(int ngpu) {
+	size_t uCurAvailMemoryInBytes;
+	size_t uTotalMemoryInBytes;
+	
+
+	double min_mem = numeric_limits<double>::max();
+	int device;
+	for (device = 0; device < ngpu; ++device) 
+	{
+		cudaSetDevice(device);
+		cudaMemGetInfo(&uCurAvailMemoryInBytes, &uTotalMemoryInBytes);
+		double aval_mem = (double)uCurAvailMemoryInBytes/1e9;
+		//cout << aval_mem << endl;
+		if (aval_mem < min_mem) {
+			min_mem = aval_mem;
+		}
+	    // cudaDeviceProp deviceProp;
+	    // cudaGetDeviceProperties(&deviceProp, device);
+	    // printf("Device %d has compute capability %d.%d.\n",
+	    //        device, deviceProp.major, deviceProp.minor);
+	}
+
+
+	return min_mem;
+}

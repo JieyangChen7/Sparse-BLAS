@@ -31,5 +31,7 @@ int get_row_from_index(int n, long long * a, long long idx);
 
 double get_time();
 
+double get_gpu_availble_mem(int ngpu);
+
 
 #endif /* SPMV_KERNEL */

@@ -56,6 +56,9 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 	double ** dev_x = new double * [ngpu];
 	double ** dev_y = new double * [ngpu];
 
+	
+
+
 	for (int d = 0; d < ngpu; d++){
 
 		cudaSetDevice(d);
@@ -69,6 +72,12 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
 		dev_nnz[d] = (int)(csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]]);
+
+		long long matrix_data_space = dev_nnz[d] * sizeof(double) + dev_nnz[d] * sizeof(int) + (dev_m[d]+1) * sizeof(int);
+		double matrix_size_in_gb = (double)matrix_data_space / 1e9;
+		if (aval_mem * 0.9 < get_gpu_availble_mem(ngpu)) {
+			return -1;
+		}
 
 		//cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
