@@ -72,9 +72,9 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
 
-		long long nzz_ll = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
-		long long matrix_data_space = nzz_ll * sizeof(double) + 
-										nzz_ll * sizeof(int) + 
+		long long nnz_ll = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
+		long long matrix_data_space = nnz_ll * sizeof(double) + 
+										nnz_ll * sizeof(int) + 
 										(long long)(dev_m[d]+1) * sizeof(int) + 
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
