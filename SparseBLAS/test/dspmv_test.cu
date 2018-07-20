@@ -199,9 +199,9 @@ int main(int argc, char *argv[]) {
 	    p = 0;
 		
 
-		cout << "Start generating data ";
+		cout << "Start generating data " << std::flush;
 		for (int i = 0; i < m; i += nb) {
-			cout << ".";
+			cout << "." << std::flush;
 			if (i == 0) {
 				r = r1;
 			} else {
