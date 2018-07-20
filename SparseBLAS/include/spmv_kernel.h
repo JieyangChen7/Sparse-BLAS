@@ -24,7 +24,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 				  double * y,
 				  int ngpu, 
 				  int kernel,
-				  int nb,
+				  long long nb,
 				  int copy_of_workspace);
 
 int get_row_from_index(int n, long long * a, long long idx);

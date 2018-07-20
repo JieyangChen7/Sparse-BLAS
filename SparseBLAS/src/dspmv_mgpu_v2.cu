@@ -17,7 +17,7 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 				    double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  	double * x, double * beta,
 				  	double * y,
-				  	int nb,
+				  	long long nb,
 				  	vector<spmv_task *> * spmv_task_pool_ptr);
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream);
@@ -36,7 +36,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 				  double * y,
 				  int ngpu, 
 				  int kernel,
-				  int nb,
+				  long long nb,
 				  int copy_of_workspace)
 {
 
@@ -218,7 +218,7 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 				    double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  	double * x, double * beta,
 				  	double * y,
-				  	int nb,
+				  	long long nb,
 				  	vector<spmv_task *> * spmv_task_pool_ptr) {
 
 	int num_of_tasks = (int)((nnz + nb - 1) / nb);
