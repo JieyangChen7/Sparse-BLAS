@@ -330,10 +330,10 @@ int main(int argc, char *argv[]) {
 					 cooVal, csrRowPtr, cooColIndex, 
 					 x, &BETA,
 					 y3,
-					 ngpu,
+					 d,
 					 kernel_version,
-					 nnz/divide,
-					 copy_of_workspace);
+					 d * c,
+					 c);
 			profile_time = get_time() - curr_time;	
 			if (profile_time < min_profile_time) {
 				min_profile_time = profile_time;
