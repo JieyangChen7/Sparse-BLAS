@@ -432,33 +432,33 @@ int main(int argc, char *argv[]) {
 		if (ret1 == 0) {
 			cout << setw(11) << time_baseline;
 		} else {
-			cout << setw(11) << "Failed.";
+			cout << setw(11) << "Failed";
 		}
 		
 		if (ret2 == 0) {
 			cout << setw(13) << time_v1;
 		} else {
-			cout << setw(13) << "Failed.";
+			cout << setw(13) << "Failed";
 		}
 
 		if (ret1 == 0) {
-			if (correct1) cout << setw(10) <<"Y";
-			else cout << setw(10) << "N";
+			if (correct1) cout << setw(9) <<"Y";
+			else cout << setw(9) << "N";
 		} else {
-			cout << setw(10) <<"N/A";
+			cout << setw(9) <<"N/A";
 		}
 
 		if (ret3 == 0) {
-			cout << setw(13) << time_v2;
+			cout << setw(14) << time_v2;
 		} else {
-			cout << setw(13) << "Failed.";
+			cout << setw(14) << "Failed.";
 		}		
 
 		if (ret1 == 0) {
-			if (correct2) cout << setw(10) <<"Y";
-			else cout << setw(10) << "N";
+			if (correct2) cout << setw(9) <<"Y";
+			else cout << setw(9) << "N";
 		} else {
-			cout << setw(10) <<"N/A";
+			cout << setw(9) <<"N/A";
 		}
 		cout << endl;
 
