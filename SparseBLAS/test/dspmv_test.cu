@@ -388,7 +388,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 best_dev_count,
 					 kernel_version,
-					 best_dev_count * best_copy,
+					 nnz / (best_dev_count * best_copy),
 					 best_copy);
 		time_v2 = get_time() - curr_time;	
 
