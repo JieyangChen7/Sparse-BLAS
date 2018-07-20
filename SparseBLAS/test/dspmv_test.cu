@@ -366,8 +366,8 @@ int main(int argc, char *argv[]) {
 
 	//cudaProfilerStart();
 
-	cout << "   Baseline     Version1     Check     Version2     Check" << endl;
-	cout << "============================================================" << endl;
+	cout << "  Test No.   Baseline     Version1     Check     Version2     Check" << endl;
+	cout << "=======================================================================" << endl;
 
 	for (int i = 0; i < repeat_test; i++) {
 		for (int i = 0; i < m; i++)
@@ -425,6 +425,10 @@ int main(int argc, char *argv[]) {
 				correct2 = false;
 			}
 		}
+
+		cout << setw(10) << i+1;
+
+
 		if (ret1 == 0) {
 			cout << setw(11) << time_baseline;
 		} else {
