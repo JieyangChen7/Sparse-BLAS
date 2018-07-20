@@ -167,8 +167,8 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			host_y[i] = new double[dev_m[i]];
 		}
 
-		for (int i = 0; i < ngpul i++) {
-			long long nnz_ll = end_idx[i] - start_idx[i] + 1;
+		for (int d = 0; d < ngpu d++) {
+			long long nnz_ll = end_idx[d] - start_idx[d] + 1;
 			long long matrix_data_space = nzz_ll * sizeof(double) + 
 										nzz_ll * sizeof(int) + 
 										(long long)(dev_m[d]+1) * sizeof(int) + 
@@ -181,7 +181,7 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			}
 
 
-			dev_nnz[i]   = (int)(end_idx[i] - start_idx[i] + 1);
+			dev_nnz[d]   = (int)(end_idx[d] - start_idx[d] + 1);
 		}
 
 
