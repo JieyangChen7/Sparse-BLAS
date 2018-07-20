@@ -30,8 +30,8 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 		curr_time = get_time();
 
 
-		long long  * start_idx  = new int[ngpu];
-		long long  * end_idx    = new int[ngpu];
+		long long  * start_idx  = new long long[ngpu];
+		long long  * end_idx    = new long long[ngpu];
 		int  * start_row  = new int[ngpu];
 		int  * end_row    = new int[ngpu];
 		bool * start_flag = new bool[ngpu];
