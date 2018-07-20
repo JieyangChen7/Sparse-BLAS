@@ -71,18 +71,22 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 
 		dev_m[d]   = end_row[d] - start_row[d] + 1;
 		dev_n[d]   = n;
-		dev_nnz[d] = (int)(csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]]);
 
-		long long matrix_data_space = (long long)dev_nnz[d] * sizeof(double) + 
-										(long long)dev_nnz[d] * sizeof(int) + 
+		nzz_ll = csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]];
+		long long matrix_data_space = nzz_ll * sizeof(double) + 
+										nzz_ll * sizeof(int) + 
 										(long long)(dev_m[d]+1) * sizeof(int) + 
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
 		double matrix_size_in_gb = (double)matrix_data_space / 1e9;
 		//cout << matrix_size_in_gb << " - " << get_gpu_availble_mem(ngpu) << endl;
-		if (dev_nnz[d] < 0 || matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
+		if ( matrix_size_in_gb > 0.8 * get_gpu_availble_mem(ngpu)) {
 			return -1;
 		}
+
+		dev_nnz[d] = (int)(csrRowPtr[end_row[d] + 1] - csrRowPtr[start_row[d]]);
+
+		
 
 		//cout << "dev_nnz[d] = " << dev_nnz[d] << " = " << csrRowPtr[end_row[d] + 1] << " - " << csrRowPtr[start_row[d]] << endl;
 
