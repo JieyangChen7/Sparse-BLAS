@@ -441,19 +441,25 @@ int main(int argc, char *argv[]) {
 		avg_time_v1  += time_v1;
 		avg_time_v2  += time_v2;
 
-		bool correct = true;
+		bool correct1 = true;
+		bool correct2 = true;
 		for(int i = 0; i < m; i++) {
 			//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
-			if (abs(y1[i] - y2[i]) > 1e-3 || abs(y1[i] - y3[i]) > 1e-3) {
+			if (abs(y1[i] - y2[i]) > 1e-3)
 				//cout << y1[i] << " - " << y3[i] << endl;
-				correct = false;
+				correct1 = false;
+			}
+			if (abs(y1[i] - y3[i]) > 1e-3) {
+				correct2 = false;
 			}
 		}
 		cout << setw(11) << time_baseline;
 		cout << setw(20) << time_v1;
 		cout << setw(20) << time_v2;
-		if (correct) cout << setw(15) <<"Pass";
-		else cout << setw(15) << "No pass";
+		if (correct1) cout << setw(15) <<"Pass1 ";
+		else cout << setw(15) << "No pass1 ";
+		if (correct2) cout << setw(15) <<"Pass2";
+		else cout << setw(15) << "No pass2";
 		cout << endl;
 
 	
