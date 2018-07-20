@@ -36,34 +36,27 @@ void print_error(cusparseStatus_t status) {
 double get_gpu_availble_mem() {
 	unsigned int uCurAvailMemoryInBytes;
 	unsigned int uTotalMemoryInBytes;
-	int nNoOfGPUs;
-
-	CUresult result;
-	CUdevice device;
-	CUcontext context;
+	
 
 	double min_mem = numeric_limits<double>::max();
 
-	cuInit(0); // Initialize CUDA
-	cuDeviceGetCount( &nNoOfGPUs ); // Get number of devices supporting CUDA
-	for( int nID = 0; nID < nNoOfGPUs; nID++ )
+	int device;
+	for (device = 0; device < deviceCount; ++device) 
 	{
-	    cuDeviceGet( &device, nID ); // Get handle for device
-	    cuCtxCreate( &context, 0, device ); // Create context
-	    result = cuMemGetInfo( &uCurAvailMemoryInBytes, &uTotalMemoryInBytes );
-	    if( result == CUDA_SUCCESS )
-	    {
-	        // printf( "Device: %d\nTotal Memory: %d MB, Free Memory: %d MB\n",
-	        //         nID,
-	        //         uTotalMemoryInBytes / ( 1024 * 1024 ),
-	        //         uCurAvailMemoryInBytes / ( 1024 * 1024 ));
-	        avail_mem = (double)uCurAvailMemoryInBytes / 1e9;
-	        if (avail_mem < min_mem) {
-	        	min_mem = avail_mem；
-	        }
-	    }
-	    cuCtxDetach( context ); // Destroy context
+		cudaSetDevice(device);
+		cudaMemGetInfo(&uCurAvailMemoryInBytes, &uTotalMemoryInBytes);
+		double aval_mem = (double)uCurAvailMemoryInBytes/1e9;
+		cout << aval_mem << endl;
+		if (aval_mem < min_mem) {
+			min_mem = aval_mem;
+		}
+	    // cudaDeviceProp deviceProp;
+	    // cudaGetDeviceProperties(&deviceProp, device);
+	    // printf("Device %d has compute capability %d.%d.\n",
+	    //        device, deviceProp.major, deviceProp.minor);
 	}
+
+
 	return min_mem;
 }
 
@@ -365,7 +358,7 @@ int main(int argc, char *argv[]) {
 							 y1,
 							 ngpu);
 	}
-	for (int d = ; d <= deviceCount; d*=2) {
+	for (int d = max(1, (matrix_size_in_gb / get_gpu_availble_mem * 0.8)); d <= deviceCount; d*=2) {
 		for (int c = 1; c <= 32; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
