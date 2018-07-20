@@ -78,6 +78,10 @@ int spMV_mgpu_baseline(int m, int n, long long nnz, double * alpha,
 										(long long)(dev_m[d]+1) * sizeof(int) + 
 										(long long)dev_n[d] * sizeof(double) +
 										(long long)dev_m[d] * sizeof(double);
+		cout << dev_nnz[d] << endl;
+		cout << (long long)dev_nnz[d] << endl;
+		cout << sizeof(double) << endl;
+		cout << sizeof(int) << endl;
 		cout << (long long)dev_nnz[d] * sizeof(double) <<endl;
 		cout << (long long)dev_nnz[d] * sizeof(int) <<endl;
 		cout << (long long)(dev_m[d]+1) * sizeof(int) <<endl;
