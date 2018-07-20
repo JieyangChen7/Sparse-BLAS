@@ -5,8 +5,8 @@ struct spmv_task
 {
 	int dev_id;
 
-	int start_idx;
-	int end_idx;
+	long long start_idx;
+	long long end_idx;
 	int start_row;
 	int end_row;
 	bool start_flag;

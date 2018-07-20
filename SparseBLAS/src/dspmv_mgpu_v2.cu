@@ -13,8 +13,8 @@ using namespace std;
 
 void * spmv_worker(void * arg);
 
-void generate_tasks(int m, int n, int nnz, double * alpha,
-				    double * csrVal, int * csrRowPtr, int * csrColIndex, 
+void generate_tasks(int m, int n, long long nnz, double * alpha,
+				    double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  	double * x, double * beta,
 				  	double * y,
 				  	int nb,
@@ -30,8 +30,8 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 
 void print_task_info(spmv_task * t);
 
-int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
-				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
+int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
+				  double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
 				  int ngpu, 
@@ -204,14 +204,14 @@ int spMV_mgpu_v2(int m, int n, int nnz, double * alpha,
 
 
 
-void generate_tasks(int m, int n, int nnz, double * alpha,
-				    double * csrVal, int * csrRowPtr, int * csrColIndex, 
+void generate_tasks(int m, int n, long long nnz, double * alpha,
+				    double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  	double * x, double * beta,
 				  	double * y,
 				  	int nb,
 				  	vector<spmv_task *> * spmv_task_pool_ptr) {
 
-	int num_of_tasks = (nnz + nb - 1) / nb;
+	int num_of_tasks = (int)((nnz + nb - 1) / nb);
 	//cout << "num_of_tasks = " << num_of_tasks << endl;
 
 	int curr_row;
@@ -222,8 +222,8 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 	// Calculate the start and end index
 	for (t = 0; t < num_of_tasks; t++) {
-		long long tmp1 = t * (long long)nnz;
-		long long tmp2 = (t + 1) * (long long)nnz;
+		long long tmp1 = t * nnz;
+		long long tmp2 = (t + 1) * nnz;
 
 		double tmp3 = (double)(tmp1 / num_of_tasks);
 		double tmp4 = (double)(tmp2 / num_of_tasks);
@@ -236,7 +236,7 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 
 		spmv_task_pool[t].start_idx = floor((double)(tmp1 / num_of_tasks));
 		spmv_task_pool[t].end_idx   = floor((double)(tmp2 / num_of_tasks)) - 1;
-		spmv_task_pool[t].dev_nnz = spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1;
+		spmv_task_pool[t].dev_nnz = (int)(spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1);
 
 		// cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
 		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
@@ -305,15 +305,15 @@ void generate_tasks(int m, int n, int nnz, double * alpha,
 		//cout << "test4-2" << endl;
 
 
-		memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
-			   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
-			   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
+		// memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
+		// 	   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
+		// 	   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
 		//cout << "test4-3" << endl;
 
 
 		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
-			spmv_task_pool[t].host_csrRowPtr[j] -= spmv_task_pool[t].start_idx;
+			spmv_task_pool[t].host_csrRowPtr[j] = (int)(csrRowPtr[spmv_task_pool[t].start_row + j] - spmv_task_pool[t].start_idx);
 		}
 
 		//cout << "test4-4" << endl;

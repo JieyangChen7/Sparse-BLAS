@@ -14,7 +14,7 @@ using namespace std;
 
 
 int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
-				  double * csrVal, int * csrRowPtr, int * csrColIndex, 
+				  double * csrVal, long long * csrRowPtr, int * csrColIndex, 
 				  double * x, double * beta,
 				  double * y,
 				  int ngpu, 
@@ -32,10 +32,10 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 
 		long long  * start_idx  = new long long[ngpu];
 		long long  * end_idx    = new long long[ngpu];
-		int  * start_row  = new int[ngpu];
-		int  * end_row    = new int[ngpu];
-		bool * start_flag = new bool[ngpu];
-		bool * end_flag   = new bool[ngpu];
+		int        * start_row  = new int[ngpu];
+		int        * end_row    = new int[ngpu];
+		bool       * start_flag = new bool[ngpu];
+		bool       * end_flag   = new bool[ngpu];
 
 		//int curr_row;
 
@@ -78,9 +78,9 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			// cout << "tmp3 = " << tmp3 << endl;
 			// cout << "tmp4 = " << tmp4 << endl;
 
-			start_idx[i]   = floor((double)tmp1 / ngpu);
-			end_idx[i]     = floor((double)tmp2 / ngpu) - 1;
-			dev_nnz[i] = end_idx[i] - start_idx[i] + 1;
+			start_idx[i] = floor((double)tmp1 / ngpu);
+			end_idx[i]   = floor((double)tmp2 / ngpu) - 1;
+			dev_nnz[i]   = (int)(end_idx[i] - start_idx[i] + 1);
 		}
 
 		// tmp = get_time() - tmp;
@@ -199,11 +199,11 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			host_csrRowPtr[i][0] = 0;
 			host_csrRowPtr[i][dev_m[i]] = dev_nnz[i];
 
-			// for (int j = 1; j < dev_m[i]; j++) {
-			// 	host_csrRowPtr[i][j] = csrRowPtr[start_row[i] + j];
-			// }
+			for (int j = 1; j < dev_m[i]; j++) {
+				host_csrRowPtr[i][j] = (int)(csrRowPtr[start_row[i] + j] - start_idx[i]);
+			}
 
-			memcpy(&host_csrRowPtr[i][1], &csrRowPtr[start_row[i] + 1], (dev_m[i] - 1)* sizeof(int) );
+			//memcpy(&host_csrRowPtr[i][1], &csrRowPtr[start_row[i] + 1], (dev_m[i] - 1) * sizeof(int) );
 
 			// cout << "host_csrRowPtr: ";
 			// for (int j = 0; j <= dev_m[i]; j++) {
@@ -211,9 +211,9 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 			// }
 			// cout << endl;
 
-			for (int j = 1; j < dev_m[i]; j++) {
-				host_csrRowPtr[i][j] = (int)((long long)host_csrRowPtr[i][j] - start_idx[i]);
-			}
+			// for (int j = 1; j < dev_m[i]; j++) {
+			// 	host_csrRowPtr[i][j] = (int)((long long)host_csrRowPtr[i][j] - start_idx[i]);
+			// }
 
 			// cout << "host_csrRowPtr: ";
 			// for (int j = 0; j <= dev_m[i]; j++) {
