@@ -449,7 +449,7 @@ int main(int argc, char *argv[]) {
 				//cout << y1[i] << " - " << y3[i] << endl;
 				correct1 = false;
 			}
-			if (abs(y1[i] - y3[i]) > 1e-3) {
+			if (abs(y2[i] - y3[i]) > 1e-3) {
 				correct2 = false;
 			}
 		}
