@@ -48,7 +48,7 @@ double get_gpu_availble_mem() {
 		cudaSetDevice(device);
 		cudaMemGetInfo(&uCurAvailMemoryInBytes, &uTotalMemoryInBytes);
 		double aval_mem = (double)uCurAvailMemoryInBytes/1e9;
-		cout << aval_mem << endl;
+		//cout << aval_mem << endl;
 		if (aval_mem < min_mem) {
 			min_mem = aval_mem;
 		}
