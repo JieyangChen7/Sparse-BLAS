@@ -438,8 +438,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (ret1 == 0) {
-			if (correct1) cout << setw(10) <<"Pass1 ";
-			else cout << setw(10) << "No pass1 ";
+			if (correct1) cout << setw(10) <<"Pass ";
+			else cout << setw(10) << "No pass ";
 		} else {
 			if (correct1) cout << setw(10) <<"N/A ";
 		}
@@ -451,8 +451,8 @@ int main(int argc, char *argv[]) {
 		}		
 
 		if (ret1 == 0) {
-			if (correct2) cout << setw(10) <<"Pass2";
-			else cout << setw(10) << "No pass2";
+			if (correct2) cout << setw(10) <<"Pass";
+			else cout << setw(10) << "No pass";
 			cout << endl;
 		} else {
 			if (correct1) cout << setw(10) <<"N/A ";
