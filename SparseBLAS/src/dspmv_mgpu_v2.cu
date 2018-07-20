@@ -40,7 +40,12 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 				  int copy_of_workspace)
 {
 
-	nb = min(nb, (int)(0.9*get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int))) ); 
+	cout << get_gpu_availble_mem(ngpu) <<endl;
+	cout << (sizeof(double) + sizeof(int) + sizeof(int)) <<endl;
+	cout << get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int)) << endl;
+	cout << (int)(0.9*get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int))) << endl;
+
+	//nb = min(nb, (int)(0.9*get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int))) ); 
 
 	double curr_time = 0.0;
 	double time_parse = 0.0;
