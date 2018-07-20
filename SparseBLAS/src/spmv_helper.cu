@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int get_row_from_index(int n, int * a, int idx) {
+int get_row_from_index(int n, long long * a, long long idx) {
 	int l = 0;
 	int r = n;
 	while (l < r - 1 ) {
