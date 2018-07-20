@@ -366,8 +366,8 @@ int main(int argc, char *argv[]) {
 
 	//cudaProfilerStart();
 
-	cout << "   Baseline            Version1            Version2          Check" << endl;
-	cout << "=====================================================================" << endl;
+	cout << "   Baseline     Version1     Check     Version2     Check" << endl;
+	cout << "============================================================" << endl;
 
 	for (int i = 0; i < repeat_test; i++) {
 		for (int i = 0; i < m; i++)
@@ -421,7 +421,7 @@ int main(int argc, char *argv[]) {
 				//cout << y1[i] << " - " << y3[i] << endl;
 				correct1 = false;
 			}
-			if (abs(y2[i] - y3[i]) > 1e-3) {
+			if (abs(y1[i] - y3[i]) > 1e-3) {
 				correct2 = false;
 			}
 		}
@@ -432,22 +432,31 @@ int main(int argc, char *argv[]) {
 		}
 		
 		if (ret2 == 0) {
-			cout << setw(20) << time_v1;
+			cout << setw(13) << time_v1;
 		} else {
-			cout << setw(20) << "Failed.";
+			cout << setw(13) << "Failed.";
+		}
+
+		if (ret1 == 0) {
+			if (correct1) cout << setw(10) <<"Pass1 ";
+			else cout << setw(10) << "No pass1 ";
+		} else {
+			if (correct1) cout << setw(10) <<"N/A ";
 		}
 
 		if (ret3 == 0) {
-			cout << setw(20) << time_v2;
+			cout << setw(13) << time_v2;
 		} else {
-			cout << setw(20) << "Failed.";
+			cout << setw(13) << "Failed.";
 		}		
 
-		if (correct1) cout << setw(15) <<"Pass1 ";
-		else cout << setw(15) << "No pass1 ";
-		if (correct2) cout << setw(15) <<"Pass2";
-		else cout << setw(15) << "No pass2";
-		cout << endl;
+		if (ret1 == 0) {
+			if (correct2) cout << setw(10) <<"Pass2";
+			else cout << setw(10) << "No pass2";
+			cout << endl;
+		} else {
+			if (correct1) cout << setw(10) <<"N/A ";
+		}
 
 	
 	}
@@ -479,8 +488,8 @@ int main(int argc, char *argv[]) {
 
 
 	cout << setw(11) << avg_time_baseline;
-	cout << setw(20) << avg_time_v1;
-	cout << setw(20) << avg_time_v2;
+	cout << setw(13) << avg_time_v1;
+	cout << setw(23) << avg_time_v2;
 	cout << endl;
 	
 }
