@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 	int ret_code;
     MM_typecode matcode;
     FILE *f;
-    int m, n
+    int m, n;
     long long nnz;   
     int * cooRowIndex;
     int * cooColIndex;
