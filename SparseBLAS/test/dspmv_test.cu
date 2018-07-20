@@ -40,6 +40,8 @@ double get_gpu_availble_mem() {
 
 	double min_mem = numeric_limits<double>::max();
 
+	int deviceCount;
+	cudaGetDeviceCount(&deviceCount);
 	int device;
 	for (device = 0; device < deviceCount; ++device) 
 	{
