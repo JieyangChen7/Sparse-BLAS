@@ -333,7 +333,7 @@ int main(int argc, char *argv[]) {
 					 y3,
 					 d,
 					 kernel_version,
-					 d * c,
+					 nnz / (d * c),
 					 c);
 			profile_time = get_time() - curr_time;	
 			if (profile_time < min_profile_time) {
