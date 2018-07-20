@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
     int * cooRowIndex;
     int * cooColIndex;
     double * cooVal;
-    int * csrRowPtr;
+    long long * csrRowPtr;
 
 
     int deviceCount;
@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
 
 	// Convert COO to CSR
     //csrRowPtr = (int *) malloc((m+1) * sizeof(int));
-    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(int));
+    cudaMallocHost((void **)&csrRowPtr, (m+1) * sizeof(long long));
 
     //cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
     long long matrix_data_space = nnz * sizeof(double) + nnz * sizeof(int) + (m+1) * sizeof(int);
