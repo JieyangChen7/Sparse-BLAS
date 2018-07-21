@@ -47,7 +47,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 
 	cout << "nb before = " << nb << endl;
 	cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
-	nb = min(nb, (long long )(0.8*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int))) ); 
+	nb = min(nb, (long long )(0.5*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int))) ); 
 	cout << "nb after = " << nb << endl;
 	if (nb <= 0 || ngpu == 0 || copy_of_workspace == 0) {
 		return -1;
