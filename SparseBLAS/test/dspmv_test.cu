@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	
-	for (int d = 1; d <= ngpu; d*=2) {
+	for (int d = 2; d <= ngpu; d*=2) {
 		for (int c = 1; c <= 8; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
 			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
