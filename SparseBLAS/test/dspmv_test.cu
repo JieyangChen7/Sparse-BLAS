@@ -338,9 +338,18 @@ int main(int argc, char *argv[]) {
 	}
 
 	
-	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem(ngpu) * 0.8))); d <= ngpu; d++) {
+	for (int d = 1; d <= ngpu; d*=2) {
 		for (int c = 1; c <= 8; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+			cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
+
 			curr_time = get_time();
 			spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
