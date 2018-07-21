@@ -329,16 +329,16 @@ int main(int argc, char *argv[]) {
 	cout << "Warming up GPU(s)..." << endl;
 
 	for (int i = 0; i < warm_up_iter; i++) {
-		// spMV_mgpu_v1(m, n, nnz, &ALPHA,
-		// 			 cooVal, csrRowPtr, cooColIndex, 
-		// 			 x, &BETA,
-		// 			 y2,
-		// 			 ngpu,
-		// 			 kernel_version);
+		spMV_mgpu_v1(m, n, nnz, &ALPHA,
+					 cooVal, csrRowPtr, cooColIndex, 
+					 x, &BETA,
+					 y2,
+					 ngpu,
+					 kernel_version);
 	}
 
 	
-	for (int d = 1; d <= ngpu; d*=2) {
+	for (int d = max(1, (int)ceil(matrix_size_in_gb / (get_gpu_availble_mem(ngpu) * 0.8))); d <= ngpu; d++) {
 		for (int c = 1; c <= 8; c*=2) {
 			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
