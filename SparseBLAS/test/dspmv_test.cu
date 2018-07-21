@@ -495,9 +495,21 @@ int main(int argc, char *argv[]) {
 	cout << "......................................................................." << endl;
 
 	cout << setw(10) << "Average";
-	cout << setw(11) << avg_time_baseline;
-	cout << setw(13) << avg_time_v1;
-	cout << setw(23) << avg_time_v2;
+	if (ret1 == 0) {
+		cout << setw(11) << avg_time_baseline;
+	} else {
+		cout << setw(11) << "Failed";
+	}
+	if (ret2 == 0) {
+		cout << setw(13) << avg_time_v1;
+	} else {
+		cout << setw(13) << "Failed";
+	}
+	if (ret3 == 0) {
+		cout << setw(23) << avg_time_v2;
+	} else {
+		cout << setw(23) << "Failed";
+	}
 	cout << endl;
 	
 }
