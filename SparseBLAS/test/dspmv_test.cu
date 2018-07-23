@@ -339,7 +339,8 @@ int main(int argc, char *argv[]) {
 
 	//cudaProfilerStart();
 
-	cout << "  Test No.   Baseline     Version1     Pass      Version2     Pass" << endl;
+	cout << "  Test No.   Baseline    Version 1     Pass     Version 2     Pass" << endl;
+	cout << "              Time(s)      Time(s)                Time(s)         " << endl;
 	cout << "=======================================================================" << endl;
 
 	for (int i = 0; i < repeat_test; i++) {
