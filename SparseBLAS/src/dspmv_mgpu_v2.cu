@@ -26,7 +26,7 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream);
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta);
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta, int m);
 
 void print_task_info(spmv_task * t);
 
@@ -191,7 +191,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 
 	curr_time = get_time();
 
-	gather_results(spmv_task_completed, y, beta);
+	gather_results(spmv_task_completed, y, beta, m);
 
 	for (int t = 0; t < (*spmv_task_completed).size(); t++) {
 		cudaFreeHost((*spmv_task_completed)[t]->host_csrRowPtr);
@@ -386,7 +386,7 @@ void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
 void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta, int m) {
 	
 	int t = 0;
-	int * flag = new bool[m];
+	bool * flag = new bool[m];
 	for (int i = 0; i < m; i++) {
 		flag[i] = false;
 	}
@@ -408,7 +408,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 				} else {
 					tmp = y[(*spmv_task_completed)[t]->start_row];
 					(*spmv_task_completed)[t]->local_result_y[0] += tmp;
-					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * (*spmv_task_completed)[t]->y2;
 				}
 		}
 		
@@ -419,7 +419,8 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 				} else {
 					tmp = y[(*spmv_task_completed)[t]->start_row];
 					(*spmv_task_completed)[t]->local_result_y[0] += tmp;
-					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * (*spmv_task_completed)[t]->y2;
+				}
 			}
 
 			if ((*spmv_task_completed)[t]->end_flag) {
@@ -428,7 +429,8 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 				} else {
 					tmp = y[(*spmv_task_completed)[t]->end_row];
 					(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp;
-					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * (*spmv_task_completed)[t]->y2;
+				}
 			}
 		}
 
