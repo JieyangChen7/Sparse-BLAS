@@ -215,13 +215,13 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 							dev_x[d],  beta, dev_y[d]); 
 			}
 		}
-		
+
 		for (int d = 0; d < ngpu; ++d) 
 		{
 			cudaSetDevice(d);
 			cudaDeviceSynchronize();
 			if (status[d] != CUSPARSE_STATUS_SUCCESS || err[d] != 0 ) {
-				//return -1;
+				return -1;
 			}
 
 		}
