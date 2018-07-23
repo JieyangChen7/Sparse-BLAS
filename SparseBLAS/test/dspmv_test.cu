@@ -38,18 +38,6 @@ void print_error(cusparseStatus_t status) {
 int main(int argc, char *argv[]) {
 
 
-	// omp_set_num_threads(8);
-	// cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-	// cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-	// #pragma omp parallel// default (shared)
-	// {
-	// 	cout << "omp_get_num_threads = " << omp_get_num_threads() << endl;
-	// 	cout << "omp_get_max_threads = " << omp_get_max_threads() << endl;
-	// 	cout << "omp_get_thread_limit = " << omp_get_thread_limit() << endl;
-
-
-	// }
-
 	if (argc < 6) {
 		cout << "Incorrect number of arguments!" << endl;
 		cout << "Usage ./spmv [input matrix file] [number of GPU(s)] [number of test(s)] [kernel version (1-3)] [data type ('f' or 'b')]"  << endl;
@@ -110,16 +98,6 @@ int main(int argc, char *argv[]) {
 	cout << "Kernel #" << kernel_version << " is selected." << endl;
 	//cout << divide <<  "total task(s) will be generated for version 2 with "<< copy_of_workspace << " Hyper-Q(s) on each GPU." << endl;
 
-	// int device;
-	// for (device = 0; device < deviceCount; ++device) 
-	// {
-	//     cudaDeviceProp deviceProp;
-	//     cudaGetDeviceProperties(&deviceProp, device);
-	//     printf("Device %d has compute capability %d.%d.\n",
-	//            device, deviceProp.major, deviceProp.minor);
-	// }
-
-
     if (input_type == 'f') {
 
 	    cout << "Loading input matrix from " << filename << endl;
@@ -136,11 +114,6 @@ int main(int argc, char *argv[]) {
 	    }
 	    nnz = nnz_int;
 	    cout << "m: " << m << " n: " << n << " nnz: " << nnz << endl;
-
-	    //cooRowIndex = (int *) malloc(nnz * sizeof(int));
-	    //cooColIndex = (int *) malloc(nnz * sizeof(int));
-	    //cooVal      = (double *) malloc(nnz * sizeof(double));
-
 	    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
@@ -340,7 +313,6 @@ int main(int argc, char *argv[]) {
 	
 	for (int d = 1; d <= ngpu; d*=2) {
 		for (int c = 1; c <= 8; c*=2) {
-			cout << "d = " << d << ", c = " << c << endl;
 			curr_time = get_time();
 			spMV_mgpu_v2(m, n, nnz, &ALPHA,
 					 cooVal, csrRowPtr, cooColIndex, 
@@ -355,9 +327,6 @@ int main(int argc, char *argv[]) {
 				min_profile_time = profile_time;
 				best_dev_count = d;
 				best_copy = c;
-				cout << "min_profile_time = " << min_profile_time;
-				cout << ", best_dev_count = " << best_dev_count;
-				cout << ", best_copy = " << best_copy << endl;
 			}
 		}
 	}
@@ -511,5 +480,10 @@ int main(int argc, char *argv[]) {
 		cout << setw(23) << "Failed";
 	}
 	cout << endl;
+
+	cudaFreeHost(cooRowIndex);
+	cudaFreeHost(cooColIndex);
+	cudaFreeHost(cooVal);
+	cudaFreeHost(csrRowPtr);
 	
 }
