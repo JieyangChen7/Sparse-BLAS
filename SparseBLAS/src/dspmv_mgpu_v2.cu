@@ -40,15 +40,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 				  int copy_of_workspace)
 {
 
-	// cout << get_gpu_availble_mem(ngpu) <<endl;
-	// cout << (sizeof(double) + sizeof(int) + sizeof(int)) <<endl;
-	// cout << get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int)) << endl;
-	// cout << (int)(0.9*get_gpu_availble_mem(ngpu)/(double)(sizeof(double) + sizeof(int) + sizeof(int))) << endl;
-
-	//cout << "nb before = " << nb << endl;
-	//cout << "get_gpu_availble_mem(ngpu) = " << get_gpu_availble_mem(ngpu) << endl;
 	nb = min(nb, (long long )(0.8*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int)))/copy_of_workspace ); 
-	//cout << "nb after = " << nb << endl;
 	if (nb <= 0 || ngpu == 0 || copy_of_workspace == 0) {
 		return -1;
 	}
@@ -63,8 +55,6 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 
 	vector<spmv_task *> * spmv_task_pool = new vector<spmv_task *>();
 	vector<spmv_task *> * spmv_task_completed = new vector<spmv_task *>();
-
-
 
 	generate_tasks(m, n, nnz, alpha,
 				  csrVal, csrRowPtr, csrColIndex, 
@@ -242,18 +232,9 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 		double tmp3 = (double)(tmp1 / num_of_tasks);
 		double tmp4 = (double)(tmp2 / num_of_tasks);
 
-		// cout << "tmp1 = " << tmp1 << endl;
-		// cout << "tmp2 = " << tmp2 << endl;
-
-		// cout << "tmp3 = " << tmp3 << endl;
-		// cout << "tmp4 = " << tmp4 << endl;
-
 		spmv_task_pool[t].start_idx = floor((double)(tmp1 / num_of_tasks));
 		spmv_task_pool[t].end_idx   = floor((double)(tmp2 / num_of_tasks)) - 1;
 		spmv_task_pool[t].dev_nnz = (int)(spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1);
-
-		// cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
-		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
 	}
 
 	//cout << "test1" << endl;
@@ -285,89 +266,50 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 		// True: imcomplete
 		if (spmv_task_pool[t].end_idx < csrRowPtr[spmv_task_pool[t].end_row + 1] - 1)  {
 			spmv_task_pool[t].end_flag = true;
+			spmv_task_pool[t].y2 = y[spmv_task_pool[t].end_row];
 		} else {
 			spmv_task_pool[t].end_flag = false;
 		}
 	}
 
-	//cout << "test3" << endl;
-
 	// Cacluclate dimensions
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].dev_m = spmv_task_pool[t].end_row - spmv_task_pool[t].start_row + 1;
 		spmv_task_pool[t].dev_n = n;
-		// cout << "spmv_task_pool[t].start_idx = " << spmv_task_pool[t].start_idx << endl;
-		// cout << "spmv_task_pool[t].end_idx = " << spmv_task_pool[t].end_idx << endl; 
-		// cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
-		// cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
-		// cout << "spmv_task_pool[t].dev_m = " << spmv_task_pool[t].dev_m << endl;
 	}
 
-	//cout << "test4" << endl;
 
 	for (t = 0; t < num_of_tasks; t++) {
 		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
 		//spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
 		cudaMallocHost((void **)&(spmv_task_pool[t].host_csrRowPtr), (spmv_task_pool[t].dev_m + 1) * sizeof(int));
 
-		//cout << "test4-1" << endl;
-
-
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
 		spmv_task_pool[t].host_csrRowPtr[spmv_task_pool[t].dev_m] = spmv_task_pool[t].dev_nnz;
-
-		//cout << "test4-2" << endl;
-
-
+	
 		// memcpy(&(spmv_task_pool[t].host_csrRowPtr[1]), 
 		// 	   &csrRowPtr[spmv_task_pool[t].start_row + 1], 
 		// 	   (spmv_task_pool[t].dev_m - 1) * sizeof(int) );
 
-		//cout << "test4-3" << endl;
-
-
+	
 		for (int j = 1; j < spmv_task_pool[t].dev_m; j++) {
 			spmv_task_pool[t].host_csrRowPtr[j] = (int)(csrRowPtr[spmv_task_pool[t].start_row + j] - spmv_task_pool[t].start_idx);
 		}
-
-		//cout << "test4-4" << endl;
-
 
 		spmv_task_pool[t].host_csrColIndex = csrColIndex;
 		spmv_task_pool[t].host_csrVal = csrVal;
 		spmv_task_pool[t].host_y = y;
 		spmv_task_pool[t].host_x = x;
 
-		//cout << "test4-5" << endl;
-
-
-		//spmv_task_pool[t].local_result_y = new double[spmv_task_pool[t].dev_m];
 		cudaMallocHost((void **)&(spmv_task_pool[t].local_result_y), spmv_task_pool[t].dev_m * sizeof(double));
 
-		//cout << "test4-6" << endl;
-
-
-		//spmv_task_pool[t].alpha = new double[1];
 		cudaMallocHost((void **)&(spmv_task_pool[t].alpha), 1 * sizeof(double));
 
-		//cout << "test4-7" << endl;
-
-
-		//spmv_task_pool[t].beta = new double[1]; 
 		cudaMallocHost((void **)&(spmv_task_pool[t].beta), 1 * sizeof(double));
-
-		//cout << "test4-8" << endl;
-
 
 		spmv_task_pool[t].alpha[0] = *alpha;
 		spmv_task_pool[t].beta[0] = *beta;
-
-		//cout << "test4-9" << endl;
-
-
 	}
-
-	//cout << "test5" << endl;
 
 	for (t = 0; t < num_of_tasks; t++) {
 		cusparseStatus_t status = cusparseCreateMatDescr(&(spmv_task_pool[t].descr));
@@ -380,22 +322,16 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 		cusparseSetMatIndexBase(spmv_task_pool[t].descr,CUSPARSE_INDEX_BASE_ZERO);
 	}
 
-	//cout << "test6" << endl;
-
 	(*spmv_task_pool_ptr).reserve(num_of_tasks);
 	for (t = 0; t < num_of_tasks; t++) {
 		(*spmv_task_pool_ptr).push_back(&spmv_task_pool[t]);
 	}
 
-	//cout << "test7" << endl;
-
 }
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	t->dev_id = dev_id;
-	//cudaSetDevice(dev_id);
-
-	//cout << "test8" << endl;
+	cudaSetDevice(dev_id);
 
     cudaMemcpyAsync(t->dev_csrRowPtr,   t->host_csrRowPtr,          
     			   (size_t)((t->dev_m + 1) * sizeof(int)), cudaMemcpyHostToDevice, stream);
@@ -412,57 +348,10 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 	cudaMemcpyAsync(t->dev_x, t->host_x,
 				   (size_t)(t->dev_n * sizeof(double)),  cudaMemcpyHostToDevice, stream);
 
-	//cout << "test9" << endl; 
 }
 
 void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
-	// cudaSetDevice(dev_id);
-
-	// cudaStream_t stream;
-
-	// cusparseGetStream(handle, &stream);
-
-	// cout << "dev_m[d] = " << t->dev_m << endl;
-	// cout << "dev_n[d] = " << t->dev_n << endl;
-	// cudaMemcpyAsync( t->host_csrRowPtr,  t->dev_csrRowPtr, (size_t)(( t->dev_m + 1) * sizeof(int)), cudaMemcpyDeviceToHost, stream);
-	// cudaMemcpyAsync(&(t->host_csrColIndex[t->start_idx]),  t->dev_csrColIndex,  (size_t)( t->dev_nnz * sizeof(int)),     cudaMemcpyDeviceToHost, stream); 
-	// cudaMemcpyAsync(&(t->host_csrVal[t->start_idx]),  t->dev_csrVal,            (size_t)( t->dev_nnz * sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
-
-	// cudaMemcpyAsync(&(t->host_y[t->start_row]),  t->dev_y,  (size_t)( t->dev_m*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
-	// cudaMemcpyAsync(t->host_x, t->dev_x,                (size_t)(t->dev_n*sizeof(double)),  cudaMemcpyDeviceToHost, stream); 
-
-	// cudaDeviceSynchronize();
-
-	// cout << "dev_csrRowPtr = [";
-	// for (int i = 0; i < t->dev_m + 1; i++) {
-	// 	cout << t->host_csrRowPtr[i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "csrColIndex = [";
-	// for (int i = 0; i < t->dev_nnz; i++) {
-	// 	cout << t->host_csrColIndex[t->start_idx+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "csrVal[start_idx[d]] = [";
-	// for (int i = 0; i < t->dev_nnz; i++) {
-	// 	cout << t->host_csrVal[t->start_idx+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "y[start_row[d]] = [";
-	// for (int i = 0; i < t->dev_m; i++) {
-	// 	cout << t->host_y[t->start_row+i] << ", ";
-	// }
-	// cout << "]" << endl;
-	// cout << "dev_x[d] = [";
-	// for (int i = 0; i < t->dev_n; i++) {
-	// 	cout << t->host_x[i] << ", ";
-	// }
-	// cout << "]" << endl;
-
-	// cout << "t->alpha = " << *(t->alpha) << endl;
-	// cout << "t->beta = " << *(t->beta) << endl;
-
-	//cout << "test10" << endl;
+	cudaSetDevice(dev_id);
 
 	cusparseStatus_t status;
 	if(kernel == 1) {
@@ -482,46 +371,25 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 					t->alpha, t->dev_csrVal, 
 					t->dev_csrRowPtr, t->dev_csrColIndex, 
 					t->dev_x,  t->beta, t->dev_y); 
-		// int err = 0;
-		// anonymouslibHandle<int, unsigned int, double> A(t->dev_m, t->dev_n);
-		// err = A.inputCSR(
-		// 	            t->dev_nnz, 
-		// 				t->dev_csrRowPtr, 
-		// 				t->dev_csrColIndex, 
-		// 				t->dev_csrVal);
-		// //cout << "inputCSR err = " << err << endl;
-		// err = A.setX(t->dev_x);
-		// //cout << "setX err = " << err << endl;
-		// A.setSigma(ANONYMOUSLIB_AUTO_TUNED_SIGMA);
-		// A.warmup();
-		// err = A.asCSR5();
-		// //cout << "asCSR5 err = " << err << endl;
-		// err = A.spmv(*(t->alpha), t->dev_y);
+		
 	}
-
-	//cout << "test11" << endl;
 
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
-	//cudaSetDevice(dev_id);
-	//cout << "test12" << endl;
-
+	cudaSetDevice(dev_id);
 	cudaMemcpyAsync(t->local_result_y,   t->dev_y,          
     			   (size_t)((t->dev_m) * sizeof(double)), 
     			   cudaMemcpyDeviceToHost, stream);
-
-	//cout << "test13" << endl;
-	// cudaFree(t->dev_csrVal);
-	// cudaFree(t->dev_csrRowPtr);
-	// cudaFree(t->dev_csrColIndex);
-	// cudaFree(t->dev_x);
 }
 
-void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta) {
+void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, double * beta, int m) {
 	
-	//cout << "test14" << endl;
 	int t = 0;
+	int * flag = new bool[m];
+	for (int i = 0; i < m; i++) {
+		flag[i] = false;
+	}
 	for (t = 0; t < (*spmv_task_completed).size(); t++) {
 		 //cout << "Task " << t << endl;
 		 //cout << "flag = " << (*spmv_task_completed)[t]->start_flag <<" " <<   (*spmv_task_completed)[t]->end_flag << endl;
@@ -535,20 +403,32 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 		if ((*spmv_task_completed)[t]->dev_m == 1 && 
 			((*spmv_task_completed)[t]->start_flag) && 
 			((*spmv_task_completed)[t]->end_flag)) {
-			tmp = y[(*spmv_task_completed)[t]->start_row];
-			(*spmv_task_completed)[t]->local_result_y[0] += tmp;
-
+				if (!flag[(*spmv_task_completed)[t]->start_row]) {
+					flag[(*spmv_task_completed)[t]->start_row] = true;
+				} else {
+					tmp = y[(*spmv_task_completed)[t]->start_row];
+					(*spmv_task_completed)[t]->local_result_y[0] += tmp;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
+				}
 		}
 		
 		else {
 			if ((*spmv_task_completed)[t]->start_flag) {
-				tmp = y[(*spmv_task_completed)[t]->start_row];
-				(*spmv_task_completed)[t]->local_result_y[0] += tmp;
+				if (!flag[(*spmv_task_completed)[t]->start_row]) {
+					flag[(*spmv_task_completed)[t]->start_row] = true;
+				} else {
+					tmp = y[(*spmv_task_completed)[t]->start_row];
+					(*spmv_task_completed)[t]->local_result_y[0] += tmp;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
 			}
 
 			if ((*spmv_task_completed)[t]->end_flag) {
-				tmp = y[(*spmv_task_completed)[t]->end_row];
-				(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp;
+				if (!flag[(*spmv_task_completed)[t]->start_row]) {
+					flag[(*spmv_task_completed)[t]->start_row] = true;
+				} else {
+					tmp = y[(*spmv_task_completed)[t]->end_row];
+					(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp;
+					(*spmv_task_completed)[t]->local_result_y[0] -= (*bata) * spmv_task_pool[t].y2;
 			}
 		}
 
@@ -560,6 +440,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 		// 	y[(*spmv_task_completed)[t]->start_row] += tmp;
 		// 	y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
 		// }
+
 	}
 
 	//cout << "test15" << endl;

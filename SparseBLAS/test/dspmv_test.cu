@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	double ALPHA = 1.0;
-	double BETA = 0.0;
+	double BETA = 1.0;
 
 	double time_baseline = 0.0;
 	double time_v1 = 0.0;
