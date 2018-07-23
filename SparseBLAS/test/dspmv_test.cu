@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
 
 					cooRowIndex[p] = ii;
 					cooColIndex[p] = j;
-					cooVal[p] = 1;//((double) rand() / (RAND_MAX));
+					cooVal[p] = (double) rand() / (RAND_MAX);
 					p++;
 
 					//cout << 1 << " ";
@@ -305,8 +305,8 @@ int main(int argc, char *argv[]) {
 		y3[i] = 0.0;
 	}
 
-	double ALPHA = 1.0;
-	double BETA = 1.0;
+	double ALPHA = (double) rand() / (RAND_MAX);
+	double BETA = (double) rand() / (RAND_MAX);
 
 	double time_baseline = 0.0;
 	double time_v1 = 0.0;
