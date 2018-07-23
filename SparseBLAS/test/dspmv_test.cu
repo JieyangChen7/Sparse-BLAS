@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 	int ngpu = atoi(argv[3]);
 	int repeat_test = atoi(argv[4]);
 	int kernel_version = atoi(argv[5]);
-	char data_type = argv[6][0];
+	
 	//int divide = atoi(argv[7]);
 	//int copy_of_workspace = atoi(argv[8]);
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	    cudaMallocHost((void **)&cooRowIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooColIndex, nnz * sizeof(int));
 	    cudaMallocHost((void **)&cooVal, nnz * sizeof(double));
-	   
+	   char data_type = argv[6][0];
 	    // Read matrix from file into COO format
 	    for (int i = 0; i < nnz; i++) {
 	    	if (data_type == 'b') { // binary input
