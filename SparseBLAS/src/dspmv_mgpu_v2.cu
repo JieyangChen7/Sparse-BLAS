@@ -37,11 +37,11 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 				  int ngpu, 
 				  int kernel,
 				  long long nb,
-				  int copy_of_workspace)
+				  int q)
 {
 
-	nb = min(nb, (long long )(0.8*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int)))/copy_of_workspace ); 
-	if (nb <= 0 || ngpu == 0 || copy_of_workspace == 0) {
+	nb = min(nb, (long long )(0.8*get_gpu_availble_mem(ngpu)*1e9/(double)(sizeof(double) + sizeof(int) + sizeof(int)))/q ); 
+	if (nb <= 0 || ngpu == 0 || q == 0) {
 		return -1;
 	}
 
@@ -81,19 +81,19 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 		//cout << "thread " << dev_id <<"/" << omp_get_num_threads() << "started" << endl;
 		cudaSetDevice(dev_id);
 		
-		cusparseStatus_t status[copy_of_workspace];
-		cudaStream_t stream[copy_of_workspace];
-		cusparseHandle_t handle[copy_of_workspace];
+		cusparseStatus_t status[q];
+		cudaStream_t stream[q];
+		cusparseHandle_t handle[q];
 
 
 
-		double ** dev_csrVal = new double * [copy_of_workspace];
-		int ** dev_csrRowPtr = new int    * [copy_of_workspace];
-		int ** dev_csrColIndex = new int  * [copy_of_workspace];
-		double ** dev_x = new double      * [copy_of_workspace];
-		double ** dev_y = new double      * [copy_of_workspace];
+		double ** dev_csrVal = new double * [q];
+		int ** dev_csrRowPtr = new int    * [q];
+		int ** dev_csrColIndex = new int  * [q];
+		double ** dev_x = new double      * [q];
+		double ** dev_y = new double      * [q];
 
-		for (c = 0; c < copy_of_workspace; c++) {
+		for (c = 0; c < q; c++) {
 			cudaStreamCreate(&(stream[c]));
 			status[c] = cusparseCreate(&(handle[c])); 
 			if (status[c] != CUSPARSE_STATUS_SUCCESS) 
@@ -129,7 +129,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 
 			spmv_task * curr_spmv_task;
 
-			for (c = 0; c < copy_of_workspace; c++) {
+			for (c = 0; c < q; c++) {
 
 				//cout << "GPU " << dev_id << " try to get one task" << endl;
 				#pragma omp critical
@@ -171,7 +171,7 @@ int spMV_mgpu_v2(int m, int n, long long nnz, double * alpha,
 
 		cudaDeviceSynchronize();
 
-		for (c = 0; c < copy_of_workspace; c++) {
+		for (c = 0; c < q; c++) {
 
 			cudaFree(dev_csrVal[c]);
 			cudaFree(dev_csrRowPtr[c]);
