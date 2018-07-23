@@ -419,8 +419,8 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 			}
 
 			if ((*spmv_task_completed)[t]->end_flag) {
-				if (!flag[(*spmv_task_completed)[t]->start_row]) {
-					flag[(*spmv_task_completed)[t]->start_row] = true;
+				if (!flag[(*spmv_task_completed)[t]->end_row]) {
+					flag[(*spmv_task_completed)[t]->end] = true;
 				} else {
 					tmp = y[(*spmv_task_completed)[t]->end_row];
 					(*spmv_task_completed)[t]->local_result_y[(*spmv_task_completed)[t]->dev_m - 1] += tmp;
