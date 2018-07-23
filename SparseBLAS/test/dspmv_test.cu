@@ -440,24 +440,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	//cudaProfilerStop();
-
-	
-
-
-	// //cout << "y = [";
-	// bool correct = true;
-	// for(int i = 0; i < m; i++) {
-	// 	//cout << y1[i] << " - "  << y2[i] << " - "<< y3[i] << endl;
-	// 	if (abs(y1[i] - y3[i]) > 1e-3 ) {
-	// 		//cout << y1[i] << " - " << y3[i] << endl;
-	// 		correct = false;
-	// 	}
-	// }
-
-	// if (correct) cout << "Pass" << endl;
-	// else cout << "No pass" << endl;
-	
-	
 	avg_time_baseline/=repeat_test;
 	avg_time_v1/=repeat_test;
 	avg_time_v2/=repeat_test;
