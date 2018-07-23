@@ -194,6 +194,7 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 
 		for (int d = 0; d < ngpu; ++d) 
 		{
+			err[d] = 0;
 			cudaSetDevice(d);
 			if (kernel == 1) {
 				status[d] = cusparseDcsrmv(handle[d],CUSPARSE_OPERATION_NON_TRANSPOSE, 
