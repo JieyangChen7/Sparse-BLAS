@@ -22,7 +22,7 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 
 void assign_task(spmv_task * t, int dev_id, cudaStream_t stream);
 
-void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
+int run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel);
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream);
 
@@ -350,10 +350,11 @@ void assign_task(spmv_task * t, int dev_id, cudaStream_t stream){
 
 }
 
-void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
+int run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 	cudaSetDevice(dev_id);
 
 	cusparseStatus_t status;
+	int err;
 	if(kernel == 1) {
 		status = cusparseDcsrmv(handle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
 								t->dev_m, t->dev_n, t->dev_nnz, 
@@ -367,13 +368,15 @@ void run_task(spmv_task * t, int dev_id, cusparseHandle_t handle, int kernel){
 									t->dev_csrRowPtr, t->dev_csrColIndex, 
 									t->dev_x,  t->beta, t->dev_y); 
 	} else if (kernel == 3) {
-		csr5_kernel(t->dev_m, t->dev_n, t->dev_nnz, 
+		err = csr5_kernel(t->dev_m, t->dev_n, t->dev_nnz, 
 					t->alpha, t->dev_csrVal, 
 					t->dev_csrRowPtr, t->dev_csrColIndex, 
 					t->dev_x,  t->beta, t->dev_y); 
 		
 	}
-
+	if (status != CUSPARSE_STATUS_SUCCESS || err != 0 ) {
+		return -1;
+	}
 }
 
 void finalize_task(spmv_task * t, int dev_id, cudaStream_t stream) {
@@ -438,14 +441,7 @@ void gather_results(vector<spmv_task *> * spmv_task_completed, double * y, doubl
 			   (*spmv_task_completed)[t]->local_result_y, 
 			  ((*spmv_task_completed)[t]->dev_m * sizeof(double))); 
 
-		// if ((*spmv_task_completed)[t]->start_flag) {
-		// 	y[(*spmv_task_completed)[t]->start_row] += tmp;
-		// 	y[(*spmv_task_completed)[t]->start_row] -= (*spmv_task_completed)[t]->y2 * (*beta);
-		// }
-
 	}
-
-	//cout << "test15" << endl;
 }
 
 void print_task_info(spmv_task * t) {

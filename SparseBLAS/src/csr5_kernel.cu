@@ -28,5 +28,5 @@ int csr5_kernel(int m, int n, int nnz, double * alpha,
 		err = A.asCSR5();
 		//cout << "asCSR5 err = " << err << endl;
 		err = A.spmv(*(alpha), y);
-		return 0;
+		return err;
 }
