@@ -237,14 +237,11 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 		spmv_task_pool[t].dev_nnz = (int)(spmv_task_pool[t].end_idx - spmv_task_pool[t].start_idx + 1);
 	}
 
-	//cout << "test1" << endl;
-
 	// Calculate the start and end row
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
 
 		spmv_task_pool[t].start_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].start_idx);
-		//cout << "spmv_task_pool[t].start_row = " << spmv_task_pool[t].start_row << endl;
 		// Mark imcomplete rows
 		// True: imcomplete
 		if (spmv_task_pool[t].start_idx > csrRowPtr[spmv_task_pool[t].start_row]) {
@@ -255,12 +252,9 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 		}
 	}
 
-	//cout << "test2" << endl;
-
 	curr_row = 0;
 	for (t = 0; t < num_of_tasks; t++) {
 		spmv_task_pool[t].end_row = get_row_from_index(m, csrRowPtr, spmv_task_pool[t].end_idx);
-		//cout << "spmv_task_pool[t].end_row = " << spmv_task_pool[t].end_row << endl;
 
 		// Mark imcomplete rows
 		// True: imcomplete
@@ -280,8 +274,6 @@ void generate_tasks(int m, int n, long long nnz, double * alpha,
 
 
 	for (t = 0; t < num_of_tasks; t++) {
-		//cout << "spmv_task_pool[t].dev_m + 1 = " << spmv_task_pool[t].dev_m + 1 << endl;
-		//spmv_task_pool[t].host_csrRowPtr = new int [spmv_task_pool[t].dev_m + 1];
 		cudaMallocHost((void **)&(spmv_task_pool[t].host_csrRowPtr), (spmv_task_pool[t].dev_m + 1) * sizeof(int));
 
 		spmv_task_pool[t].host_csrRowPtr[0] = 0;
