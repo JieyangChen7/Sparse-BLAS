@@ -219,7 +219,7 @@ int spMV_mgpu_v1(int m, int n, long long nnz, double * alpha,
 				cudaSetDevice(d);
 				cudaDeviceSynchronize();
 				if (status[d] != CUSPARSE_STATUS_SUCCESS || err[d] != 0 ) {
-					return -1;
+					//return -1;
 				}
 
 			}
